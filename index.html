@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phejosh | Home</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      color: white;
+      overflow: hidden;
+
+      /* Background image */
+      background: url("llove.jpg.jpeg") no-repeat center center fixed;
+      background-size: cover; /* fills screen */
+      position: relative;
+    }
+
+    /* Overlay tint for readability */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.4); /* darker overlay for text contrast */
+      z-index: 0;
+    }
+
+    .heart {
+      font-size: 80px;
+      text-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
+      animation: spin 6s infinite linear;
+      margin-bottom: 20px;
+      z-index: 1;
+    }
+
+    @keyframes spin {
+      from { transform: rotateY(0deg); }
+      to { transform: rotateY(360deg); }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.8);
+      z-index: 1;
+      text-align: center;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      z-index: 1;
+    }
+
+    button {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .yes {
+      background: hotpink;
+      color: white;
+      box-shadow: 0 0 15px rgba(255,105,180,0.6);
+    }
+
+    .no {
+      background: lightgray;
+      color: black;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    /* Glitter particles */
+    .glitter {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: sparkle 5s linear infinite;
+    }
+
+    @keyframes sparkle {
+      from { transform: translateY(100vh) scale(0.5); opacity: 0.8; }
+      to { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      .heart {
+        font-size: 60px;
+      }
+      button {
+        font-size: 1rem;
+        padding: 12px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="heart">💖</div>
+  <h1>Do you love me?</h1>
+  <div class="buttons">
+    <!-- Yes button goes to page2.html -->
+    <a href="page2.html">
+      <button class="yes">Yes</button>
+    </a>
+    <button class="no">No</button>
+  </div>
+  <div id="message">Oops! Try again 😜</div>
+
+  <script>
+    const noBtn = document.querySelector(".no");
+    const message = document.getElementById("message");
+
+    noBtn.addEventListener("click", () => {
+      let currentSize = parseFloat(window.getComputedStyle(noBtn).fontSize);
+      noBtn.style.fontSize = (currentSize * 0.9) + "px";
+      message.style.opacity = 1;
+    });
+
+    // Generate glitter particles
+    function createGlitter() {
+      const glitter = document.createElement("div");
+      glitter.className = "glitter";
+      glitter.style.left = Math.random() * 100 + "vw";
+      glitter.style.animationDuration = (3 + Math.random() * 3) + "s";
+      document.body.appendChild(glitter);
+
+      setTimeout(() => glitter.remove(), 6000);
+    }
+
+    setInterval(createGlitter, 800); // slower sparkle for mobile
+  </script>
+</body>
+</html>
