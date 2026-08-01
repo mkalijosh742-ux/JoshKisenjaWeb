@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Our Playlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0b0014;
+    --deep:#1c0630;
+    --panel:#220a38;
+    --rose:#ff3d7f;
+    --violet:#b46bff;
+    --gold:#ffd8a8;
+    --mist:#f3e7ff;
+    --line-dim: rgba(180,107,255,0.25);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;
+    background:radial-gradient(120% 100% at 50% 0%, var(--deep) 0%, var(--void) 60%);
+    color:var(--mist);
+    font-family:'Sora',sans-serif;
+    min-height:100%;
+    overflow-x:hidden;
+  }
+  .stars{
+    position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 70% 20%, rgba(255,255,255,0.35), transparent),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(2px 2px at 85% 65%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 60% 50%, rgba(255,255,255,0.25), transparent);
+    background-size: 100% 100%;
+    opacity:0.6;
+  }
+  header{
+    position:relative;z-index:1;
+    text-align:center;
+    padding:48px 20px 8px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.35em;
+    text-transform:uppercase;
+    color:var(--gold);
+    opacity:0.85;
+  }
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-style:italic;
+    font-size:clamp(34px,9vw,52px);
+    margin:6px 0 4px;
+    color:var(--mist);
+    text-shadow:0 0 24px rgba(255,61,127,0.35);
+  }
+  .sub{
+    font-size:13px;
+    color:rgba(243,231,255,0.55);
+    max-width:320px;
+    margin:0 auto;
+    line-height:1.5;
+  }
+
+  .spine-wrap{
+    position:relative;z-index:1;
+    max-width:420px;
+    margin:32px auto 80px;
+    padding:0 22px;
+  }
+  .spine-line{
+    position:absolute;
+    left:50%;
+    top:0;
+    bottom:0;
+    width:2px;
+    transform:translateX(-50%);
+    background:linear-gradient(to bottom, transparent, var(--line-dim) 6%, var(--line-dim) 94%, transparent);
+  }
+  .pulse-dot{
+    position:absolute;
+    left:50%;top:0;
+    width:6px;height:6px;
+    margin-left:-3px;
+    border-radius:50%;
+    background:var(--rose);
+    box-shadow:0 0 12px 3px rgba(255,61,127,0.7);
+    animation:travel 3.2s linear infinite;
+  }
+  @keyframes travel{
+    0%{top:0; opacity:0;}
+    5%{opacity:1;}
+    95%{opacity:1;}
+    100%{top:100%; opacity:0;}
+  }
+
+  .track{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin:0 0 22px;
+    animation:fadeUp 0.6s both;
+  }
+  .track:nth-child(odd){ flex-direction:row; }
+  .track:nth-child(even){ flex-direction:row-reverse; }
+
+  .node{
+    flex:0 0 auto;
+    width:56px;height:56px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.12), var(--panel) 70%);
+    border:1px solid var(--line-dim);
+    font-family:'JetBrains Mono',monospace;
+    font-size:15px;
+    color:var(--gold);
+    position:relative;
+    z-index:2;
+    box-shadow:0 0 0 4px rgba(11,0,20,0.9);
+  }
+  .track:nth-child(3n+1) .node{ color:var(--rose); }
+  .track:nth-child(3n+2) .node{ color:var(--violet); }
+
+  .card{
+    flex:1;
+    background:linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px;
+    padding:14px 18px;
+    backdrop-filter:blur(6px);
+    cursor:pointer;
+    transition:transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    text-decoration:none;
+    color:inherit;
+    display:block;
+  }
+  .card:active{ transform:scale(0.97); }
+  .card:hover{
+    border-color:rgba(255,61,127,0.5);
+    background:linear-gradient(145deg, rgba(255,61,127,0.08), rgba(180,107,255,0.04));
+  }
+  .track-title{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:20px;
+    color:var(--mist);
+    margin:0 0 2px;
+  }
+  .track-meta{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:rgba(243,231,255,0.4);
+  }
+  .track-meta .beat{
+    color:var(--rose);
+  }
+  .keepsake-tag{
+    display:inline-block;
+    margin-top:6px;
+    font-size:10px;
+    font-family:'JetBrains Mono',monospace;
+    letter-spacing:0.08em;
+    color:var(--gold);
+    border:1px solid rgba(255,216,168,0.35);
+    border-radius:20px;
+    padding:2px 9px;
+  }
+
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(14px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  footer{
+    position:relative;z-index:1;
+    text-align:center;
+    padding:0 20px 48px;
+    font-size:11px;
+    color:rgba(243,231,255,0.3);
+    font-family:'JetBrains Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<header>
+  <div class="eyebrow">10 tracks &middot; our tempo</div>
+  <h1>Feel Every Beat</h1>
+  <p class="sub">Tap a track to run the road with me. Some of them are holding onto a little more than a song.</p>
+</header>
+
+<div class="spine-wrap" id="spine">
+  <div class="spine-line"></div>
+  <div class="pulse-dot" style="animation-delay:0s"></div>
+  <div class="pulse-dot" style="animation-delay:1.6s"></div>
+  <!-- tracks injected by JS -->
+</div>
+
+<footer>hold your finger to the beat &middot; v1.0</footer>
+
+<script src="songs-config.js"></script>
+<script>
+  const wrap = document.getElementById('spine');
+
+  SONGS.forEach((song, i) => {
+    const track = document.createElement('div');
+    track.className = 'track';
+    track.style.animationDelay = (i * 0.08) + 's';
+
+    const node = document.createElement('div');
+    node.className = 'node';
+    node.textContent = String(song.id).padStart(2, '0');
+
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = 'game.html?id=' + song.id;
+
+    const title = document.createElement('p');
+    title.className = 'track-title';
+    title.textContent = song.title;
+
+    const meta = document.createElement('p');
+    meta.className = 'track-meta';
+    meta.innerHTML = '<span class="beat">' + song.bpm + ' bpm</span> &nbsp;&middot;&nbsp; tap to run';
+
+    card.appendChild(title);
+    card.appendChild(meta);
+
+    if (song.image !== undefined) {
+      const tag = document.createElement('span');
+      tag.className = 'keepsake-tag';
+      tag.textContent = '+ keepsake';
+      card.appendChild(document.createElement('br'));
+      card.appendChild(tag);
+    }
+
+    track.appendChild(node);
+    track.appendChild(card);
+    wrap.appendChild(track);
+  });
+</script>
+
+</body>
+</html>

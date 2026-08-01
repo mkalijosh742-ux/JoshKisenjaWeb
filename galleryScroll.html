@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>for phejosh 💘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3EC;
+    --cream2:#F6E9E1;
+    --blush:#F3D6D6;
+    --rose:#D8899A;
+    --wine:#7A3247;
+    --wine-dark:#5A2033;
+    --gold:#C9A15A;
+    --ink:#3B2226;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);font-family:'Jost',sans-serif;overflow-x:hidden;}
+  .display{font-family:'Playfair Display',serif;}
+
+  /* ambient floating hearts */
+  .float-heart{
+    position:fixed;top:100%;font-size:16px;color:var(--rose);opacity:0.55;
+    pointer-events:none;z-index:0;animation:rise linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0;}
+    10%{opacity:0.6;}
+    90%{opacity:0.5;}
+    100%{transform:translateY(-108vh) translateX(var(--drift)) rotate(25deg);opacity:0;}
+  }
+
+  /* hero */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:40px 24px;position:relative;z-index:2;
+    background:radial-gradient(ellipse at 50% 20%, var(--blush) 0%, var(--cream) 65%);
+  }
+  .eyebrow{
+    letter-spacing:3px;text-transform:uppercase;font-size:12px;color:var(--wine);
+    font-weight:500;margin-bottom:18px;opacity:0.85;
+  }
+  .hero h1{
+    font-size:clamp(34px,8vw,58px);margin:0;color:var(--wine-dark);font-weight:700;line-height:1.15;
+  }
+  .hero .script{font-style:italic;color:var(--rose);font-weight:600;}
+  .hero .name{
+    margin-top:18px;font-size:clamp(20px,5vw,26px);color:var(--wine);letter-spacing:1px;
+  }
+  .hero p.sub{max-width:340px;margin:16px auto 0;color:#6b4a52;font-size:14.5px;line-height:1.6;}
+  .scroll-cue{
+    margin-top:56px;display:flex;flex-direction:column;align-items:center;gap:8px;
+    color:var(--wine);font-size:12px;letter-spacing:2px;text-transform:uppercase;opacity:0.75;
+  }
+  .scroll-cue .arrow{
+    width:1px;height:34px;background:linear-gradient(var(--wine), transparent);
+    animation:bob 1.8s ease-in-out infinite;position:relative;
+  }
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+  /* garland */
+  .garland-section{position:relative;padding:10px 16px 60px;z-index:2;}
+  .thread{
+    position:absolute;top:0;left:50%;width:2px;height:100%;
+    background:repeating-linear-gradient(to bottom, var(--gold), var(--gold) 6px, transparent 6px, transparent 12px);
+    transform:translateX(-50%);opacity:0.7;
+  }
+  .row{
+    position:relative;display:flex;align-items:center;margin:34px 0;
+    justify-content:center;
+  }
+  .row.left{justify-content:flex-end;padding-right:52%;}
+  .row.right{justify-content:flex-start;padding-left:52%;}
+  .pin{
+    position:absolute;top:8px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;border-radius:50%;
+    background:var(--wine);color:#fff;font-size:11px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:4;border:2px solid var(--cream);
+    transition:transform .15s ease;
+  }
+  .pin:active{transform:translateX(-50%) scale(1.35);}
+  .connector{
+    position:absolute;top:19px;width:9%;height:2px;background:var(--gold);opacity:0.8;
+  }
+  .row.left .connector{right:calc(48% - 2px);}
+  .row.right .connector{left:calc(48% - 2px);}
+
+  .polaroid{
+    background:#fff;padding:8px 8px 30px;border-radius:3px;
+    box-shadow:0 6px 16px rgba(90,32,51,0.18);
+    width:170px;max-width:44vw;position:relative;
+  }
+  .row.left .polaroid{transform:rotate(-4deg);}
+  .row.right .polaroid{transform:rotate(3deg);}
+  .polaroid .frame{
+    width:100%;aspect-ratio:1/1.05;background:var(--cream2);border-radius:2px;
+    overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;
+  }
+  .polaroid img{width:100%;height:100%;object-fit:cover;display:block;}
+  .polaroid .ph-label{color:#b98fa0;font-size:11px;letter-spacing:1px;}
+  .polaroid .cap{
+    position:absolute;bottom:8px;left:0;right:0;text-align:center;
+    font-family:'Playfair Display',serif;font-style:italic;font-size:12.5px;color:var(--wine);
+  }
+
+  /* outro */
+  .outro{
+    text-align:center;padding:70px 24px 90px;position:relative;z-index:2;
+  }
+  .outro .display{font-size:clamp(22px,6vw,30px);color:var(--wine-dark);margin-bottom:10px;}
+  .outro p{color:#6b4a52;font-size:13.5px;max-width:300px;margin:0 auto;line-height:1.6;}
+  .signature{margin-top:22px;font-family:'Playfair Display',serif;font-style:italic;font-size:18px;color:var(--rose);}
+
+  @media (max-width:400px){
+    .row.left{padding-right:50%;}
+    .row.right{padding-left:50%;}
+    .polaroid{width:140px;}
+  }
+
+  /* music player */
+  .player{
+    position:fixed;top:16px;right:16px;z-index:30;
+    background:#fff;border-radius:30px;
+    box-shadow:0 6px 18px rgba(90,32,51,0.22);
+    padding:8px 12px;display:flex;align-items:center;gap:8px;
+    max-width:220px;
+  }
+  .player .note{font-size:15px;color:var(--wine);flex-shrink:0;}
+  .player .track{
+    font-family:'Playfair Display',serif;font-style:italic;font-size:12px;color:var(--ink);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:88px;
+  }
+  .player .ctrls{display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0;}
+  .player button{
+    border:none;background:var(--blush);color:var(--wine-dark);
+    width:26px;height:26px;border-radius:50%;font-size:11px;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:transform .15s ease;
+  }
+  .player button:active{transform:scale(0.85);}
+  .player button.play{background:var(--wine);color:#fff;width:28px;height:28px;font-size:12px;}
+
+  @media (max-width:400px){
+    .player{top:10px;right:10px;padding:6px 9px;max-width:170px;}
+    .player .track{max-width:60px;font-size:11px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="player">
+  <span class="note">&#9835;</span>
+  <span class="track" id="trackName">Our song 1</span>
+  <div class="ctrls">
+    <button onclick="prevSong()" title="Previous">&#9664;</button>
+    <button class="play" id="playBtn" onclick="togglePlay()" title="Play">&#9654;</button>
+    <button onclick="nextSong()" title="Next">&#9654;&#9654;</button>
+  </div>
+</div>
+<audio id="audio" preload="none"></audio>
+
+<div id="hearts"></div>
+
+<section class="hero">
+  <div class="eyebrow">a little something for you</div>
+  <h1 class="display">Every little <span class="script">moment</span><br>with you</h1>
+  <div class="name">phejosh 💘</div>
+  <p class="sub">A small string of memories, just for you to keep &mdash; tap any heart pin to save the photo.</p>
+  <div class="scroll-cue"><span>scroll</span><div class="arrow"></div></div>
+</section>
+
+<section class="garland-section">
+  <div class="thread"></div>
+  <div id="garland"></div>
+</section>
+
+<section class="outro">
+  <div class="display">that's all for now</div>
+  <p>but there's always more memories to make. thank you for being mine.</p>
+  <div class="signature">yours, always</div>
+</section>
+
+<script>
+  const TOTAL_IMAGES = 30;
+  const garland = document.getElementById('garland');
+
+  for(let i=1;i<=TOTAL_IMAGES;i++){
+    const side = i % 2 === 0 ? 'right' : 'left';
+    const src = "img"+i+".jpg";
+    const row = document.createElement('div');
+    row.className = 'row ' + side;
+    row.innerHTML = `
+      <div class="connector"></div>
+      <div class="pin" onclick="downloadImg('${src}', ${i})" title="Save photo">&#128149;</div>
+      <div class="polaroid">
+        <div class="frame">
+          <span class="ph-label">img${i}</span>
+          <img src="${src}" alt="img${i}" loading="lazy"
+               onload="this.previousElementSibling.style.display='none'"
+               onerror="this.style.display='none'">
+        </div>
+        <div class="cap">#${i}</div>
+      </div>
+    `;
+    garland.appendChild(row);
+  }
+
+  function downloadImg(src, i){
+    const a = document.createElement('a');
+    a.href = src;
+    a.download = "phejosh-memory-"+i+".jpg";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  const songs = [
+    { src: "song1.mp3", name: "Our song 1" },
+    { src: "song2.mp3", name: "Our song 2" },
+    { src: "song3.mp3", name: "Our song 3" }
+  ];
+  let songIndex = 0;
+  const audio = document.getElementById('audio');
+  const trackName = document.getElementById('trackName');
+  const playBtn = document.getElementById('playBtn');
+
+  function loadSong(i, autoplay){
+    songIndex = (i + songs.length) % songs.length;
+    audio.src = songs[songIndex].src;
+    trackName.textContent = songs[songIndex].name;
+    if(autoplay){
+      audio.play().catch(()=>{ playBtn.innerHTML = '&#9654;'; });
+    }
+  }
+
+  function togglePlay(){
+    if(!audio.src){ loadSong(songIndex, true); }
+    else if(audio.paused){ audio.play().catch(()=>{}); }
+    else{ audio.pause(); }
+  }
+
+  function nextSong(){ loadSong(songIndex + 1, true); }
+  function prevSong(){ loadSong(songIndex - 1, true); }
+
+  audio.addEventListener('play', ()=>{ playBtn.innerHTML = '&#10073;&#10073;'; });
+  audio.addEventListener('pause', ()=>{ playBtn.innerHTML = '&#9654;'; });
+  audio.addEventListener('ended', ()=>{ nextSong(); });
+
+  trackName.textContent = songs[0].name;
+
+  const heartsWrap = document.getElementById('hearts');
+  for(let i=0;i<10;i++){
+    const h = document.createElement('div');
+    h.className = 'float-heart';
+    h.textContent = Math.random() > 0.5 ? '♥' : '💕';
+    h.style.left = Math.random()*100 + 'vw';
+    h.style.setProperty('--drift', (Math.random()*60-30)+'px');
+    h.style.animationDuration = (10 + Math.random()*10) + 's';
+    h.style.animationDelay = (Math.random()*10) + 's';
+    h.style.fontSize = (12 + Math.random()*10) + 'px';
+    heartsWrap.appendChild(h);
+  }
+</script>
+</body>
+</html>

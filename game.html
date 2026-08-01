@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For You — Arcade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,500&family=Sora:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0B0B2F;
+    --bg-mid:#1B1140;
+    --rose:#FF4D6D;
+    --gold:#FFC857;
+    --lavender:#C9A8FF;
+    --cream:#F5F0FF;
+    --muted:#9088B8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:'Sora',sans-serif;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(255,77,109,0.12), transparent 40%),
+      radial-gradient(ellipse at 80% 85%, rgba(201,168,255,0.15), transparent 45%),
+      linear-gradient(180deg, var(--bg-deep), var(--bg-mid));
+    color:var(--cream);
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+    overflow-x:hidden;
+    position:relative;
+  }
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+  .stars span{
+    position:absolute;width:2px;height:2px;background:var(--cream);
+    border-radius:50%;opacity:0.5;animation:twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle{0%,100%{opacity:.15;}50%{opacity:.9;}}
+
+  header{text-align:center;margin-bottom:56px;position:relative;z-index:1;}
+  .eyebrow{
+    font-family:'Space Mono',monospace;
+    font-size:12px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--lavender);margin-bottom:14px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(38px,7vw,64px);
+    margin:0;
+    line-height:1.05;
+    background:linear-gradient(100deg,var(--cream) 30%, var(--rose) 70%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  h1 em{font-style:italic;font-weight:500;color:var(--gold);-webkit-text-fill-color:var(--gold);}
+  p.sub{color:var(--muted);font-size:15px;max-width:420px;margin:16px auto 0;}
+
+  .arcade{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:28px;
+    max-width:760px;
+    width:100%;
+    position:relative;z-index:1;
+  }
+  .card-wrap{ perspective:900px; }
+  .card{
+    background:linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border:1px solid rgba(255,255,255,0.09);
+    border-radius:20px;
+    padding:32px 28px;
+    text-decoration:none;
+    color:inherit;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    transition:transform .12s ease-out, border-color .25s ease, box-shadow .2s ease-out;
+    transform-style:preserve-3d;
+    position:relative;
+    overflow:hidden;
+    will-change:transform;
+  }
+  .card .glow{
+    position:absolute; inset:-40%; z-index:0; pointer-events:none;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,77,109,0.18), transparent 55%);
+    opacity:0; transition:opacity .2s ease;
+  }
+  .card:hover .glow{opacity:1;}
+  .card > *{position:relative; z-index:1;}
+  .card:hover{
+    border-color:rgba(255,77,109,0.4);
+    box-shadow:0 24px 50px -20px rgba(255,77,109,0.4);
+  }
+  .card .glyph{font-size:38px;line-height:1;}
+  .card h2{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:24px;margin:0;
+  }
+  .card p{color:var(--muted);font-size:14px;margin:0;line-height:1.5;}
+  .tag{
+    font-family:'Space Mono',monospace;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:6px;
+    padding:6px 12px;border-radius:100px;
+    width:fit-content;
+  }
+  .tag.play{background:rgba(255,200,87,0.15);color:var(--gold);}
+  .tag.soon{background:rgba(144,136,184,0.15);color:var(--muted);}
+  .card.locked{opacity:.7;}
+  .card.locked:hover{transform:none;border-color:rgba(255,255,255,0.09);box-shadow:none;cursor:default;}
+
+  footer{margin-top:48px;font-size:12px;color:var(--muted);position:relative;z-index:1;}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<header>
+  <div class="eyebrow">an arcade, just for you</div>
+  <h1>Catch every<br><em>falling heart</em></h1>
+  <p class="sub">Two little games made with you in mind. Pick one below — the second is still being wrapped up.</p>
+</header>
+
+<div class="arcade">
+  <div class="card-wrap">
+    <a class="card tilt" href="HHGame.html">
+      <span class="glow"></span>
+      <span class="glyph">💘</span>
+      <span class="tag play">● ready to play</span>
+      <h2>Heart Catcher</h2>
+      <p>Hearts are falling from the sky — grab your cannon and don't let a single one slip past. 5 levels, and it gets faster.</p>
+    </a>
+  </div>
+
+  <div class="card-wrap">
+    <a class="card tilt" href="galleryScroll.html">
+      <span class="glow"></span>
+      <span class="glyph">🎁</span>
+      <span class="tag play">○ precious scroll</span>
+      <h2>Gallery Scroll #2</h2>
+      <p>A simple gallery i made for you, how i wish all the promisses we made for each other remains unbreackable #cute phelly.</p>
+    </a>
+  </div>
+
+  <div class="card-wrap">
+    <a class="card tilt locked" href="homepuzzlelettertiles.html">
+      <span class="glow"></span>
+      <span class="glyph">✨</span>
+      <span class="tag play">○ ready to explore</span>
+      <h2>Special page #3</h2>
+      <p>Phely go and check on this there's hidden germ in there ayaa i worned you.</p>
+    </a>
+  </div>
+</div>
+
+<footer>made with ❤️ — click a card to start</footer>
+
+<script>
+  const starField = document.getElementById('stars');
+  for(let i=0;i<70;i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.animationDelay = (Math.random()*3)+'s';
+    starField.appendChild(s);
+  }
+
+  // classic arcade-cabinet 3D tilt on hover
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isTouch = window.matchMedia('(hover: none)').matches;
+  if(!reduceMotion && !isTouch){
+    document.querySelectorAll('.card.tilt').forEach(card=>{
+      card.addEventListener('mousemove', e=>{
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left)/r.width;
+        const py = (e.clientY - r.top)/r.height;
+        const rotY = (px-0.5)*16;
+        const rotX = (0.5-py)*16;
+        card.style.transform = `translateY(-6px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+        card.style.setProperty('--mx', (px*100)+'%');
+        card.style.setProperty('--my', (py*100)+'%');
+      });
+      card.addEventListener('mouseleave', ()=>{
+        card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+      });
+    });
+  }
+</script>
+</body>
+</html>

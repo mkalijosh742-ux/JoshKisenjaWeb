@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heart Catcher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=Sora:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rose:#FF4D6D;
+    --gold:#FFC857;
+    --lavender:#C9A8FF;
+    --cream:#F5F0FF;
+    --muted:#9088B8;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;overflow:hidden;background:#000;}
+  body{font-family:'Sora',sans-serif;color:var(--cream);}
+
+  #stage{position:fixed;inset:0;}
+  canvas{display:block;width:100%;height:100%;touch-action:none;}
+
+  #hud{
+    position:fixed; top:0; left:0; right:0;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:16px 20px; pointer-events:none; z-index:5;
+  }
+  #hud.hidden{display:none;}
+  .hud-block{
+    background:rgba(10,6,18,0.55);
+    border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(6px);
+    border-radius:14px;
+    padding:10px 16px;
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+  }
+  #livesBlock{display:flex;gap:6px;align-items:center;}
+  #rightCol{display:flex; flex-direction:column; align-items:flex-end; gap:8px;}
+  #scoreBlock{text-align:right;}
+  #scoreBlock .big{font-size:20px;color:var(--gold);font-weight:700;}
+  #hudControls{display:flex; gap:6px; pointer-events:auto;}
+  .icon-btn{
+    cursor:pointer; border:none; width:34px; height:34px; border-radius:50%;
+    background:rgba(10,6,18,0.55); color:var(--cream); font-size:15px;
+    border:1px solid rgba(255,255,255,0.12); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+  }
+  #quitBtn{
+    pointer-events:auto; cursor:pointer;
+    background:rgba(10,6,18,0.55); color:var(--cream);
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em;
+    border:1px solid rgba(255,255,255,0.12); border-radius:100px; padding:8px 14px;
+    backdrop-filter:blur(6px);
+  }
+  #comboTag{
+    position:fixed; top:78px; left:50%; transform:translateX(-50%);
+    font-family:'Fraunces',serif; font-style:italic; font-weight:600;
+    font-size:22px; color:var(--rose); opacity:0; z-index:6; pointer-events:none;
+    text-shadow:0 0 18px rgba(255,77,109,0.6);
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  #powerBar{
+    position:fixed; top:16px; left:50%; transform:translateX(-50%);
+    width:min(240px,40vw); height:8px; border-radius:100px;
+    background:rgba(255,255,255,0.08); overflow:hidden; opacity:0;
+    transition:opacity .25s ease; z-index:5;
+  }
+  #powerFill{height:100%; width:100%; background:linear-gradient(90deg,var(--gold),var(--rose));}
+
+  #memoryWall{
+    position:fixed; right:14px; top:50%; transform:translateY(-50%);
+    display:flex; flex-direction:column; gap:6px; z-index:5;
+  }
+  #memoryWall.hidden{display:none;}
+  .mem-slot{
+    width:26px; height:26px; border-radius:7px;
+    border:1.5px dashed rgba(255,255,255,0.25);
+    background:rgba(255,255,255,0.03);
+    transition:all .3s ease;
+  }
+  .mem-slot.unlocked{
+    border-style:solid; border-color:var(--gold);
+    background:linear-gradient(135deg, var(--lavender), var(--rose));
+    box-shadow:0 0 10px rgba(255,200,87,0.5);
+  }
+
+  .overlay{
+    position:fixed; inset:0; z-index:10;
+    background:radial-gradient(ellipse at center, rgba(20,10,30,0.94), rgba(0,0,0,0.98));
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:30px; gap:16px; overflow-y:auto;
+  }
+  .overlay.hidden{display:none;}
+  .overlay .eyebrow{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.25em;
+    text-transform:uppercase; color:var(--lavender);
+  }
+  .overlay h1{
+    font-family:'Fraunces',serif; font-weight:600; font-size:clamp(28px,6vw,50px);
+    margin:0; color:var(--cream);
+  }
+  .overlay h1 em{font-style:italic;color:var(--gold);}
+  .overlay p{color:var(--muted); max-width:420px; font-size:14px; line-height:1.6; margin:0;}
+  .stars{font-size:26px; letter-spacing:4px; color:rgba(255,255,255,0.15);}
+  .stars .filled{color:var(--gold); text-shadow:0 0 12px rgba(255,200,87,0.6);}
+  .btn{
+    font-family:'Sora',sans-serif; font-weight:600; font-size:14px;
+    background:var(--rose); color:#fff; border:none; padding:14px 30px;
+    border-radius:100px; cursor:pointer; text-decoration:none;
+    transition:transform .2s ease, box-shadow .2s ease;
+    box-shadow:0 10px 30px -10px rgba(255,77,109,0.6);
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--cream);box-shadow:none;}
+  .row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+
+  #levelGrid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:18px; max-width:900px; width:100%; margin-top:6px;
+  }
+  .lvl-card{
+    position:relative; border-radius:18px; padding:22px 18px; text-align:left;
+    border:1px solid rgba(255,255,255,0.1); cursor:pointer; overflow:hidden;
+    transition:transform .18s ease, border-color .18s ease;
+    min-height:150px; display:flex; flex-direction:column; justify-content:flex-end;
+  }
+  .lvl-card:hover:not(.locked){transform:translateY(-4px); border-color:rgba(255,255,255,0.3);}
+  .lvl-card.locked{cursor:not-allowed; opacity:0.55;}
+  .lvl-card .lvl-num{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.15em;
+    text-transform:uppercase; opacity:0.8;
+  }
+  .lvl-card .lvl-name{font-family:'Fraunces',serif; font-weight:600; font-size:20px; margin:4px 0;}
+  .lvl-card .lvl-tag{font-size:12px; opacity:0.75; line-height:1.4;}
+  .lvl-card .lvl-best{font-family:'Space Mono',monospace; font-size:10px; margin-top:8px; opacity:0.7;}
+  .lvl-card .lock{position:absolute; top:14px; right:14px; font-size:18px;}
+
+  #levelCard{
+    position:fixed; inset:0; z-index:8; display:none;
+    flex-direction:column; align-items:center; justify-content:center; pointer-events:none;
+  }
+  #levelCard span{
+    font-family:'Fraunces',serif; font-style:italic; font-weight:600;
+    font-size:clamp(28px,6vw,56px); color:var(--gold);
+    text-shadow:0 0 30px rgba(255,200,87,0.5);
+    opacity:0; transform:scale(.8);
+  }
+  #levelCard .sub{
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.15em;
+    color:var(--cream); opacity:0; text-transform:uppercase; margin-top:8px;
+  }
+
+  #pauseOverlay{
+    position:fixed; inset:0; z-index:9; display:none;
+    align-items:center; justify-content:center; flex-direction:column; gap:16px;
+    background:rgba(5,3,10,0.88); backdrop-filter:blur(4px); text-align:center; padding:20px;
+  }
+  #pauseOverlay h1{font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:32px; margin:0;}
+
+  #loveMsg{
+    position:fixed; z-index:3; pointer-events:none;
+    font-family:'Fraunces',serif; font-style:italic;
+    color:var(--lavender); opacity:0.85; white-space:nowrap;
+    text-shadow:0 0 12px rgba(201,168,255,0.5);
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="game"></canvas>
+</div>
+
+<div id="hud" class="hidden">
+  <div id="livesBlock" class="hud-block"></div>
+  <div id="rightCol">
+    <div id="hudControls">
+      <button class="icon-btn" id="pauseBtn" title="Pause">&#10074;&#10074;</button>
+      <button class="icon-btn" id="muteBtn" title="Mute">&#128266;</button>
+      <span id="quitBtn">quit to select</span>
+    </div>
+    <div id="scoreBlock" class="hud-block">
+      <div>LEVEL <span id="levelNum">1</span> &middot; target <span id="targetNum">400</span></div>
+      <div class="big" id="scoreNum">0</div>
+      <div style="color:var(--muted); font-size:11px;" id="timerNum">0:00</div>
+    </div>
+  </div>
+</div>
+<div id="comboTag"></div>
+<div id="powerBar"><div id="powerFill"></div></div>
+<div id="memoryWall" class="hidden"></div>
+<div id="levelCard"><span id="levelCardText"></span><div class="sub" id="levelCardSub"></div></div>
+
+<div id="pauseOverlay">
+  <div class="eyebrow" style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--lavender);">paused</div>
+  <h1>Take a breath</h1>
+  <div class="row">
+    <button class="btn" id="resumeBtn">Resume</button>
+    <button class="btn ghost" id="quitFromPauseBtn">Quit to select</button>
+  </div>
+</div>
+
+<div class="overlay" id="selectOverlay">
+  <div class="eyebrow">heart catcher</div>
+  <h1>Choose a <em>level</em></h1>
+  <p>Each level is its own little world. Beat one to unlock the next.</p>
+  <div id="levelGrid"></div>
+  <a class="btn ghost" href="page2.html">Back home</a>
+</div>
+
+<div class="overlay hidden" id="completeOverlay">
+  <div class="eyebrow">level cleared</div>
+  <h1 id="completeTitle">Level <em>complete</em></h1>
+  <div class="stars" id="completeStars"></div>
+  <p id="completeText"></p>
+  <div class="row">
+    <button class="btn" id="nextLevelBtn">Next level</button>
+    <button class="btn ghost" id="selectFromCompleteBtn">Level select</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="overOverlay">
+  <div class="eyebrow">out of hearts</div>
+  <h1>Level <em>failed</em></h1>
+  <p id="overScoreText"></p>
+  <div class="row">
+    <button class="btn" id="retryBtn">Retry level</button>
+    <button class="btn ghost" id="selectFromOverBtn">Level select</button>
+  </div>
+</div>
+
+<div class="overlay hidden" id="winOverlay">
+  <div class="eyebrow">every heart, caught</div>
+  <h1>You <em>win</em> &hearts;</h1>
+  <div class="stars" id="winStars"></div>
+  <p>You made it through all 5 levels &mdash; through the void, the gold, the lavender night, the deep ocean, and hell itself. Every memory, unlocked.</p>
+  <div class="row">
+    <button class="btn" id="selectFromWinBtn">Level select</button>
+    <a class="btn ghost" href="index.html">Back home</a>
+  </div>
+</div>
+
+<!-- =========================================================
+# AUDIO FILES YOU NEED TO ADD
+Drop your files into an /audio folder next to this page, using
+these EXACT names below and everything plays automatically —
+no code editing needed. A different song plays on each level.
+
+  Background music (one per level, loops):
+    audio/bgm-level1.mp3   (Hollow Void)
+    audio/bgm-level2.mp3   (Golden Hour)
+    audio/bgm-level3.mp3   (Lavender Night)
+    audio/bgm-level4.mp3   (Deep Ocean)
+    audio/bgm-level5.mp3   (Hell)
+
+  Effects:
+    audio/sfx-shoot.mp3      -> the "puh puh" firing sound
+    audio/sfx-explosion.mp3  -> the "boom" when a heart is popped
+    audio/sfx-miss.mp3       -> plays when a heart is missed (optional)
+    audio/sfx-powerup.mp3    -> plays when a gold power-up is grabbed (optional)
+    audio/sfx-levelup.mp3    -> plays when a level is cleared (optional)
+
+  Missing files simply stay silent — never throws an error, so add
+  them whenever you're ready.
+========================================================== -->
+<audio id="bgm1" src="BASS.mp3" loop></audio>
+<audio id="bgm2" src="OWEN.mp3" loop></audio>
+<audio id="bgm3" src="DOJA.mp3" loop></audio>
+<audio id="bgm4" src="audio/bgm-level4.mp3" loop></audio>
+<audio id="bgm5" src="MIX.mp3" loop></audio>
+<audio id="sfxShoot" src="audio/sfx-shoot.mp3"></audio>
+<audio id="sfxExplosion" src="puu.mp3"></audio>
+<audio id="sfxMiss" src="puu.mp3"></audio>
+<audio id="sfxPowerup" src="NAA"></audio>
+<audio id="sfxLevelup" src="audio/sfx-levelup.mp3"></audio>
+
+<!-- =========================================================
+# PHOTO IMAGES YOU NEED TO ADD (optional)
+Drop up to 10 real photos into an /images folder next to this
+page, using these EXACT names. Any photo-heart that falls from
+level 2 onward will randomly show one of these instead of the
+placeholder color. Any name left missing just falls back to the
+colored placeholder — nothing breaks.
+
+    images/photo1.jpg   images/photo2.jpg   images/photo3.jpg
+    images/photo4.jpg   images/photo5.jpg   images/photo6.jpg
+    images/photo7.jpg   images/photo8.jpg   images/photo9.jpg
+    images/photo10.jpg
+========================================================== -->
+<img id="photoImg0" src="IMG17.jpg" style="display:none">
+<img id="photoImg1" src="IMG20.jpg" style="display:none">
+<img id="photoImg2" src="IMG21.jpg" style="display:none">
+<img id="photoImg3" src="IMG27.jpg" style="display:none">
+<img id="photoImg4" src="IMG24.jpg" style="display:none">
+<img id="photoImg5" src="IMG18.jpg" style="display:none">
+<img id="photoImg6" src="IMG15.jpg" style="display:none">
+<img id="photoImg7" src="IMG8.jpg" style="display:none">
+<img id="photoImg8" src="IMG1.jpg" style="display:none">
+<img id="photoImg9" src="IMG10.jpg" style="display:none">
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------- canvas setup ----------------
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  let W, H, DPR;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W*DPR; canvas.height = H*DPR;
+    canvas.style.width = W+'px'; canvas.style.height = H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    resetGunPos();
+  }
+  window.addEventListener('resize', resize);
+
+  // ---------------- storage helpers ----------------
+  function loadJSON(key, fallback){
+    try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; }
+  }
+  function saveJSON(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+
+  // ---------------- photo images ----------------
+  const PHOTO_SLOTS = 10;
+  const photoImgs = [];
+  for(let i=0;i<PHOTO_SLOTS;i++){ photoImgs.push(document.getElementById('photoImg'+i)); }
+  function photoReady(i){
+    const img = photoImgs[i];
+    return img && img.complete && img.naturalWidth > 0;
+  }
+
+  // ---------------- audio helpers ----------------
+  const bgms = [null,
+    document.getElementById('bgm1'), document.getElementById('bgm2'),
+    document.getElementById('bgm3'), document.getElementById('bgm4'),
+    document.getElementById('bgm5')
+  ];
+  const sfxShoot = document.getElementById('sfxShoot');
+  const sfxExplosion = document.getElementById('sfxExplosion');
+  const sfxMiss = document.getElementById('sfxMiss');
+  const sfxPowerup = document.getElementById('sfxPowerup');
+  const sfxLevelup = document.getElementById('sfxLevelup');
+
+  let muted = loadJSON('heartCatcherMuted', false);
+
+  function safePlay(el, volume){
+    if(!el || muted) return;
+    try{
+      const node = el.cloneNode(true);
+      node.volume = volume===undefined?0.7:volume;
+      node.play().catch(()=>{});
+    }catch(e){}
+  }
+  let currentBgm = null;
+  function playBgmFor(level){
+    if(currentBgm){ try{currentBgm.pause();}catch(e){} }
+    currentBgm = bgms[level];
+    if(currentBgm && !muted){
+      try{ currentBgm.volume = 0.35; currentBgm.currentTime = 0; currentBgm.play().catch(()=>{}); }catch(e){}
+    }
+  }
+  function stopBgm(){ if(currentBgm){ try{currentBgm.pause();}catch(e){} } currentBgm=null; }
+  function updateMuteBtn(){
+    document.getElementById('muteBtn').innerHTML = muted ? '&#128263;' : '&#128266;';
+  }
+
+  // ---------------- level metadata ----------------
+  const LEVEL_META = {
+    1: { name:'Hollow Void',     tag:'Where it all begins \u2014 quiet, dark, empty.',       target:400,  minMs:130000 },
+    2: { name:'Golden Hour',     tag:'Warm skies. Memories start to fall.',                   target:550,  minMs:135000 },
+    3: { name:'Lavender Night',  tag:'Love notes drift by. Don\u2019t get distracted.',       target:700,  minMs:140000 },
+    4: { name:'Deep Ocean',      tag:'Slower currents. Deeper focus.',                        target:900,  minMs:145000 },
+    5: { name:'Hell',            tag:'Everything, all at once. The final one.',               target:1400, minMs:320000 }
+  };
+  const PHOTO_COLORS = [
+    ['#FF4D6D','#FFC857'], ['#C9A8FF','#FF4D6D'], ['#FFC857','#9088B8'],
+    ['#FF9EB0','#7C6BD9'], ['#FFD9A0','#FF4D6D'], ['#C9A8FF','#FFC857'],
+    ['#FF6B8A','#3D2B66'], ['#FFE29A','#C9A8FF'], ['#FF8FA3','#FFC857'],
+    ['#B892FF','#FF4D6D']
+  ];
+
+  let unlockedMax = loadJSON('heartCatcherUnlockedMax', 1);
+  let levelBest = loadJSON('heartCatcherLevelBest', {});
+  let unlockedSlots = new Set(loadJSON('heartCatcherMemory', []));
+
+  let state = 'select'; // select | playing | paused | complete | over | finalWin
+  let stateBeforePause = 'playing';
+  let level = 1;
+  let score = 0;
+  let lives = 3;
+  let combo = 0;
+  let comboMult = 1;
+  let levelStartTime = 0;
+
+  const gun = { x: 0, y: 0, recoil:0 };
+  function resetGunPos(){ gun.x = (W||window.innerWidth)/2; gun.y = (H||window.innerHeight) - 40; }
+
+  let aimX = window.innerWidth/2;
+  function setAim(x){ aimX = Math.max(50, Math.min(W-50, x)); }
+  canvas.addEventListener('mousemove', e=>{ if(state==='playing') setAim(e.clientX); });
+  canvas.addEventListener('touchmove', e=>{ if(state==='playing'){ setAim(e.touches[0].clientX); e.preventDefault(); } }, {passive:false});
+  canvas.addEventListener('touchstart', e=>{ if(state==='playing') setAim(e.touches[0].clientX); }, {passive:false});
+
+  let bullets = [], hearts = [], particles = [], popups = [];
+
+  const LOVE_LINES = [
+    "you make my chest feel like fireworks",
+    "every day, i choose you again",
+    "still my favourite person",
+    "you + me, always",
+    "my heart found its home in you",
+    "lucky to love you",
+    "you're the best part of my day",
+    "forever isn't long enough with you"
+  ];
+
+  let powerUntil = 0;
+  let lastSpawn = 0, lastShot = 0;
+  let screenShake = 0;
+
+  // base difficulty per level, then escalated by wave stage within the level
+  function baseConfig(l){
+    if(l===5){
+      return { spawnInterval:260, fallSpeed:190, fireCooldown:65, photoChance:0.3, powerChance:0.08, waveMs:20000, waveGrowth:0.18, waveMax:6 };
+    }
+    return {
+      spawnInterval: Math.max(320, 1050 - l*130),
+      fallSpeed: 55 + l*24,
+      fireCooldown: Math.max(80, 260 - l*30),
+      photoChance: l>=2 ? 0.32 : 0,
+      powerChance: 0.06,
+      waveMs: 28000,
+      waveGrowth: 0.12,
+      waveMax: 4
+    };
+  }
+  function levelConfig(l, elapsedMs){
+    const base = baseConfig(l);
+    const wave = Math.min(base.waveMax, Math.floor(elapsedMs / base.waveMs));
+    const growth = 1 + base.waveGrowth * wave;
+    return {
+      spawnInterval: Math.max(140, base.spawnInterval / growth),
+      fallSpeed: base.fallSpeed * growth,
+      fireCooldown: base.fireCooldown,
+      photoChance: base.photoChance,
+      powerChance: base.powerChance,
+      wave
+    };
+  }
+
+  // ---------------- level select rendering ----------------
+  function themeSwatch(l){
+    const swatches = {
+      1: 'linear-gradient(160deg,#120a1e,#000)',
+      2: 'linear-gradient(160deg,#3a2a52,#a85b3f)',
+      3: 'linear-gradient(160deg,#1c1030,#5a3d8a)',
+      4: 'linear-gradient(160deg,#04202b,#0a4a5c)',
+      5: 'linear-gradient(160deg,#2a0505,#6e0f0f)'
+    };
+    return swatches[l];
+  }
+  function renderLevelSelect(){
+    const grid = document.getElementById('levelGrid');
+    grid.innerHTML = '';
+    for(let l=1;l<=5;l++){
+      const meta = LEVEL_META[l];
+      const locked = l > unlockedMax;
+      const card = document.createElement('div');
+      card.className = 'lvl-card' + (locked?' locked':'');
+      card.style.background = themeSwatch(l);
+      card.innerHTML = `
+        ${locked ? '<span class="lock">\u{1F512}</span>' : ''}
+        <div class="lvl-num">level ${l}</div>
+        <div class="lvl-name">${meta.name}</div>
+        <div class="lvl-tag">${meta.tag}</div>
+        ${levelBest[l] ? `<div class="lvl-best">best: ${levelBest[l]}</div>` : ''}
+      `;
+      if(!locked){ card.addEventListener('click', ()=> startLevel(l)); }
+      grid.appendChild(card);
+    }
+  }
+
+  // ---------------- HUD ----------------
+  function updateHUD(){
+    document.getElementById('levelNum').textContent = level;
+    document.getElementById('targetNum').textContent = LEVEL_META[level].target;
+    document.getElementById('scoreNum').textContent = score;
+    const livesBlock = document.getElementById('livesBlock');
+    livesBlock.innerHTML = '';
+    for(let i=0;i<3;i++){
+      const s = document.createElement('span');
+      s.style.fontSize='18px';
+      s.textContent = i < lives ? '\u2764\ufe0f' : '\ud83d\udc94';
+      s.style.opacity = i < lives ? '1' : '0.35';
+      livesBlock.appendChild(s);
+    }
+  }
+  function renderMemoryWall(){
+    const wall = document.getElementById('memoryWall');
+    wall.innerHTML = '';
+    for(let i=0;i<PHOTO_SLOTS;i++){
+      const d = document.createElement('div');
+      d.className = 'mem-slot' + (unlockedSlots.has(i) ? ' unlocked' : '');
+      wall.appendChild(d);
+    }
+  }
+  function flashCombo(){
+    const tag = document.getElementById('comboTag');
+    if(comboMult>1){
+      tag.textContent = 'x'+comboMult.toFixed(1)+' combo!';
+      tag.style.opacity = '1';
+      tag.style.transform = 'translateX(-50%) scale(1.15)';
+      setTimeout(()=>{ tag.style.transform='translateX(-50%) scale(1)'; },120);
+      clearTimeout(flashCombo._t);
+      flashCombo._t = setTimeout(()=>{ tag.style.opacity='0'; }, 900);
+    }
+  }
+  function updatePowerBar(){
+    const bar = document.getElementById('powerBar');
+    const fill = document.getElementById('powerFill');
+    const remaining = powerUntil - performance.now();
+    if(remaining>0){
+      bar.style.opacity='1';
+      fill.style.width = Math.max(0,Math.min(100, remaining/6000*100))+'%';
+    } else {
+      bar.style.opacity='0';
+    }
+  }
+  function starsHTML(n){
+    let s='';
+    for(let i=0;i<3;i++){ s += `<span class="${i<n?'filled':''}">${i<n?'\u2605':'\u2606'}</span>`; }
+    return s;
+  }
+
+  // ---------------- drawing helpers ----------------
+  function heartPath(cx, cy, size){
+    ctx.beginPath();
+    const s = size/16;
+    ctx.moveTo(cx, cy + 4*s);
+    ctx.bezierCurveTo(cx, cy, cx - 8*s, cy - 8*s, cx - 8*s, cy - 2*s);
+    ctx.bezierCurveTo(cx - 8*s, cy + 4*s, cx - 4*s, cy + 8*s, cx, cy + 13*s);
+    ctx.bezierCurveTo(cx + 4*s, cy + 8*s, cx + 8*s, cy + 4*s, cx + 8*s, cy - 2*s);
+    ctx.bezierCurveTo(cx + 8*s, cy - 8*s, cx, cy, cx, cy + 4*s);
+    ctx.closePath();
+  }
+
+  let ambient = [];
+  function seedAmbient(l){
+    ambient = [];
+    const count = l===5 ? 46 : 26;
+    for(let i=0;i<count;i++){
+      ambient.push({ x: Math.random()*W, y: Math.random()*H, r: 1+Math.random()*2.2, seed: Math.random()*1000, drift: 0.3+Math.random()*0.8 });
+    }
+  }
+
+  function drawBackground(t){
+    if(level===1){
+      const g = ctx.createRadialGradient(W/2, H*0.35, 0, W/2, H*0.35, Math.max(W,H)*0.8);
+      g.addColorStop(0, '#120a1e'); g.addColorStop(0.5, '#080410'); g.addColorStop(1, '#000000');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+      ambient.forEach((p,i)=>{
+        const y = (p.y + t*0.01*p.drift) % H;
+        ctx.fillStyle = `rgba(180,150,220,${0.03+0.02*Math.sin(t*0.0005+i)})`;
+        ctx.beginPath(); ctx.arc(p.x, y, p.r, 0, Math.PI*2); ctx.fill();
+      });
+    } else if(level===2){
+      const g = ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#4a2f52'); g.addColorStop(0.45,'#a85b3f'); g.addColorStop(1,'#2a1520');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+      const sun = ctx.createRadialGradient(W*0.7,H*0.25,10,W*0.7,H*0.25,220);
+      sun.addColorStop(0,'rgba(255,220,150,0.5)'); sun.addColorStop(1,'rgba(255,220,150,0)');
+      ctx.fillStyle = sun; ctx.beginPath(); ctx.arc(W*0.7,H*0.25,220,0,Math.PI*2); ctx.fill();
+      ambient.forEach((p,i)=>{
+        const x = (p.x + t*0.015*p.drift) % (W+120) - 60;
+        ctx.fillStyle = 'rgba(60,30,40,0.18)';
+        ctx.beginPath(); ctx.ellipse(x, p.y*0.4, 60, 14, 0, 0, Math.PI*2); ctx.fill();
+      });
+    } else if(level===3){
+      const g = ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#1c1030'); g.addColorStop(1,'#3d2560');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+      ambient.forEach((p,i)=>{
+        const alpha = 0.2+0.5*Math.abs(Math.sin(t*0.0008+p.seed));
+        ctx.fillStyle = `rgba(201,168,255,${alpha})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+      });
+    } else if(level===4){
+      const g = ctx.createLinearGradient(0,0,0,H);
+      g.addColorStop(0,'#04202b'); g.addColorStop(1,'#0a4a5c');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+      ctx.save(); ctx.globalAlpha = 0.06;
+      for(let i=0;i<5;i++){
+        ctx.fillStyle = '#bff2ff';
+        ctx.beginPath();
+        const x = W*0.15*i + Math.sin(t*0.0003+i)*20;
+        ctx.moveTo(x,0); ctx.lineTo(x+60,0); ctx.lineTo(x-40,H); ctx.lineTo(x-100,H);
+        ctx.closePath(); ctx.fill();
+      }
+      ctx.restore();
+      ambient.forEach((p,i)=>{
+        const y = H - ((t*0.05*p.drift + p.seed*40) % (H+40));
+        ctx.strokeStyle = 'rgba(200,240,255,0.3)';
+        ctx.beginPath(); ctx.arc(p.x, y, p.r+1.5, 0, Math.PI*2); ctx.stroke();
+      });
+    } else if(level===5){
+      const pulse = 0.5+0.5*Math.sin(t*0.002);
+      const g = ctx.createRadialGradient(W/2,H*1.1,10,W/2,H*1.1,Math.max(W,H)*0.9);
+      g.addColorStop(0, `rgba(255,${80+pulse*40},20,0.9)`);
+      g.addColorStop(0.4,'#3a0505'); g.addColorStop(1,'#0a0000');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+      ambient.forEach((p,i)=>{
+        const y = H - ((t*0.09*p.drift + p.seed*50) % (H+40));
+        const flick = 0.4+0.6*Math.random();
+        ctx.fillStyle = `rgba(255,${120+Math.floor(Math.random()*80)},40,${flick})`;
+        ctx.beginPath(); ctx.arc(p.x + Math.sin(t*0.002+i)*8, y, p.r, 0, Math.PI*2); ctx.fill();
+      });
+      ctx.fillStyle = `rgba(120,0,0,${0.04+0.03*pulse})`;
+      ctx.fillRect(0,0,W,H);
+    }
+  }
+
+  function drawGun(t){
+    ctx.save();
+    ctx.translate(gun.x, gun.y);
+    const recoilOffset = gun.recoil;
+
+    const baseGrad = ctx.createLinearGradient(-40,10,40,40);
+    baseGrad.addColorStop(0,'#2b2b33'); baseGrad.addColorStop(0.5,'#484852'); baseGrad.addColorStop(1,'#1c1c22');
+    ctx.fillStyle = baseGrad;
+    ctx.beginPath();
+    ctx.moveTo(-42, 40); ctx.lineTo(42, 40); ctx.lineTo(30, 12); ctx.lineTo(-30,12);
+    ctx.closePath(); ctx.fill();
+
+    const bodyGrad = ctx.createLinearGradient(-26,-10,26,20);
+    bodyGrad.addColorStop(0,'#5a5a66'); bodyGrad.addColorStop(0.45,'#7d7d8c');
+    bodyGrad.addColorStop(0.55,'#5a5a66'); bodyGrad.addColorStop(1,'#33333c');
+    ctx.fillStyle = bodyGrad;
+    roundRect(-26,-8,52,26,8); ctx.fill();
+
+    ctx.fillStyle='rgba(255,255,255,0.12)';
+    roundRect(-22,-6,52,4,2); ctx.fill();
+
+    const barrelGrad = ctx.createLinearGradient(-8,0,8,0);
+    barrelGrad.addColorStop(0,'#26262e'); barrelGrad.addColorStop(0.5,'#55555f'); barrelGrad.addColorStop(1,'#1a1a20');
+    ctx.fillStyle = barrelGrad;
+    roundRect(-9, -46 + recoilOffset, 18, 44, 5); ctx.fill();
+
+    ctx.fillStyle = '#0d0d10';
+    ctx.beginPath(); ctx.ellipse(0, -46+recoilOffset, 9, 4, 0, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = 'rgba(255,77,109,0.55)';
+    ctx.beginPath(); ctx.ellipse(0, -46+recoilOffset, 4, 2, 0, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    [[-18,4],[18,4],[-18,-2],[18,-2]].forEach(p=>{
+      ctx.beginPath(); ctx.arc(p[0],p[1],1.6,0,Math.PI*2); ctx.fill();
+    });
+
+    ctx.restore();
+    if(gun.recoil>0){ gun.recoil = Math.max(0, gun.recoil - 1.4); }
+  }
+  function roundRect(x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.arcTo(x+w,y,x+w,y+h,r);
+    ctx.arcTo(x+w,y+h,x,y+h,r);
+    ctx.arcTo(x,y+h,x,y,r);
+    ctx.arcTo(x,y,x+w,y,r);
+    ctx.closePath();
+  }
+
+  // ---------------- entities ----------------
+  function spawnHeart(cfg){
+    const isPower = Math.random() < cfg.powerChance;
+    const isPhoto = !isPower && Math.random() < cfg.photoChance;
+    const x = 40 + Math.random()*(W-80);
+    const size = isPhoto ? 46 : (isPower ? 34 : 30);
+    hearts.push({
+      x, y: -40, size,
+      speed: cfg.fallSpeed * (0.85 + Math.random()*0.3),
+      isPhoto, isPower,
+      photoIdx: isPhoto ? Math.floor(Math.random()*PHOTO_SLOTS) : -1,
+      wobble: Math.random()*Math.PI*2
+    });
+  }
+  function spawnLoveMsg(){
+    if(level!==3) return;
+    const el = document.createElement('div');
+    el.id='loveMsg';
+    el.textContent = LOVE_LINES[Math.floor(Math.random()*LOVE_LINES.length)];
+    el.style.left = (20 + Math.random()*60)+'%';
+    el.style.top = '-30px';
+    el.style.fontSize = (14+Math.random()*8)+'px';
+    document.body.appendChild(el);
+    const duration = 9000 + Math.random()*4000;
+    const start = performance.now();
+    function anim(t){
+      const p = (t-start)/duration;
+      if(p>=1){ el.remove(); return; }
+      el.style.top = (p*(H+60)-30)+'px';
+      el.style.opacity = (0.85*(1-Math.abs(p-0.5)*1.4)).toString();
+      requestAnimationFrame(anim);
+    }
+    requestAnimationFrame(anim);
+  }
+
+  function fire(){
+    bullets.push({ x: gun.x, y: gun.y-70, speed: 620 });
+    gun.recoil = 8;
+    safePlay(sfxShoot, 0.35);
+  }
+
+  function popHeart(h, idx){
+    hearts.splice(idx,1);
+    for(let i=0;i<14;i++){
+      const ang = Math.random()*Math.PI*2;
+      const spd = 60+Math.random()*160;
+      particles.push({
+        x:h.x, y:h.y, vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd,
+        life:1, color: h.isPower ? '#FFC857' : (h.isPhoto? '#C9A8FF':'#FF4D6D')
+      });
+    }
+    safePlay(sfxExplosion, 0.6);
+    screenShake = 10;
+
+    let gained = 0;
+    if(h.isPower){
+      powerUntil = performance.now() + 6000;
+      safePlay(sfxPowerup, 0.5);
+      gained = 15;
+      score += gained;
+    } else {
+      combo++;
+      comboMult = 1 + Math.min(Math.floor(combo/8), 4)*0.4;
+      flashCombo();
+      const base = h.isPhoto ? 14 : 6;
+      gained = Math.round(base*comboMult);
+      score += gained;
+      if(h.isPhoto){
+        unlockedSlots.add(h.photoIdx);
+        saveJSON('heartCatcherMemory', Array.from(unlockedSlots));
+        renderMemoryWall();
+      }
+    }
+    popups.push({ x:h.x, y:h.y, text:'+'+gained, life:1, color: h.isPower?'#FFC857':(h.isPhoto?'#C9A8FF':'#FFE29A') });
+    updateHUD();
+    checkWin();
+  }
+
+  function missHeart(){
+    combo = 0; comboMult = 1;
+    lives--;
+    updateHUD();
+    safePlay(sfxMiss, 0.4);
+    screenShake = 6;
+    if(lives<=0){ failLevel(); }
+  }
+
+  function checkWin(){
+    const meta = LEVEL_META[level];
+    const elapsed = performance.now() - levelStartTime;
+    if(score >= meta.target && elapsed >= meta.minMs){ winLevel(); }
+  }
+
+  function showLevelCard(text, sub){
+    const card = document.getElementById('levelCard');
+    const t = document.getElementById('levelCardText');
+    const s = document.getElementById('levelCardSub');
+    t.textContent = text; s.textContent = sub||'';
+    card.style.display='flex';
+    [t,s].forEach(el=>{ el.style.transition='none'; el.style.opacity='0'; });
+    t.style.transform='scale(.8)';
+    requestAnimationFrame(()=>{
+      t.style.transition='opacity .4s ease, transform .4s ease';
+      s.style.transition='opacity .4s ease .1s';
+      t.style.opacity='1'; t.style.transform='scale(1)';
+      s.style.opacity='1';
+    });
+    setTimeout(()=>{
+      t.style.opacity='0'; t.style.transform='scale(1.1)'; s.style.opacity='0';
+      setTimeout(()=>{ card.style.display='none'; }, 400);
+    }, 1400);
+  }
+
+  // ---------------- main loop ----------------
+  let lastTime = 0;
+  function loop(t){
+    requestAnimationFrame(loop);
+    if(state!=='playing') return;
+    const dt = Math.min(40, t-lastTime)/1000;
+    lastTime = t;
+
+    const cfg = levelConfig(level, t - levelStartTime);
+
+    if(t - lastSpawn > cfg.spawnInterval){ lastSpawn = t; spawnHeart(cfg); }
+    if(level===3 && Math.random()<0.01){ spawnLoveMsg(); }
+
+    gun.x += (aimX - gun.x)*0.18;
+
+    const activeCooldown = (performance.now()<powerUntil) ? cfg.fireCooldown*0.45 : cfg.fireCooldown;
+    if(t - lastShot > activeCooldown){ lastShot = t; fire(); }
+
+    bullets.forEach(b=> b.y -= b.speed*dt);
+    bullets = bullets.filter(b=> b.y > -20);
+
+    hearts.forEach(h=>{ h.y += h.speed*dt; h.wobble += dt*2; });
+
+    for(let i=hearts.length-1;i>=0;i--){
+      const h = hearts[i];
+      for(let j=bullets.length-1;j>=0;j--){
+        const b = bullets[j];
+        const dx = h.x - b.x, dy = h.y - b.y;
+        if(Math.abs(dx) < h.size*0.6 && Math.abs(dy) < h.size*0.6){
+          bullets.splice(j,1);
+          popHeart(h, i);
+          break;
+        }
+      }
+    }
+    for(let i=hearts.length-1;i>=0;i--){
+      if(hearts[i] && hearts[i].y > H+40){
+        const missed = hearts[i];
+        hearts.splice(i,1);
+        if(!missed.isPower) missHeart();
+      }
+    }
+
+    particles.forEach(p=>{ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy += 220*dt; p.life -= dt*1.4; });
+    particles = particles.filter(p=>p.life>0);
+    popups.forEach(p=>{ p.y -= 40*dt; p.life -= dt*0.9; });
+    popups = popups.filter(p=>p.life>0);
+
+    updatePowerBar();
+    const elapsedSec = Math.floor((t - levelStartTime)/1000);
+    const mm = Math.floor(elapsedSec/60), ss = elapsedSec%60;
+    document.getElementById('timerNum').textContent = mm+':'+(ss<10?'0':'')+ss;
+
+    ctx.save();
+    if(screenShake>0){
+      ctx.translate((Math.random()-0.5)*screenShake, (Math.random()-0.5)*screenShake);
+      screenShake *= 0.85;
+      if(screenShake<0.5) screenShake=0;
+    }
+    drawBackground(t);
+
+    hearts.forEach(h=>{
+      const wob = Math.sin(h.wobble)*4;
+      ctx.save();
+      if(h.isPower){
+        ctx.shadowColor='rgba(255,200,87,0.9)'; ctx.shadowBlur=18;
+        ctx.fillStyle='#FFC857';
+        heartPath(h.x+wob, h.y, h.size); ctx.fill();
+      } else if(h.isPhoto){
+        if(photoReady(h.photoIdx)){
+          ctx.save();
+          heartPath(h.x+wob, h.y, h.size);
+          ctx.clip();
+          const d = h.size*1.3;
+          ctx.drawImage(photoImgs[h.photoIdx], h.x+wob-d/2, h.y-d/2, d, d);
+          ctx.restore();
+          ctx.strokeStyle='rgba(255,255,255,0.7)'; ctx.lineWidth=1.5;
+          heartPath(h.x+wob, h.y, h.size); ctx.stroke();
+        } else {
+          const grad = ctx.createLinearGradient(h.x-h.size/2,h.y-h.size/2,h.x+h.size/2,h.y+h.size/2);
+          const c = PHOTO_COLORS[h.photoIdx % PHOTO_COLORS.length];
+          grad.addColorStop(0,c[0]); grad.addColorStop(1,c[1]);
+          ctx.fillStyle = grad;
+          ctx.shadowColor='rgba(201,168,255,0.5)'; ctx.shadowBlur=10;
+          heartPath(h.x+wob, h.y, h.size); ctx.fill();
+          ctx.shadowBlur=0;
+          ctx.strokeStyle='rgba(255,255,255,0.7)';
+          ctx.setLineDash([2,2]); ctx.lineWidth=1.2;
+          ctx.strokeRect(h.x+wob-8, h.y-6, 16, 12);
+          ctx.setLineDash([]);
+        }
+      } else {
+        ctx.fillStyle='#FF4D6D';
+        ctx.shadowColor='rgba(255,77,109,0.5)'; ctx.shadowBlur=10;
+        heartPath(h.x+wob, h.y, h.size); ctx.fill();
+      }
+      ctx.restore();
+    });
+
+    bullets.forEach(b=>{
+      ctx.save();
+      ctx.fillStyle='#FFE29A';
+      ctx.shadowColor='rgba(255,226,154,0.8)'; ctx.shadowBlur=8;
+      ctx.beginPath(); ctx.ellipse(b.x,b.y,3.5,9,0,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    particles.forEach(p=>{
+      ctx.globalAlpha = Math.max(0,p.life);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,2.4,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
+    });
+
+    popups.forEach(p=>{
+      ctx.globalAlpha = Math.max(0,p.life);
+      ctx.font = "700 15px 'Space Mono', monospace";
+      ctx.fillStyle = p.color;
+      ctx.textAlign = 'center';
+      ctx.fillText(p.text, p.x, p.y);
+      ctx.globalAlpha = 1;
+    });
+
+    drawGun(t);
+    ctx.restore();
+  }
+  requestAnimationFrame(loop);
+
+  // ---------------- flow control ----------------
+  function showOverlay(id){
+    ['selectOverlay','completeOverlay','overOverlay','winOverlay'].forEach(o=>{
+      document.getElementById(o).classList.toggle('hidden', o!==id);
+    });
+  }
+  function showHud(show){
+    document.getElementById('hud').classList.toggle('hidden', !show);
+    document.getElementById('memoryWall').classList.toggle('hidden', !show);
+  }
+
+  function goToSelect(){
+    state = 'select';
+    stopBgm();
+    document.getElementById('pauseOverlay').style.display = 'none';
+    showHud(false);
+    renderLevelSelect();
+    showOverlay('selectOverlay');
+  }
+
+  function startLevel(l){
+    level = l;
+    score = 0; lives = 3; combo = 0; comboMult = 1;
+    bullets=[]; hearts=[]; particles=[]; popups=[];
+    lastSpawn = 0; lastShot = 0; powerUntil = 0;
+    resetGunPos();
+    seedAmbient(l);
+    updateHUD(); renderMemoryWall(); showHud(true);
+    showOverlay(null);
+    document.getElementById('completeOverlay').classList.add('hidden');
+    document.getElementById('overOverlay').classList.add('hidden');
+    document.getElementById('winOverlay').classList.add('hidden');
+    state = 'playing';
+    lastTime = performance.now();
+    levelStartTime = lastTime;
+    playBgmFor(l);
+    showLevelCard('Level '+l, LEVEL_META[l].name);
+  }
+
+  function livesToStars(){ return Math.max(1, Math.min(3, lives)); }
+
+  function winLevel(){
+    if(state!=='playing') return;
+    state = 'complete';
+    stopBgm();
+    safePlay(sfxLevelup, 0.5);
+    if(score > (levelBest[level]||0)){ levelBest[level] = score; saveJSON('heartCatcherLevelBest', levelBest); }
+    if(level < 5 && unlockedMax < level+1){ unlockedMax = level+1; saveJSON('heartCatcherUnlockedMax', unlockedMax); }
+    const stars = livesToStars();
+    if(level===5){
+      document.getElementById('winStars').innerHTML = starsHTML(stars);
+      showHud(false);
+      showOverlay('winOverlay');
+      return;
+    }
+    document.getElementById('completeTitle').innerHTML = 'Level <em>complete</em>';
+    document.getElementById('completeStars').innerHTML = starsHTML(stars);
+    document.getElementById('completeText').textContent =
+      'Score '+score+' on '+LEVEL_META[level].name+'. '+LEVEL_META[level+1].name+' is now unlocked.';
+    document.getElementById('nextLevelBtn').style.display = 'inline-block';
+    showHud(false);
+    showOverlay('completeOverlay');
+  }
+
+  function failLevel(){
+    state = 'over';
+    stopBgm();
+    document.getElementById('overScoreText').textContent =
+      'You scored '+score+' out of '+LEVEL_META[level].target+' on '+LEVEL_META[level].name+'.';
+    showHud(false);
+    showOverlay('overOverlay');
+  }
+
+  function pauseGame(){
+    if(state!=='playing') return;
+    stateBeforePause = state;
+    state = 'paused';
+    if(currentBgm){ try{currentBgm.pause();}catch(e){} }
+    document.getElementById('pauseOverlay').style.display = 'flex';
+  }
+  function resumeGame(){
+    if(state!=='paused') return;
+    state = 'playing';
+    document.getElementById('pauseOverlay').style.display = 'none';
+    if(currentBgm && !muted){ try{currentBgm.play().catch(()=>{});}catch(e){} }
+    lastTime = performance.now();
+  }
+
+  document.getElementById('nextLevelBtn').addEventListener('click', ()=> startLevel(level+1));
+  document.getElementById('selectFromCompleteBtn').addEventListener('click', goToSelect);
+  document.getElementById('retryBtn').addEventListener('click', ()=> startLevel(level));
+  document.getElementById('selectFromOverBtn').addEventListener('click', goToSelect);
+  document.getElementById('selectFromWinBtn').addEventListener('click', goToSelect);
+  document.getElementById('quitBtn').addEventListener('click', goToSelect);
+  document.getElementById('pauseBtn').addEventListener('click', pauseGame);
+  document.getElementById('resumeBtn').addEventListener('click', resumeGame);
+  document.getElementById('quitFromPauseBtn').addEventListener('click', goToSelect);
+  document.getElementById('muteBtn').addEventListener('click', ()=>{
+    muted = !muted;
+    saveJSON('heartCatcherMuted', muted);
+    updateMuteBtn();
+    if(muted && currentBgm){ try{currentBgm.pause();}catch(e){} }
+    else if(currentBgm && state==='playing'){ try{currentBgm.play().catch(()=>{});}catch(e){} }
+  });
+
+  updateMuteBtn();
+  resize();
+  goToSelect();
+})();
+</script>
+</body>
+</html>

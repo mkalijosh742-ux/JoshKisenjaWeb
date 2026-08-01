@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>You Are My Everything</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+
+    .page2 {
+      width: 100%;
+      /* FIX: use dvh so mobile browser address bar doesn't clip content */
+      height: 100vh;
+      height: 100dvh;
+      min-height: 100vh;
+      min-height: 100dvh;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    }
+
+    /* ===== 3D PARALLAX BACKGROUND ===== */
+    .parallax-bg {
+      position: absolute;
+      top: -10%;
+      left: -10%;
+      width: 120%;
+      height: 120%;
+      pointer-events: none;
+    }
+
+    .parallax-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.1s ease-out;
+    }
+
+    .layer-1 {
+      background: radial-gradient(circle at 20% 50%, rgba(255, 0, 150, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(0, 200, 255, 0.1) 0%, transparent 40%);
+    }
+
+    .layer-2 {
+      background: radial-gradient(circle at 60% 80%, rgba(255, 100, 200, 0.1) 0%, transparent 40%);
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      animation: floatParticle linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes floatParticle {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+    }
+
+    /* ===== HER IMAGE - LEFT SIDE ===== */
+    .her-image {
+      position: absolute;
+      left: -2%;
+      bottom: 0;
+      height: 85vh;
+      z-index: 5;
+      filter: drop-shadow(0 0 30px rgba(255, 100, 200, 0.4));
+      animation: gentleFloat 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    /* ===== MAIN CONTENT - CENTER RIGHT ===== */
+    .content {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 55%;
+      max-width: 350px;
+      z-index: 10;
+      text-align: center;
+    }
+
+    .typing-container {
+      margin-bottom: 30px;
+    }
+
+    .typing-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.2rem;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+      min-height: 120px;
+      line-height: 1.4;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1em;
+      background: #ff6b9d;
+      animation: blink 0.8s infinite;
+      vertical-align: middle;
+      margin-left: 3px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .love-quote {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      font-style: italic;
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeInQuote 1s ease 4s forwards;
+    }
+
+    @keyframes fadeInQuote {
+      to { opacity: 1; }
+    }
+
+    .floating-heart {
+      position: absolute;
+      color: rgba(255, 105, 180, 0.4);
+      font-size: 20px;
+      animation: heartFloat 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes heartFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    /* ===== TABS ===== */
+    .tab {
+      position: absolute;
+      z-index: 20;
+      padding: 14px 24px;
+      border-radius: 25px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      font-family: 'Poppins', sans-serif;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .tab:active {
+      transform: scale(0.95);
+    }
+
+    .game-tab {
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, #ff4757, #c44569);
+      animation: pulseTab 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseTab {
+      0%, 100% { box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4); }
+      50% { box-shadow: 0 5px 30px rgba(255, 71, 87, 0.7); }
+    }
+
+    .gallery-tab {
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+      animation: pulseTab2 2s ease-in-out infinite 1s;
+    }
+
+    @keyframes pulseTab2 {
+      0%, 100% { box-shadow: 0 5px 20px rgba(108, 92, 231, 0.4); }
+      50% { box-shadow: 0 5px 30px rgba(108, 92, 231, 0.7); }
+    }
+
+    .tab::before {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 30px;
+      background: inherit;
+      filter: blur(15px);
+      opacity: 0.4;
+      z-index: -1;
+    }
+
+    /* ===== MUSIC PLAYER WIDGET ===== */
+    .music-player {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      opacity: 0;
+      transition: opacity 0.5s ease, box-shadow 0.5s ease;
+      pointer-events: none;
+    }
+
+    .music-player.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .music-player.song-1 {
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.5), 0 0 40px rgba(255, 105, 180, 0.2);
+      border-color: rgba(255, 105, 180, 0.3);
+    }
+
+    .music-player.song-2 {
+      box-shadow: 0 0 20px rgba(162, 155, 254, 0.5), 0 0 40px rgba(162, 155, 254, 0.2);
+      border-color: rgba(162, 155, 254, 0.3);
+    }
+
+    .music-player.song-3 {
+      box-shadow: 0 0 20px rgba(255, 165, 2, 0.5), 0 0 40px rgba(255, 165, 2, 0.2);
+      border-color: rgba(255, 165, 2, 0.3);
+    }
+
+    .music-icon {
+      font-size: 1.3rem;
+      animation: musicBounce 1s ease-in-out infinite;
+    }
+
+    @keyframes musicBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    .song-name {
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .equalizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 20px;
+    }
+
+    .eq-bar {
+      width: 3px;
+      background: currentColor;
+      border-radius: 2px;
+      animation: eqBounce 0.5s ease-in-out infinite alternate;
+    }
+
+    .eq-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+    .eq-bar:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+    .eq-bar:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+    .eq-bar:nth-child(4) { height: 16px; animation-delay: 0.15s; }
+    .eq-bar:nth-child(5) { height: 7px; animation-delay: 0.05s; }
+
+    @keyframes eqBounce {
+      0% { transform: scaleY(0.3); }
+      100% { transform: scaleY(1); }
+    }
+
+    .music-switch {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 30;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .music-switch:active {
+      transform: scale(0.9);
+    }
+
+    .music-switch.glow-pink {
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.6);
+      border-color: rgba(255, 105, 180, 0.5);
+    }
+
+    .music-switch.glow-purple {
+      box-shadow: 0 0 15px rgba(162, 155, 254, 0.6);
+      border-color: rgba(162, 155, 254, 0.5);
+    }
+
+    .music-switch.glow-orange {
+      box-shadow: 0 0 15px rgba(255, 165, 2, 0.6);
+      border-color: rgba(255, 165, 2, 0.5);
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 500px) {
+      .her-image {
+        height: 60vh;
+        left: -15%;
+        opacity: 0.9;
+      }
+      .content {
+        width: 52%;
+        right: 3%;
+      }
+      .typing-text {
+        font-size: 1.4rem;
+        min-height: 100px;
+      }
+      .tab {
+        padding: 10px 14px;
+        font-size: 0.75rem;
+      }
+      .music-player {
+        padding: 8px 15px;
+        bottom: 70px;
+      }
+      .song-name {
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-height: 600px) {
+      .her-image {
+        height: 55vh;
+      }
+      .typing-text {
+        font-size: 1.3rem;
+        min-height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page2" id="page2">
+    <!-- 3D Parallax Background -->
+    <div class="parallax-bg" id="parallaxBg">
+      <div class="parallax-layer layer-1" id="layer1"></div>
+      <div class="parallax-layer layer-2" id="layer2"></div>
+    </div>
+
+    <!-- Floating particles -->
+    <div id="particles"></div>
+
+    <!-- ===== HER IMAGE ===== -->
+    <img src="phely.png" alt="My Love" class="her-image" id="herImage">
+
+    <!-- ===== MUSIC SWITCH BUTTON (Top Right) ===== -->
+    <button class="music-switch glow-pink" id="musicSwitch" onclick="cycleSong()">🎵</button>
+
+    <!-- ===== MUSIC PLAYER WIDGET (Bottom Center) ===== -->
+    <div class="music-player song-1 visible" id="musicPlayer">
+      <span class="music-icon">🎵</span>
+      <span class="song-name" id="songName">Romantic Vibes</span>
+      <div class="equalizer" id="equalizer">
+        <div class="eq-bar" style="color: #ff6b9d;"></div>
+        <div class="eq-bar" style="color: #ff6b9d;"></div>
+        <div class="eq-bar" style="color: #ff6b9d;"></div>
+        <div class="eq-bar" style="color: #ff6b9d;"></div>
+        <div class="eq-bar" style="color: #ff6b9d;"></div>
+      </div>
+    </div>
+
+    <!-- ===== AUDIO ELEMENTS ===== -->
+    <!-- FIX: song2's id was set to the file path instead of "song2", and its src was empty -->
+    <audio id="song1" loop>
+      <source src="page 2 aud/LoonyQ.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="song2" loop>
+      <source src="page 2 aud/sean.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="song3" loop>
+      <source src="page 2 aud/woza.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- ===== GAME TAB - Top Left ===== -->
+    <a href="game.html" class="tab game-tab" id="gameTab"
+       ontouchstart="previewSong(3)" onmouseenter="previewSong(3)" onmouseleave="restoreSong()">
+      🎯 Check on This Amazing Spot
+    </a>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="content">
+      <div class="typing-container">
+        <div class="typing-text" id="typingText">
+          <span id="typedText"></span><span class="typing-cursor" id="cursor"></span>
+        </div>
+      </div>
+      <div class="love-quote" id="loveQuote">
+        "You are the most beautiful chapter in my life story."
+      </div>
+    </div>
+
+    <!-- ===== GALLERY TAB - Bottom Right ===== -->
+    <a href="gallery.html" class="tab gallery-tab" id="galleryTab"
+       ontouchstart="previewSong(2)" onmouseenter="previewSong(2)" onmouseleave="restoreSong()">
+      📸 Our Gallery
+    </a>
+  </div>
+
+  <script>
+    /* ===== 3D PARALLAX EFFECT ===== */
+    const page2 = document.getElementById('page2');
+    const layer1 = document.getElementById('layer1');
+    const layer2 = document.getElementById('layer2');
+
+    page2.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      const x = (touch.clientX / window.innerWidth - 0.5) * 2;
+      const y = (touch.clientY / window.innerHeight - 0.5) * 2;
+      layer1.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
+      layer2.style.transform = `translate(${x * 40}px, ${y * 40}px)`;
+    }, { passive: true });
+
+    page2.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 2;
+      const y = (e.clientY / window.innerHeight - 0.5) * 2;
+      layer1.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
+      layer2.style.transform = `translate(${x * 40}px, ${y * 40}px)`;
+    });
+
+    /* ===== FLOATING PARTICLES ===== */
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.width = (2 + Math.random() * 4) + 'px';
+      p.style.height = p.style.width;
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      p.style.animationDelay = Math.random() * 5 + 's';
+      p.style.opacity = 0.3 + Math.random() * 0.5;
+      particlesContainer.appendChild(p);
+    }
+
+    /* ===== TYPING ANIMATION ===== */
+    const messages = [
+      "Hey beautiful...",
+      "Every moment with you",
+      "feels like a dream",
+      "I love you more than",
+      "words can ever say 💕"
+    ];
+
+    let msgIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    const typedText = document.getElementById('typedText');
+
+    function typeText() {
+      const currentMsg = messages[msgIndex];
+      if (isDeleting) {
+        typedText.textContent = currentMsg.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        typedText.textContent = currentMsg.substring(0, charIndex + 1);
+        charIndex++;
+      }
+
+      let typeSpeed = isDeleting ? 30 : 80;
+      if (!isDeleting && charIndex === currentMsg.length) {
+        typeSpeed = 1500;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        msgIndex = (msgIndex + 1) % messages.length;
+        typeSpeed = 500;
+      }
+      setTimeout(typeText, typeSpeed);
+    }
+    setTimeout(typeText, 1000);
+
+    /* ===== FLOATING HEARTS ===== */
+    const content = document.querySelector('.content');
+    const heartPositions = [
+      { top: '-30px', left: '10%' },
+      { top: '-20px', right: '10%' },
+      { bottom: '-20px', left: '20%' },
+      { bottom: '-30px', right: '20%' }
+    ];
+    heartPositions.forEach((pos, i) => {
+      const heart = document.createElement('div');
+      heart.className = 'floating-heart';
+      heart.textContent = ['💕', '💖', '💗', '💘'][i];
+      Object.assign(heart.style, pos);
+      heart.style.animationDelay = (i * 0.5) + 's';
+      content.appendChild(heart);
+    });
+
+    /* ===== MUSIC SYSTEM ===== */
+    const songData = [
+      { id: 'song1', name: 'Vibes', color: '#ff6b9d', class: 'song-1', glow: 'glow-pink' },
+      { id: 'song2', name: 'hits', color: '#a29bfe', class: 'song-2', glow: 'glow-purple' },
+      { id: 'song3', name: 'Playful Energy', color: '#ffa502', class: 'song-3', glow: 'glow-orange' }
+    ];
+
+    let currentSongIndex = 0;
+    let previousSongIndex = 0;
+    let isPreviewing = false;
+    // FIX: tracks whether audio has been unlocked by a user gesture,
+    // so the fallback "start audio" listener doesn't stomp on a preview
+    // that already started from tapping a tab.
+    let audioUnlocked = false;
+
+    const musicPlayer = document.getElementById('musicPlayer');
+    const songName = document.getElementById('songName');
+    const musicSwitch = document.getElementById('musicSwitch');
+    const eqBars = document.querySelectorAll('.eq-bar');
+
+    function playSong(index) {
+      audioUnlocked = true;
+
+      // Stop all songs
+      songData.forEach((s) => {
+        const audio = document.getElementById(s.id);
+        if (!audio) return;
+        audio.pause();
+        audio.currentTime = 0;
+      });
+
+      // Play selected
+      const audio = document.getElementById(songData[index].id);
+      if (audio) {
+        audio.play().catch(e => console.log('Audio play failed:', e));
+      }
+
+      // Update UI
+      const data = songData[index];
+      musicPlayer.className = `music-player ${data.class} visible`;
+      songName.textContent = data.name;
+      musicSwitch.className = `music-switch ${data.glow}`;
+      eqBars.forEach(bar => bar.style.color = data.color);
+
+      // Show player briefly
+      musicPlayer.style.opacity = '1';
+      clearTimeout(window.hidePlayerTimeout);
+      window.hidePlayerTimeout = setTimeout(() => {
+        if (!isPreviewing) musicPlayer.style.opacity = '0.7';
+      }, 3000);
+    }
+
+    function cycleSong() {
+      currentSongIndex = (currentSongIndex + 1) % 3;
+      playSong(currentSongIndex);
+    }
+
+    function previewSong(index) {
+      isPreviewing = true;
+      previousSongIndex = currentSongIndex;
+      playSong(index - 1); // index is 1-based in HTML
+    }
+
+    function restoreSong() {
+      isPreviewing = false;
+      playSong(previousSongIndex);
+    }
+
+    // Unlock/start Song 1 on the first interaction, but only if nothing
+    // has already started playing (e.g. from tapping a tab directly).
+    function startInitialAudio() {
+      if (audioUnlocked) return;
+      playSong(0);
+    }
+    document.addEventListener('click', startInitialAudio, { once: true });
+    document.addEventListener('touchstart', startInitialAudio, { once: true });
+  </script>
+</body>
+</html>

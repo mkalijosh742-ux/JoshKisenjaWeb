@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Run The Beat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --hue: 330;
+    --void:#0a0210;
+    --mist:#f3e7ff;
+    --gold:#ffd8a8;
+    --accent: hsl(var(--hue), 80%, 62%);
+    --accent2: hsl(calc(var(--hue) + 40), 70%, 60%);
+    --accent-dim: hsla(var(--hue), 70%, 55%, 0.35);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:var(--void);
+    color:var(--mist);
+    font-family:'Sora',sans-serif;
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+  #stage{ position:fixed; inset:0; display:flex; flex-direction:column; }
+
+  #hud{
+    position:relative; z-index:6;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 18px 8px;
+  }
+  #back{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    color:rgba(243,231,255,0.55); text-decoration:none;
+    border:1px solid rgba(255,255,255,0.15); border-radius:20px; padding:6px 12px;
+  }
+  #titleWrap{ text-align:center; }
+  #trackTitle{ font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:17px; margin:0; }
+  #bpmReadout{ font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.15em; color:var(--accent); text-transform:uppercase; }
+  #score{ font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--accent); letter-spacing:0.1em; }
+
+  #road{
+    position:relative; flex:1; overflow:hidden; touch-action:manipulation;
+    background:radial-gradient(120% 70% at 50% 100%, var(--accent-dim), transparent 60%), linear-gradient(to bottom, var(--void) 0%, #140626 100%);
+  }
+  #bgfx{ position:absolute; inset:0; overflow:hidden; z-index:0; }
+  .particle{ position:absolute; border-radius:50%; opacity:0.5; will-change:transform; }
+
+  #keepsakePhoto{
+    position:absolute; inset:0; margin:auto; width:60%; max-width:260px; aspect-ratio:1/1; top:6%;
+    object-fit:cover; border-radius:14px; opacity:0.14; pointer-events:none; z-index:1;
+  }
+
+  #grid{
+    position:absolute; left:0; right:0; bottom:0; top:35%; z-index:1;
+    background-image:
+      linear-gradient(to right, var(--accent-dim) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--accent-dim) 1px, transparent 1px);
+    background-size: 12.5% 40px;
+    transform:perspective(300px) rotateX(35deg);
+    transform-origin:bottom;
+    opacity:0.4;
+    animation:gridmove 0.5s linear infinite;
+  }
+  @keyframes gridmove{ from{ background-position-y:0; } to{ background-position-y:40px; } }
+
+  #hitline{
+    position:absolute; left:4%; right:4%; bottom:24%; height:3px; z-index:2;
+    background:linear-gradient(to right, transparent, var(--accent), var(--accent2), transparent);
+    box-shadow:0 0 18px 2px var(--accent-dim);
+  }
+
+  .tile{
+    position:absolute; top:-90px; left:0; width:96px; height:96px; margin-left:-48px;
+    background:linear-gradient(145deg, var(--accent), var(--accent2));
+    box-shadow:0 0 22px var(--accent-dim);
+    z-index:3;
+    border-radius:20px;
+    transform:scale(0.3);
+    opacity:0.9;
+    transition:transform linear, top linear, opacity 0.25s ease;
+  }
+  /* generous invisible hit area, bigger than the visible tile so touches never miss narrowly */
+  .tile::after{
+    content:''; position:absolute; inset:-18px;
+  }
+  .tile.shape-diamond{ clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%); border-radius:0; }
+  .tile.shape-hexagon{ clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%); border-radius:0; }
+  .tile.shape-star{ clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); border-radius:0; }
+  .tile.shape-heart{ border-radius:0; background:transparent; box-shadow:none; }
+  .tile.shape-heart .heart-core{
+    position:absolute; inset:14%; transform:rotate(-45deg);
+    background:linear-gradient(145deg, var(--accent), var(--accent2));
+    box-shadow:0 0 22px var(--accent-dim);
+  }
+  .tile.shape-heart .heart-core::before, .tile.shape-heart .heart-core::after{
+    content:''; position:absolute; width:100%; height:100%; border-radius:50%; background:inherit;
+  }
+  .tile.shape-heart .heart-core::before{ top:-50%; left:0; }
+  .tile.shape-heart .heart-core::after{ top:0; left:50%; }
+
+  .tile.good{ transform:scale(1.3) !important; opacity:0 !important; background:linear-gradient(145deg,#8dffc2,#3dd8ff) !important; box-shadow:0 0 30px rgba(125,255,176,0.8) !important; }
+  .tile.good .heart-core{ background:linear-gradient(145deg,#8dffc2,#3dd8ff) !important; }
+  .tile.bad{ background:linear-gradient(145deg,#3a3a3a,#1a1a1a) !important; box-shadow:none !important; opacity:0.4 !important; }
+  .tile.bad .heart-core{ background:linear-gradient(145deg,#3a3a3a,#1a1a1a) !important; }
+
+  #tapHint{
+    position:absolute; bottom:6%; left:0; right:0; text-align:center; z-index:5;
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.18em;
+    color:rgba(243,231,255,0.35); text-transform:uppercase; pointer-events:none;
+  }
+
+  .overlay{
+    position:fixed; inset:0; z-index:20; background:rgba(10,2,16,0.94);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:32px; backdrop-filter:blur(4px);
+  }
+  .overlay.hidden{ display:none; }
+  .overlay h2{ font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:clamp(26px,7vw,36px); margin:0 0 10px; color:var(--mist); }
+  .overlay p{ color:rgba(243,231,255,0.6); font-size:14px; max-width:300px; line-height:1.6; margin:0 0 22px; }
+  .overlay .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.3em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; }
+  .keepsake-card{
+    width:min(78vw,260px); aspect-ratio:1/1; border-radius:16px; overflow:hidden;
+    border:1px solid var(--accent-dim); box-shadow:0 0 40px var(--accent-dim); margin-bottom:20px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+  }
+  .keepsake-card img{ width:100%; height:100%; object-fit:cover; }
+  .keepsake-placeholder{ font-family:'JetBrains Mono',monospace; font-size:10.5px; line-height:1.6; color:var(--gold); padding:18px; }
+  .btn{
+    font-family:'Sora',sans-serif; font-weight:600; font-size:14px; color:var(--void);
+    background:linear-gradient(135deg, var(--gold), var(--accent));
+    border:none; border-radius:24px; padding:12px 28px; text-decoration:none; display:inline-block;
+    box-shadow:0 6px 20px var(--accent-dim);
+  }
+  .btn.ghost{ background:transparent; color:var(--mist); border:1px solid rgba(255,255,255,0.25); box-shadow:none; margin-top:10px; }
+  #audioNotice{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--gold); margin-top:14px; max-width:260px; line-height:1.5; opacity:0.75; }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="hud">
+    <a href="tiles.html" id="back">&larr; playlist</a>
+    <div id="titleWrap">
+      <p id="trackTitle">—</p>
+      <p id="bpmReadout">— bpm</p>
+    </div>
+    <div id="score">0</div>
+  </div>
+
+  <div id="road">
+    <div id="bgfx"></div>
+    <img id="keepsakePhoto" style="display:none;">
+    <div id="grid"></div>
+    <div id="hitline"></div>
+    <p id="tapHint">tap the tile as it reaches the line</p>
+  </div>
+</div>
+
+<div class="overlay" id="startOverlay">
+  <div class="eyebrow">get ready</div>
+  <h2 id="startTitle">Song</h2>
+  <p>One tile at a time — tap it the moment it reaches the glowing line.</p>
+  <a href="#" class="btn" id="startBtn">Start</a>
+  <p id="audioNotice"></p>
+</div>
+
+<div class="overlay hidden" id="endOverlay">
+  <h2 id="endHeadline">That was us.</h2>
+  <div class="keepsake-card" id="keepsakeCard" style="display:none;"></div>
+  <p id="endMessage"></p>
+  <a href="tiles.html" class="btn">Back to the playlist</a>
+  <a href="#" class="btn ghost" id="replayBtn">Run it again</a>
+</div>
+
+<audio id="audio" preload="auto"></audio>
+
+<script src="songs-config.js"></script>
+<script>
+(function(){
+  const song = getSongFromQuery();
+  const theme = THEME_PRESETS[song.theme] || THEME_PRESETS.bloom;
+  const hue = song.hue !== undefined ? song.hue : theme.base[0];
+  document.documentElement.style.setProperty('--hue', hue);
+
+  const audio = document.getElementById('audio');
+  const road = document.getElementById('road');
+  const scoreEl = document.getElementById('score');
+  const startOverlay = document.getElementById('startOverlay');
+  const endOverlay = document.getElementById('endOverlay');
+  const startBtn = document.getElementById('startBtn');
+  const replayBtn = document.getElementById('replayBtn');
+  const bgfx = document.getElementById('bgfx');
+
+  document.getElementById('trackTitle').textContent = song.title;
+  document.getElementById('bpmReadout').textContent = song.bpm + ' bpm';
+  document.getElementById('startTitle').textContent = song.title;
+
+  function buildBackground(kind){
+    const count = 9;
+    for (let i=0;i<count;i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = 3 + Math.random()*6;
+      p.style.width = size+'px'; p.style.height = size+'px';
+      p.style.left = Math.random()*100+'%';
+      p.style.top = Math.random()*100+'%';
+      const dur = 4 + Math.random()*6;
+      const delay = Math.random()*6;
+      let color = 'hsla(' + hue + ',80%,70%,0.7)';
+      let anim = 'driftDown';
+      if (kind === 'petals'){ anim='driftDown'; p.style.borderRadius='0 60% 0 60%'; }
+      if (kind === 'embers'){ anim='driftUp'; color='hsla('+hue+',90%,60%,0.8)'; }
+      if (kind === 'aurora'){ anim='sway'; p.style.width=(40+Math.random()*60)+'px'; p.style.height='6px'; p.style.borderRadius='6px'; p.style.opacity='0.3'; }
+      if (kind === 'stars'){ anim='twinkle'; }
+      if (kind === 'drift'){ anim='sway'; }
+      p.style.background = color;
+      p.style.animation = anim+' '+dur+'s ease-in-out '+delay+'s infinite';
+      bgfx.appendChild(p);
+    }
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes driftDown{ from{ transform:translateY(-20px) rotate(0deg);} to{ transform:translateY(70vh) rotate(180deg);} }
+      @keyframes driftUp{ from{ transform:translateY(10vh) scale(1); opacity:0.8;} to{ transform:translateY(-60vh) scale(0.4); opacity:0;} }
+      @keyframes sway{ 0%,100%{ transform:translateX(-10px);} 50%{ transform:translateX(10px);} }
+      @keyframes twinkle{ 0%,100%{ opacity:0.2;} 50%{ opacity:0.9;} }
+    `;
+    document.head.appendChild(style);
+  }
+  buildBackground(theme.bg);
+
+  const hasKeepsakeSlot = song.image !== undefined;
+  if (hasKeepsakeSlot && song.image) {
+    const bgPhoto = document.getElementById('keepsakePhoto');
+    bgPhoto.src = song.image;
+    bgPhoto.style.display = 'block';
+  }
+
+  audio.src = song.file;
+  let audioBroken = false;
+  audio.addEventListener('error', () => {
+    audioBroken = true;
+    document.getElementById('audioNotice').textContent =
+      'Couldn\'t find "' + song.file + '" yet — the tiles will still run on tempo, just without sound until you add the file.';
+  });
+
+  let roadW = 0, roadH = 0, hitY = 0;
+  const margin = 70;
+  function measureRoad(){ roadW = road.clientWidth; roadH = road.clientHeight; hitY = roadH * 0.76; }
+  window.addEventListener('resize', measureRoad);
+
+  let score = 0, running = false, alive = true;
+
+  // ---- SINGLE SOURCE OF TRUTH FOR TIME ----
+  // Everything (spawn timing AND miss timing) reads from this one clock,
+  // which only starts once the song has actually begun playing (or,
+  // if there's no audio file yet, once we know we're not waiting on one).
+  let clockZero = null;
+  function now(){ return clockZero === null ? 0 : (performance.now()/1000 - clockZero); }
+
+  const travelSec = 1.6;                // time a tile takes top -> hit line
+  const beatInterval = 60 / song.bpm;
+  // never let two tiles be in flight at once: force real spacing
+  const spawnInterval = Math.max(beatInterval * (song.bpm > 130 ? 2 : 1), travelSec + 0.5);
+  const leadIn = 1.2;
+  const tapToleranceSec = 0.3;          // generous forgiveness around the beat
+  let nextBeatTime = 0;
+  let activeTile = null;                // only one tile lives at a time
+  let pollId;
+
+  function updateScore(){ scoreEl.textContent = score; }
+
+  function pickNextX(prevX){
+    const spread = roadW * 0.36;
+    let x = (prevX === null ? roadW/2 : prevX) + (Math.random()*2-1) * spread;
+    return Math.max(margin, Math.min(roadW-margin, x));
+  }
+  let lastX = null;
+
+  function makeTileEl(x){
+    const el = document.createElement('div');
+    el.className = 'tile shape-' + theme.shape;
+    if (theme.shape === 'heart'){
+      const core = document.createElement('div');
+      core.className = 'heart-core';
+      el.appendChild(core);
+    }
+    el.style.left = x + 'px';
+    road.appendChild(el);
+    requestAnimationFrame(()=>{
+      el.style.transitionDuration = travelSec + 's, ' + travelSec + 's, 0.25s';
+      el.style.top = (hitY - 48) + 'px';
+      el.style.transform = 'scale(1.05)';
+    });
+    return el;
+  }
+
+  function clearActive(){
+    if (activeTile && activeTile.missTimer) clearTimeout(activeTile.missTimer);
+    if (activeTile && activeTile.removeTimer) clearTimeout(activeTile.removeTimer);
+    activeTile = null;
+  }
+
+  function judge(entry, tapped){
+    if (!entry || entry.judged) return;
+    entry.judged = true;
+    if (tapped){
+      entry.el.classList.add('good');
+      score += 1; updateScore();
+      setTimeout(()=>{ if (entry.el) entry.el.remove(); }, 260);
+    } else {
+      entry.el.classList.add('bad');
+      setTimeout(()=>{ if (entry.el) entry.el.remove(); }, 500);
+      failRun();
+    }
+  }
+
+  function failRun(){
+    if (!alive) return;
+    alive = false;
+    setTimeout(()=> endGame(false), 320);
+  }
+
+  function spawnBeat(arrival){
+    lastX = pickNextX(lastX);
+    const el = makeTileEl(lastX);
+    const entry = { el, arrival, judged:false };
+    activeTile = entry;
+
+    el.addEventListener('pointerdown', (e)=>{
+      e.preventDefault();
+      if (Math.abs(now() - entry.arrival) <= tapToleranceSec){
+        judge(entry, true);
+        clearActive();
+      }
+    });
+
+    entry.missTimer = setTimeout(()=>{
+      judge(entry, false);
+    }, (arrival - now() + tapToleranceSec) * 1000);
+
+    entry.removeTimer = setTimeout(()=>{
+      if (entry.el) entry.el.remove();
+      if (activeTile === entry) activeTile = null;
+    }, (arrival - now() + tapToleranceSec + 0.6) * 1000);
+  }
+
+  function pollSpawns(){
+    if (!running) return;
+    if (alive && !activeTile && nextBeatTime - now() <= travelSec){
+      spawnBeat(nextBeatTime);
+      nextBeatTime += spawnInterval;
+    }
+    pollId = requestAnimationFrame(pollSpawns);
+  }
+
+  function beginRun(){
+    // called only once we're sure timing has a valid zero-point
+    score = 0; updateScore();
+    if (activeTile) clearActive();
+    road.querySelectorAll('.tile').forEach(t=>t.remove());
+    lastX = null;
+    measureRoad();
+    running = true; alive = true;
+    nextBeatTime = leadIn;
+    pollId = requestAnimationFrame(pollSpawns);
+  }
+
+  function startGame(){
+    startOverlay.classList.add('hidden');
+    clockZero = null;
+
+    if (audioBroken || !song.file){
+      clockZero = performance.now()/1000;
+      beginRun();
+      return;
+    }
+
+    // wait for the browser to actually start producing sound before
+    // starting the game clock — this is what prevents "missed before
+    // it even started".
+    const onPlaying = () => {
+      audio.removeEventListener('playing', onPlaying);
+      clockZero = performance.now()/1000;
+      beginRun();
+    };
+    audio.addEventListener('playing', onPlaying);
+    audio.currentTime = 0;
+    audio.play().catch(()=>{
+      // autoplay/decoding failed for some reason — still let them play silently
+      audio.removeEventListener('playing', onPlaying);
+      clockZero = performance.now()/1000;
+      beginRun();
+    });
+  }
+
+  function endGame(finishedSong){
+    running = false;
+    cancelAnimationFrame(pollId);
+    audio.pause();
+    const headline = document.getElementById('endHeadline');
+    const msg = document.getElementById('endMessage');
+    const card = document.getElementById('keepsakeCard');
+
+    if (finishedSong){
+      headline.textContent = 'That was us.';
+      msg.textContent = 'Every beat of "' + song.title + '" landed exactly where it should — like this.';
+    } else {
+      headline.textContent = 'Let\'s find the rhythm again.';
+      msg.textContent = 'No losing here — just an excuse to run "' + song.title + '" one more time.';
+    }
+
+    if (hasKeepsakeSlot){
+      card.style.display = 'flex';
+      if (song.image){
+        card.innerHTML = '<img src="' + song.image + '" alt="">';
+      } else {
+        card.innerHTML = '<div class="keepsake-placeholder">Drop a photo named<br><strong>image' + song.id + '.jpg</strong><br>next to this page and it\'ll show up here.</div>';
+      }
+    } else {
+      card.style.display = 'none';
+    }
+    endOverlay.classList.remove('hidden');
+  }
+
+  audio.addEventListener('ended', () => { if (alive) endGame(true); });
+  startBtn.addEventListener('click', (e)=>{ e.preventDefault(); startGame(); });
+  replayBtn.addEventListener('click', (e)=>{ e.preventDefault(); endOverlay.classList.add('hidden'); startGame(); });
+})();
+</script>
+
+</body>
+</html>

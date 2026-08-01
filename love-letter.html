@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>My Love Letter To You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Sora:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --hue: 330;
+    --void:#0a0210;
+    --mist:#f3e7ff;
+    --gold:#ffd8a8;
+    --accent: hsl(var(--hue), 80%, 64%);
+    --accent2: hsl(calc(var(--hue) + 45), 70%, 62%);
+    --accent-dim: hsla(var(--hue), 70%, 55%, 0.3);
+    --hue-transition: 40s;
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; padding:0; min-height:100%; overflow-x:hidden;
+    background:var(--void); color:var(--mist); font-family:'Sora',sans-serif; }
+
+  /* ---------- LIVING WALLPAPER BACKGROUND ---------- */
+  #wallpaper{ position:fixed; inset:0; z-index:0; overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 20% 10%, var(--accent-dim), transparent 55%),
+      radial-gradient(120% 90% at 85% 90%, hsla(calc(var(--hue) + 60), 70%, 55%, 0.25), transparent 55%),
+      linear-gradient(160deg, var(--void), #150425 60%, var(--void));
+    transition:background 3s ease;
+  }
+  .orb{ position:absolute; border-radius:50%; filter:blur(2px); opacity:0.5;
+    background:radial-gradient(circle, var(--accent), transparent 70%);
+    animation:orbit ease-in-out infinite;
+    will-change:transform;
+  }
+  @keyframes orbit{
+    0%,100%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(var(--dx,20px), var(--dy,-30px)) scale(1.15); }
+  }
+  .spark{ position:absolute; width:2px; height:2px; border-radius:50%; background:#fff; opacity:0.6;
+    animation:twinkle 3s ease-in-out infinite; }
+  @keyframes twinkle{ 0%,100%{ opacity:0.15; } 50%{ opacity:0.9; } }
+
+  #parallaxLayer{ position:absolute; inset:0; transition:transform 0.4s ease-out; }
+
+  /* ---------- ENVELOPE INTRO ---------- */
+  #envelopeScreen{ position:fixed; inset:0; z-index:10; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center; padding:32px;
+    transition:opacity 0.8s ease, visibility 0.8s ease; }
+  #envelopeScreen.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  .eyebrow{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.3em;
+    text-transform:uppercase; color:var(--gold); margin-bottom:16px; opacity:0.85; }
+  #envelope{ width:min(70vw,240px); aspect-ratio:3/2; position:relative; cursor:pointer;
+    margin-bottom:22px; animation:hover 3s ease-in-out infinite; }
+  @keyframes hover{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
+  .env-body{ position:absolute; inset:0; border-radius:10px;
+    background:linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border:1px solid var(--accent-dim); box-shadow:0 20px 50px rgba(0,0,0,0.5), 0 0 40px var(--accent-dim); }
+  .env-flap{ position:absolute; top:0; left:0; right:0; height:55%;
+    background:linear-gradient(145deg, var(--accent), var(--accent2));
+    clip-path:polygon(0 0, 100% 0, 50% 100%); transform-origin:top; }
+  .env-seal{ position:absolute; top:50%; left:50%; width:38px; height:38px; margin:-19px 0 0 -19px;
+    border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px;
+    background:radial-gradient(circle at 35% 30%, #fff, var(--gold) 45%, var(--accent) 100%);
+    box-shadow:0 0 20px var(--accent-dim); z-index:2; }
+  #envelopeScreen p{ color:rgba(243,231,255,0.55); font-size:13px; max-width:260px; line-height:1.6; margin:0; }
+  #envelopeScreen .prompt{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.15em;
+    text-transform:uppercase; color:rgba(243,231,255,0.4); margin-top:14px; }
+
+  /* ---------- LETTER LAYOUT ---------- */
+  #letterScreen{ position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column;
+    opacity:0; transition:opacity 1s ease 0.2s; }
+  #letterScreen.visible{ opacity:1; }
+
+  #topbar{ display:flex; justify-content:space-between; align-items:center; padding:16px 18px; }
+  .navbtn{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.1em;
+    color:rgba(243,231,255,0.6); text-decoration:none;
+    border:1px solid rgba(255,255,255,0.15); border-radius:20px; padding:7px 14px;
+    background:rgba(255,255,255,0.03); backdrop-filter:blur(4px); }
+  .navbtn:active{ transform:scale(0.96); }
+
+  #content{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:28px; padding:10px 22px 50px; max-width:900px; margin:0 auto; width:100%; }
+  @media(min-width:720px){ #content{ flex-direction:row; align-items:flex-start; gap:44px; } }
+
+  #photoFrame{ flex:0 0 auto; width:min(78vw,260px); aspect-ratio:4/5; position:relative;
+    border-radius:18px; overflow:hidden;
+    border:1px solid var(--accent-dim); box-shadow:0 25px 60px rgba(0,0,0,0.5), 0 0 50px var(--accent-dim);
+    background:linear-gradient(150deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    display:flex; align-items:center; justify-content:center;
+  }
+  #photoFrame img{ width:100%; height:100%; object-fit:cover; }
+  .photo-placeholder{ font-family:'JetBrains Mono',monospace; font-size:11px; line-height:1.7;
+    color:var(--gold); text-align:center; padding:20px; opacity:0.7; }
+
+  #letterCard{ flex:1; max-width:460px; }
+  #letterCard .eyebrow2{ font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.25em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  #letterCard h2{ font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
+    font-size:clamp(26px,7vw,36px); margin:0 0 18px; text-shadow:0 0 20px var(--accent-dim); }
+  .line{ font-family:'Cormorant Garamond',serif; font-size:clamp(16px,4.4vw,19px); line-height:1.75;
+    color:rgba(243,231,255,0.88); margin:0 0 14px; opacity:0; transform:translateY(10px);
+    transition:opacity 0.9s ease, transform 0.9s ease; }
+  .line.show{ opacity:1; transform:translateY(0); }
+  .signature{ font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:600;
+    font-size:20px; color:var(--gold); margin-top:20px; opacity:0; transition:opacity 1.2s ease; }
+  .signature.show{ opacity:1; }
+
+  #musicToggle{ position:fixed; bottom:20px; right:18px; z-index:5;
+    width:46px; height:46px; border-radius:50%; border:1px solid var(--accent-dim);
+    background:rgba(10,2,16,0.6); backdrop-filter:blur(6px); color:var(--mist);
+    display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div id="wallpaper">
+  <div id="parallaxLayer"></div>
+</div>
+
+<div id="envelopeScreen">
+  <div class="eyebrow">for you</div>
+  <div id="envelope">
+    <div class="env-body"></div>
+    <div class="env-flap" id="envFlap"></div>
+    <div class="env-seal">♥</div>
+  </div>
+  <p>A letter, waiting for you to open it.</p>
+  <p class="prompt">tap the envelope</p>
+</div>
+
+<div id="letterScreen">
+  <div id="topbar">
+    <a href="javascript:history.back()" class="navbtn">&larr; back</a>
+    <a href="home.html" class="navbtn">home</a>
+  </div>
+
+  <div id="content">
+    <div id="photoFrame">
+      <!-- auto-synced: just drop a file named IMG17 (.jpg/.jpeg/.png/.webp)
+           in this same folder — nothing here needs editing. -->
+      <img id="letterPhoto" alt="" style="display:none;">
+      <div class="photo-placeholder" id="photoPlaceholder">place a photo named<br><strong>IMG17</strong><br>(.jpg, .jpeg, .png, or .webp)<br>next to this page</div>
+    </div>
+
+    <div id="letterCard">
+      <div class="eyebrow2">a letter, for you</div>
+      <h2>My Love Letter To You</h2>
+      <div id="lines"></div>
+      <p class="signature" id="signature">— always yours</p>
+    </div>
+  </div>
+</div>
+
+<button id="musicToggle" title="toggle music">♪</button>
+<!-- ADD YOUR SONG: set the src below to your file, e.g. "letter-song.mp3" -->
+<audio id="bgMusic" loop preload="auto"></audio>
+
+<script>
+(function(){
+  // ---------------------------------------------------------------
+  // auto-find the photo — tries IMG17.jpg, IMG17.jpeg, IMG17.png,
+  // IMG17.webp in order and uses whichever one actually exists.
+  // No editing needed here — just add the file with that name.
+  // ---------------------------------------------------------------
+  (function loadPhoto(){
+    const name = "IMG17";
+    const exts = ["jpg","jpeg","png","webp","JPG","PNG"];
+    const img = document.getElementById('letterPhoto');
+    const placeholder = document.getElementById('photoPlaceholder');
+    let i = 0;
+    function tryNext(){
+      if (i >= exts.length) return; // none found, placeholder stays visible
+      img.onerror = () => { i++; tryNext(); };
+      img.onload = () => { img.style.display = 'block'; placeholder.style.display = 'none'; };
+      img.src = name + '.' + exts[i];
+    }
+    tryNext();
+  })();
+
+  // ---------------------------------------------------------------
+  // EDIT THIS: the words of the letter. One entry = one line/paragraph
+  // that fades in on its own. Write whatever you want here — nothing
+  // else in the page needs to change.
+  // ---------------------------------------------------------------
+  const LETTER_LINES = [
+    "Hello mambo mpenzi, ni Mimi apa Josh, I hope gift yako umeipenda Baby girl wangu uko aje Nakuandikia hii barua manake Mimi nataka ujue kitu sijui kwa kweli kama wajua Josh yuakupenda sana na hayupo tayarii kukaa bila ya kuona smile yako manake mashallah mtoto umebarikiwa na iyo smile,, kismile mwenzako ndio lengo languu,, ",
+    "🙂bado nakumbuka nakumiss wakati nilikuitaga baby girl wangu na wewe kuniita Dad🙈 sijui ivi kama unakumbuka... ",
+    "Phelyy sorry I mean Phejosh I still remember them days when we said our love is forever wakanda, I hope enemies don't destroy our kingdom coz girl you gat me a love portion I can't get over you and always will,,, 😂you said love yetu ni tight kama kifuniko Cha gas nikasemaga basi tusiitumie gas iise ",
+    "Mamah I need you to understand that in relationships there's highs and lows and I hope we make it to till full freedom between us. In past few months tumekua na issues but I understand where there's love nothing is unsolvable maybe kama imepita beyond solving level. ",
+    "I want you to take your time and think kinely b4 you make a decision concerning both of us, pia I understand that our love might feel empty sometimes but it's just beginning of true love pia we've known each other for longest so there's familiarity. ",
+    "Honestly baby girl you're the only one apart from my family members that has stayed the longest in my life and I really mean it when I say I don't wanna loose. ",
+    "All I ever wanted is someone who can't get enough of me and I can never get enough of them and you've proved to be that someone. This are pure words from my heart 😌just a boy trying to prove his love. ",
+    "My love you cute like a diamond 💎 and I understand we both have options but I would choose you in a thousand lifetimes. ",
+    "Keep in mind whenever we have issues we said we don't choose silent we talk solve and keep our bond, Nakupenda sana my wangu ",
+    "After exploring the small adventure I made for you it'll be a change in us who knows maybe positive maybe negative all I wish for is the best for both of us"
+  ];
+  const SIGNATURE = "— Josh";
+
+  // set your song here (leave empty string if you haven't added one yet)
+  const SONG_SRC = "AUD3.mp3";
+
+  const music = document.getElementById('bgMusic');
+  music.src = SONG_SRC;
+  let musicOn = false;
+  function setMusicIcon(){ document.getElementById('musicToggle').textContent = musicOn ? '♫' : '♪'; }
+  document.getElementById('musicToggle').addEventListener('click', ()=>{
+    musicOn = !musicOn;
+    if (musicOn){ music.play().catch(()=>{}); } else { music.pause(); }
+    setMusicIcon();
+  });
+
+  // ---------------------------------------------------------------
+  // living wallpaper: hue drifts slowly on its own forever
+  // ---------------------------------------------------------------
+  let hue = 330;
+  setInterval(()=>{
+    hue = (hue + 6) % 360;
+    document.documentElement.style.setProperty('--hue', hue);
+  }, 6000);
+
+  const wallpaper = document.getElementById('wallpaper');
+  for (let i=0;i<10;i++){
+    const o = document.createElement('div');
+    o.className = 'orb';
+    const size = 80 + Math.random()*160;
+    o.style.width = size+'px'; o.style.height = size+'px';
+    o.style.left = Math.random()*100+'%';
+    o.style.top = Math.random()*100+'%';
+    o.style.setProperty('--dx', (Math.random()*80-40)+'px');
+    o.style.setProperty('--dy', (Math.random()*80-40)+'px');
+    o.style.animationDuration = (10+Math.random()*14)+'s';
+    wallpaper.appendChild(o);
+  }
+  for (let i=0;i<40;i++){
+    const s = document.createElement('div');
+    s.className = 'spark';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.animationDelay = (Math.random()*3)+'s';
+    s.style.animationDuration = (2+Math.random()*3)+'s';
+    wallpaper.appendChild(s);
+  }
+
+  // interactive parallax — the whole scene subtly follows touch/mouse
+  const layer = document.getElementById('parallaxLayer');
+  function parallax(x, y){
+    const nx = (x/window.innerWidth - 0.5) * 16;
+    const ny = (y/window.innerHeight - 0.5) * 16;
+    layer.style.transform = 'translate(' + nx + 'px,' + ny + 'px)';
+  }
+  window.addEventListener('mousemove', (e)=>parallax(e.clientX, e.clientY));
+  window.addEventListener('touchmove', (e)=>{
+    if (e.touches[0]) parallax(e.touches[0].clientX, e.touches[0].clientY);
+  }, {passive:true});
+
+  // ---------------------------------------------------------------
+  // envelope open -> reveal letter, start music, animate lines in
+  // ---------------------------------------------------------------
+  const linesWrap = document.getElementById('lines');
+  LETTER_LINES.forEach(text => {
+    const p = document.createElement('p');
+    p.className = 'line';
+    p.textContent = text;
+    linesWrap.appendChild(p);
+  });
+  document.getElementById('signature').textContent = SIGNATURE;
+
+  document.getElementById('envelope').addEventListener('click', () => {
+    document.getElementById('envFlap').style.transition = 'transform 0.6s ease';
+    document.getElementById('envFlap').style.transform = 'rotateX(180deg)';
+    if (SONG_SRC){ music.play().then(()=>{ musicOn = true; setMusicIcon(); }).catch(()=>{}); }
+
+    setTimeout(()=>{
+      document.getElementById('envelopeScreen').classList.add('hidden');
+      document.getElementById('letterScreen').classList.add('visible');
+      const lineEls = document.querySelectorAll('.line');
+      lineEls.forEach((el, i) => {
+        setTimeout(()=> el.classList.add('show'), i * 900);
+      });
+      setTimeout(()=> document.getElementById('signature').classList.add('show'),
+        lineEls.length * 900 + 300);
+    }, 500);
+  });
+})();
+</script>
+
+</body>
+</html>

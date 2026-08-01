@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>For You 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     EDIT ME: put your real video files named exactly
+     vid1.mp4, vid2.mp4, vid3.mp4 in the SAME FOLDER as this
+     index.html file. The site will pick them up automatically.
+     Change titles / password / trivia in the CONFIG block at the
+     top of the <script> further down.
+     ============================================================ */
+
+  :root{
+    --pink:#FF6F91;
+    --yellow:#FFC75F;
+    --teal:#4ECDC4;
+    --purple:#A685E2;
+    --bg-deep:#1A1A2E;
+    --bg-deep2:#2D2159;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:radial-gradient(circle at 20% 15%, var(--bg-deep2) 0%, var(--bg-deep) 65%);
+    background-size:200% 200%;
+    animation:bgshift 18s ease-in-out infinite;
+    color:#fff;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow-x:hidden;
+  }
+  .font-display{font-family:'Baloo 2',cursive;}
+  #app{
+    position:relative;
+    width:100%;
+    max-width:420px;
+    padding:28px 16px 60px;
+    z-index:2;
+  }
+  .blob{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(40px);
+    opacity:0.45;
+    z-index:0;
+    pointer-events:none;
+  }
+  .card{
+    width:100%;
+    border-radius:26px;
+    padding:26px 22px;
+    background:linear-gradient(160deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+    border:1px solid rgba(255,255,255,0.15);
+    backdrop-filter:blur(6px);
+    box-shadow:0 20px 60px rgba(0,0,0,0.35);
+    animation:cardIn 0.5s ease;
+  }
+  @keyframes cardIn{ from{opacity:0; transform:translateY(16px) scale(0.98);} to{opacity:1; transform:translateY(0) scale(1);} }
+  @keyframes bgshift{ 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+  @keyframes floaty{ 0%,100%{transform:translateY(0) translateX(0);} 50%{transform:translateY(-18px) translateX(8px);} }
+  @keyframes wiggle{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+  @keyframes pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.15);} }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes popIn{ from{opacity:0; transform:scale(0.5);} to{opacity:1; transform:scale(1);} }
+  @keyframes heartbeat{ 0%,100%{transform:scale(1);} 15%{transform:scale(1.2);} 30%{transform:scale(1);} 45%{transform:scale(1.15);} }
+  .wiggle{ animation:wiggle 0.4s ease; }
+  .pop{ animation:popIn 0.35s ease; }
+
+  h1,h2{margin:0;}
+  h1.title{font-size:28px;text-align:center;margin-bottom:10px;}
+  h2.subtitle{font-size:22px;text-align:center;margin-bottom:6px;}
+  p{line-height:1.5;}
+  .muted{color:rgba(255,255,255,0.65);font-size:14px;}
+  .center{text-align:center;}
+
+  .btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:18px;
+    font-weight:800;
+    font-size:16px;
+    color:var(--bg-deep);
+    cursor:pointer;
+    transition:transform 0.15s ease;
+    font-family:'Nunito',sans-serif;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn:hover{transform:scale(1.02);}
+  .btn-pink{background:var(--pink); color:#fff;}
+  .btn-yellow{background:var(--yellow);}
+  .btn-teal{background:var(--teal); color:#0c2b28;}
+
+  /* trail */
+  .trail-wrap{max-width:420px; margin:0 auto 26px; padding:0 4px;}
+  .trail-track{position:relative; height:6px; border-radius:6px; background:rgba(255,255,255,0.15); overflow:visible;}
+  .trail-fill{position:absolute; top:0; left:0; height:6px; border-radius:6px; background:linear-gradient(90deg,var(--pink),var(--yellow)); transition:width 0.6s ease;}
+  .trail-dot{position:absolute; top:-8px; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; transform:translateX(-50%); transition:all 0.5s ease; border:2px solid rgba(255,255,255,0.25); background:rgba(255,255,255,0.08); font-size:11px;}
+  .trail-dot.reached{border-color:transparent; background:var(--pink);}
+  .trail-labels{display:flex; justify-content:space-between; margin-top:14px; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.4px; color:rgba(255,255,255,0.45);}
+  .trail-labels span.reached{color:#fff;}
+
+  /* keypad */
+  .display-boxes{display:flex; justify-content:center; gap:10px; margin:18px 0;}
+  .digit-box{width:38px; height:48px; border-radius:12px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-family:'Baloo 2',cursive; font-size:20px; font-weight:700;}
+  .digit-box.filled{border-color:var(--yellow); background:rgba(255,199,95,0.15);}
+
+  .keypad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px;}
+  .keypad button{
+    padding:16px 0; border-radius:16px; border:none; font-size:20px; font-weight:800;
+    background:rgba(255,255,255,0.08); color:#fff; cursor:pointer; transition:transform 0.1s ease, background 0.15s ease;
+    font-family:'Nunito',sans-serif;
+  }
+  .keypad button:active{transform:scale(0.92); background:rgba(255,255,255,0.18);}
+  .keypad button.wide{grid-column:span 1;}
+  .keypad button.action{background:var(--pink); color:#fff;}
+
+  .qwerty{margin-top:14px;}
+  .qwerty .row{display:flex; justify-content:center; gap:5px; margin-bottom:6px; flex-wrap:wrap;}
+  .qwerty button{
+    min-width:26px; padding:12px 0; flex:1; max-width:34px; border-radius:8px; border:none;
+    background:rgba(255,255,255,0.1); color:#fff; font-weight:800; font-size:13px; cursor:pointer;
+  }
+  .qwerty button:active{transform:scale(0.9); background:rgba(255,255,255,0.2);}
+  .qwerty .wide-key{max-width:70px; flex:1.6; background:var(--pink);}
+  .qwerty .back-key{max-width:70px; flex:1.6;}
+
+  .letter-boxes{display:flex; justify-content:center; gap:6px; margin:18px 0; flex-wrap:wrap;}
+  .letter-box{width:28px; height:36px; border-bottom:3px solid rgba(255,255,255,0.35); display:flex; align-items:center; justify-content:center; font-family:'Baloo 2',cursive; font-size:18px; font-weight:700;}
+  .letter-box.filled{border-color:var(--teal);}
+
+  /* unscramble */
+  .scramble-tiles{display:flex; justify-content:center; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+  .tile{width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2',cursive; font-weight:700; font-size:19px; color:var(--bg-deep); background:var(--yellow);}
+  .tile.solved{background:var(--teal);}
+  input.answer{
+    width:100%; padding:14px; border-radius:14px; background:rgba(255,255,255,0.1);
+    border:2px solid rgba(255,255,255,0.2); color:#fff; font-size:16px; text-align:center;
+    font-weight:800; letter-spacing:2px; outline:none; margin-bottom:12px; font-family:'Nunito',sans-serif;
+  }
+  input.answer:focus{border-color:var(--yellow);}
+
+  /* hearts game */
+  .hearts-field{position:relative; width:100%; height:280px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); overflow:hidden; margin:14px 0;}
+  .heart-target{position:absolute; font-size:30px; cursor:pointer; animation:popIn 0.25s ease, pulse 1s ease-in-out infinite; user-select:none;}
+  .hearts-score{text-align:center; font-family:'Baloo 2',cursive; font-size:18px; margin-bottom:6px;}
+
+  /* videos */
+  .gift-btn{
+    display:flex; align-items:center; gap:14px; width:100%; padding:20px; border-radius:20px; border:none;
+    background:linear-gradient(135deg,var(--purple),var(--pink)); color:#fff; font-family:'Baloo 2',cursive;
+    font-size:17px; font-weight:700; cursor:pointer; margin-bottom:14px; transition:transform 0.15s ease;
+  }
+  .gift-btn:active{transform:scale(0.97);}
+  .video-wrap{position:relative; border-radius:20px; overflow:hidden; border:1px solid rgba(255,255,255,0.15); margin-bottom:14px; background:#000;}
+  .video-wrap video{width:100%; display:block; aspect-ratio:9/16; object-fit:cover; background:#000;}
+  .video-missing{aspect-ratio:9/16; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:rgba(255,255,255,0.5); font-size:13px; text-align:center; padding:20px;}
+  .letter-overlay{
+    position:absolute; left:0; right:0; bottom:0; padding:22px 16px 20px;
+    background:linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.35) 55%, transparent 100%);
+    pointer-events:none;
+  }
+  .letter-overlay p{
+    font-family:'Baloo 2',cursive; font-size:15px; text-align:center; margin:0;
+    text-shadow:0 2px 8px rgba(0,0,0,0.6);
+    animation:fadeUp 0.6s ease;
+  }
+  .video-title{text-align:center; font-size:13px; font-weight:800; color:rgba(255,255,255,0.7); margin:-6px 0 14px;}
+
+  .footer-note{text-align:center; margin-top:22px; color:rgba(255,255,255,0.5); font-size:13px;}
+</style>
+</head>
+<body>
+
+<div class="blob" style="width:220px;height:220px;background:var(--pink);top:6%;left:-40px;animation:floaty 7s ease-in-out infinite;"></div>
+<div class="blob" style="width:260px;height:260px;background:var(--teal);bottom:8%;right:-60px;animation:floaty 8s ease-in-out infinite;"></div>
+<div class="blob" style="width:180px;height:180px;background:var(--yellow);top:55%;left:10%;animation:floaty 6s ease-in-out infinite;"></div>
+
+<div id="app"></div>
+
+<script>
+/* =====================================================================
+   EDIT THIS CONFIG BLOCK before sending the site.
+   - password: the 4-digit unlock code shown on the lock screen
+   - birthDate: your date of birth as 8 digits, DDMMYYYY
+   - lastName: your last name (used as a trivia answer)
+   - herName: her name, shown in the greeting
+   - videos: put vid1.mp4, vid2.mp4, vid3.mp4 in this SAME FOLDER.
+     The site loads them automatically by that filename.
+   - loveLetterLines: timed captions (in seconds) shown gently at the
+     bottom of the video as it plays, without covering the picture.
+   ===================================================================== */
+const CONFIG = {
+  yourName: "Kisenja",
+  herName: "Phejosh",
+  password: "6564",
+  birthDate: "29112004", // DD MM YYYY -> 29/11/2004
+  lastName: "KISENJA",
+  intro: "I made you a little adventure. Unlock it, prove you know me, win two tiny games, and 3 surprises are waiting at the end. Ready?",
+  unscrambleWords: [
+    { word: "LOVE", hint: "what we have" },
+    { word: "KISS", hint: "sealed with a..." },
+    { word: "HUGS", hint: "my favorite thing to give you" },
+  ],
+  heartsTarget: 10,
+  videos: [
+    { title: "Surprise #1", src: "vid1.mp4" },
+    { title: "Surprise #2", src: "vid2.mp4" },
+    { title: "Surprise #3", src: "vid3.mp4" },
+  ],
+  // Times are in seconds. Edit these lines into your real love letter.
+  loveLetterLines: [
+    { time: 0,  text: "Hey love, watch this till the end 💛" },
+    { time: 15, text: "I don't say this enough, but..." },
+    { time: 32, text: "every day with you feels lighter" },
+    { time: 50, text: "you make ordinary days feel golden" },
+    { time: 68, text: "so here's a little proof of that" },
+    { time: 82, text: "I love you, Kisenja 💛" },
+  ],
+};
+
+/* ---------------------------------------------------------------- */
+
+const STAGES = ["start","lock","birthday","name","game1","game2","videos"];
+const LABELS = ["Start","Unlock","Birthday","Name","Word Game","Hearts","Surprises"];
+let stageIdx = 0;
+
+const app = document.getElementById("app");
+
+function scramble(word){
+  let arr = word.split(""), tries = 0, result = word;
+  while(result === word && tries < 20){
+    arr = arr.map(c => [Math.random(), c]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+    result = arr.join("");
+    tries++;
+  }
+  return result;
+}
+
+function trailHTML(){
+  const pct = (stageIdx / (STAGES.length - 1)) * 100;
+  const dots = STAGES.map((_, i) => {
+    const left = (i / (STAGES.length - 1)) * 100;
+    const reached = i <= stageIdx;
+    return `<div class="trail-dot ${reached?'reached':''}" style="left:${left}%">${reached ? '♥' : ''}</div>`;
+  }).join("");
+  const labels = LABELS.map((l,i) => `<span class="${i<=stageIdx?'reached':''}">${l}</span>`).join("");
+  return `
+    <div class="trail-wrap">
+      <div class="trail-track">
+        <div class="trail-fill" style="width:${pct}%"></div>
+        ${dots}
+      </div>
+      <div class="trail-labels">${labels}</div>
+    </div>`;
+}
+
+function cardWrap(inner){
+  return `${trailHTML()}<div class="card">${inner}</div>`;
+}
+
+function render(){
+  const stage = STAGES[stageIdx];
+  if(stage === "start") renderStart();
+  else if(stage === "lock") renderLock();
+  else if(stage === "birthday") renderBirthday();
+  else if(stage === "name") renderName();
+  else if(stage === "game1") renderUnscramble();
+  else if(stage === "game2") renderHearts();
+  else if(stage === "videos") renderVideos();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function renderStart(){
+  app.innerHTML = cardWrap(`
+    <div class="center" style="margin-bottom:6px;">
+      <div style="width:60px;height:60px;border-radius:18px;background:var(--yellow);display:inline-flex;align-items:center;justify-content:center;transform:rotate(6deg);font-size:26px;">✨</div>
+    </div>
+    <h1 class="title font-display">Hey ${CONFIG.herName} 💌</h1>
+    <p class="center" style="color:rgba(255,255,255,0.85);margin-bottom:20px;">${CONFIG.intro}</p>
+    <button class="btn btn-pink" id="start-btn">Start the adventure →</button>
+  `);
+  document.getElementById("start-btn").onclick = () => { stageIdx++; render(); };
+}
+
+function renderLock(){
+  let digits = "";
+  function draw(shake){
+    const boxes = Array.from({length:4}).map((_,i) =>
+      `<div class="digit-box ${i < digits.length ? 'filled':''}">${i < digits.length ? '•' : ''}</div>`
+    ).join("");
+    app.innerHTML = cardWrap(`
+      <p class="muted center" style="text-transform:uppercase;font-weight:800;letter-spacing:1px;">Enter the code</p>
+      <h2 class="subtitle font-display" style="margin-bottom:4px;">🔒 It's a secret</h2>
+      <div class="display-boxes ${shake?'wiggle':''}">${boxes}</div>
+      ${keypadHTML()}
+    `);
+    bindKeypad(onDigit, onBack);
+  }
+  function onDigit(d){
+    if(digits.length >= 4) return;
+    digits += d;
+    if(digits.length === 4){
+      draw(false);
+      setTimeout(() => {
+        if(digits === CONFIG.password){ stageIdx++; render(); }
+        else { digits = ""; draw(true); setTimeout(()=>draw(false), 400); }
+      }, 250);
+    } else draw(false);
+  }
+  function onBack(){ digits = digits.slice(0,-1); draw(false); }
+  draw(false);
+}
+
+function renderBirthday(){
+  let digits = "";
+  function fmt(){
+    const d = digits.padEnd(8,"_").split("");
+    return `${d[0]}${d[1]}/${d[2]}${d[3]}/${d[4]}${d[5]}${d[6]}${d[7]}`;
+  }
+  function draw(shake){
+    app.innerHTML = cardWrap(`
+      <p class="muted center" style="text-transform:uppercase;font-weight:800;letter-spacing:1px;">About me</p>
+      <h2 class="subtitle font-display" style="margin-bottom:4px;">What's my date of birth?</h2>
+      <p class="center muted">Format: DD/MM/YYYY</p>
+      <div class="center ${shake?'wiggle':''}" style="font-family:'Baloo 2',cursive;font-size:22px;letter-spacing:3px;margin:18px 0;">${fmt()}</div>
+      ${keypadHTML()}
+    `);
+    bindKeypad(onDigit, onBack);
+  }
+  function onDigit(d){
+    if(digits.length >= 8) return;
+    digits += d;
+    if(digits.length === 8){
+      draw(false);
+      setTimeout(() => {
+        if(digits === CONFIG.birthDate){ stageIdx++; render(); }
+        else { digits = ""; draw(true); setTimeout(()=>draw(false), 400); }
+      }, 250);
+    } else draw(false);
+  }
+  function onBack(){ digits = digits.slice(0,-1); draw(false); }
+  draw(false);
+}
+
+function renderName(){
+  let val = "";
+  const target = CONFIG.lastName;
+  function draw(shake){
+    const boxes = Array.from({length: target.length}).map((_,i) =>
+      `<div class="letter-box ${i < val.length ? 'filled':''}">${val[i] || ""}</div>`
+    ).join("");
+    app.innerHTML = cardWrap(`
+      <p class="muted center" style="text-transform:uppercase;font-weight:800;letter-spacing:1px;">Almost there</p>
+      <h2 class="subtitle font-display" style="margin-bottom:10px;">What's my last name?</h2>
+      <div class="letter-boxes ${shake?'wiggle':''}">${boxes}</div>
+      ${qwertyHTML()}
+    `);
+    bindQwerty(onKey, onBack, onEnter);
+  }
+  function onKey(k){ if(val.length < target.length) val += k; draw(false); }
+  function onBack(){ val = val.slice(0,-1); draw(false); }
+  function onEnter(){
+    if(val.toUpperCase() === target){ stageIdx++; render(); }
+    else { val = ""; draw(true); setTimeout(()=>draw(false), 400); }
+  }
+  draw(false);
+}
+
+function renderUnscramble(){
+  let round = 0;
+  const scrambled = CONFIG.unscrambleWords.map(w => scramble(w.word));
+  function draw(solved, shake){
+    const item = CONFIG.unscrambleWords[round];
+    const tiles = scrambled[round].split("").map(c => `<div class="tile ${solved?'solved':''}">${c}</div>`).join("");
+    app.innerHTML = cardWrap(`
+      <p class="muted center" style="text-transform:uppercase;font-weight:800;letter-spacing:1px;">Unscramble ${round+1} of ${CONFIG.unscrambleWords.length}</p>
+      <div class="scramble-tiles" style="margin-top:14px;">${tiles}</div>
+      <p class="center muted" style="font-style:italic;margin-bottom:14px;">Hint: ${item.hint}</p>
+      <input class="answer ${shake?'wiggle':''}" id="ans" placeholder="Your answer" autocomplete="off" />
+      <button class="btn btn-pink" id="check-btn">${solved ? "Nice! 🎉" : "Check"}</button>
+    `);
+    const input = document.getElementById("ans");
+    input.focus();
+    input.oninput = () => { input.value = input.value.toUpperCase(); };
+    input.onkeydown = (e) => { if(e.key === "Enter") check(); };
+    document.getElementById("check-btn").onclick = check;
+    function check(){
+      const item2 = CONFIG.unscrambleWords[round];
+      if(input.value.trim().toUpperCase() === item2.word){
+        draw(true, false);
+        setTimeout(() => {
+          if(round + 1 < CONFIG.unscrambleWords.length){ round++; draw(false,false); }
+          else { stageIdx++; render(); }
+        }, 650);
+      } else {
+        draw(false, true);
+        setTimeout(() => draw(false,false), 400);
+      }
+    }
+  }
+  draw(false,false);
+}
+
+function renderHearts(){
+  let score = 0;
+  let activeHeart = null;
+  let spawnTimer = null;
+  app.innerHTML = cardWrap(`
+    <p class="muted center" style="text-transform:uppercase;font-weight:800;letter-spacing:1px;">Mini game</p>
+    <h2 class="subtitle font-display" style="margin-bottom:8px;">Catch ${CONFIG.heartsTarget} hearts!</h2>
+    <div class="hearts-score" id="score">0 / ${CONFIG.heartsTarget}</div>
+    <div class="hearts-field" id="field"></div>
+    <p class="center muted">Tap the hearts before they float away 💗</p>
+  `);
+  const field = document.getElementById("field");
+  const scoreEl = document.getElementById("score");
+
+  function spawn(){
+    if(activeHeart) return;
+    const el = document.createElement("div");
+    el.className = "heart-target";
+    el.textContent = "💗";
+    const left = 10 + Math.random() * 75;
+    const top = 10 + Math.random() * 70;
+    el.style.left = left + "%";
+    el.style.top = top + "%";
+    el.onclick = () => {
+      score++;
+      scoreEl.textContent = `${score} / ${CONFIG.heartsTarget}`;
+      el.remove();
+      activeHeart = null;
+      if(score >= CONFIG.heartsTarget){
+        clearInterval(spawnTimer);
+        setTimeout(() => { stageIdx++; render(); }, 300);
+      }
+    };
+    field.appendChild(el);
+    activeHeart = el;
+    setTimeout(() => {
+      if(el.parentNode){ el.remove(); activeHeart = null; }
+    }, 1400);
+  }
+  spawnTimer = setInterval(spawn, 850);
+  spawn();
+}
+
+function renderVideos(){
+  const opened = CONFIG.videos.map(() => false);
+  function draw(){
+    const items = CONFIG.videos.map((v, idx) => {
+      if(!opened[idx]){
+        return `<button class="gift-btn" data-open="${idx}">🎁 &nbsp; ${v.title}</button>`;
+      }
+      return `
+        <div class="video-wrap" id="vwrap-${idx}">
+          <video id="vid-${idx}" src="${v.src}" controls playsinline></video>
+          <div class="letter-overlay" id="overlay-${idx}"><p id="line-${idx}"></p></div>
+        </div>
+        <div class="video-title">${v.title}</div>`;
+    }).join("");
+    app.innerHTML = cardWrap(`
+      <div class="center" style="margin-bottom:10px;">
+        <div style="font-size:30px;">🎉</div>
+        <h2 class="subtitle font-display">You made it, ${CONFIG.herName}!</h2>
+        <p class="muted">Open your surprises</p>
+      </div>
+      ${items}
+      <p class="footer-note" id="signoff" style="display:${opened.every(Boolean) ? 'block':'none'}">I love you, ${CONFIG.herName}. — ${CONFIG.yourName}</p>
+    `);
+    CONFIG.videos.forEach((v, idx) => {
+      const btn = document.querySelector(`[data-open="${idx}"]`);
+      if(btn){
+        btn.onclick = () => {
+          opened[idx] = true;
+          draw();
+          setTimeout(() => setupVideo(idx), 50);
+        };
+      }
+      if(opened[idx]) setupVideo(idx);
+    });
+  }
+  function setupVideo(idx){
+    const vid = document.getElementById(`vid-${idx}`);
+    const lineEl = document.getElementById(`line-${idx}`);
+    if(!vid) return;
+    vid.muted = false;
+    vid.volume = 1;
+    vid.addEventListener("error", () => {
+      const wrap = document.getElementById(`vwrap-${idx}`);
+      wrap.innerHTML = `<div class="video-missing">🎬<br/>Add <b>${CONFIG.videos[idx].src}</b> to this folder to play "${CONFIG.videos[idx].title}"</div>`;
+    });
+    vid.addEventListener("timeupdate", () => {
+      const t = vid.currentTime;
+      let current = CONFIG.loveLetterLines[0];
+      for(const line of CONFIG.loveLetterLines){
+        if(t >= line.time) current = line; else break;
+      }
+      if(lineEl && lineEl.textContent !== current.text) lineEl.textContent = current.text;
+    });
+    vid.play().catch(() => {});
+  }
+  draw();
+}
+
+/* ---------- shared keypad / keyboard builders ---------- */
+function keypadHTML(){
+  const keys = ["1","2","3","4","5","6","7","8","9","","0","⌫"];
+  return `<div class="keypad">${keys.map(k => {
+    if(k === "") return `<div></div>`;
+    if(k === "⌫") return `<button class="action" data-back="1">⌫</button>`;
+    return `<button data-digit="${k}">${k}</button>`;
+  }).join("")}</div>`;
+}
+function bindKeypad(onDigit, onBack){
+  document.querySelectorAll("[data-digit]").forEach(b => b.onclick = () => onDigit(b.dataset.digit));
+  const back = document.querySelector("[data-back]");
+  if(back) back.onclick = onBack;
+}
+function qwertyHTML(){
+  const rows = ["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"];
+  const rowsHTML = rows.map((row, i) => {
+    const keys = row.split("").map(c => `<button data-key="${c}">${c}</button>`).join("");
+    if(i === rows.length - 1){
+      return `<div class="row"><button class="back-key" data-back="1">⌫</button>${keys}<button class="wide-key" data-enter="1">ENTER</button></div>`;
+    }
+    return `<div class="row">${keys}</div>`;
+  }).join("");
+  return `<div class="qwerty">${rowsHTML}</div>`;
+}
+function bindQwerty(onKey, onBack, onEnter){
+  document.querySelectorAll("[data-key]").forEach(b => b.onclick = () => onKey(b.dataset.key));
+  const back = document.querySelector("[data-back]");
+  if(back) back.onclick = onBack;
+  const ent = document.querySelector("[data-enter]");
+  if(ent) ent.onclick = onEnter;
+}
+
+render();
+</script>
+</body>
+</html>
