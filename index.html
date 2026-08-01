@@ -2,154 +2,466 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Phejosh | Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Do You Love Me?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      overflow: hidden;
+    }
+
+    .love-page {
+      width: 100%;
       height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(135deg, #1a0a2e 0%, #4a1a4e 30%, #8b2f5c 60%, #d44d7a 100%);
+      font-family: 'Poppins', sans-serif;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      font-family: 'Poppins', sans-serif;
-      color: white;
-      overflow: hidden;
-
-      /* Background image */
-      background: url("llove.jpg.jpeg") no-repeat center center fixed;
-      background-size: cover; /* fills screen */
-      position: relative;
+      justify-content: center;
     }
 
-    /* Overlay tint for readability */
-    body::before {
-      content: "";
+    .heart-bg {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.4); /* darker overlay for text contrast */
-      z-index: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
     }
 
-    .heart {
-      font-size: 80px;
-      text-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
-      animation: spin 6s infinite linear;
-      margin-bottom: 20px;
-      z-index: 1;
+    .heart-bg span {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.15);
+      font-size: 20px;
+      animation: floatUp linear infinite;
+      bottom: -50px;
     }
 
-    @keyframes spin {
-      from { transform: rotateY(0deg); }
-      to { transform: rotateY(360deg); }
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
     }
 
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 30px;
-      text-shadow: 0 0 10px rgba(255,255,255,0.8);
-      z-index: 1;
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 2s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .question-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 3.5rem;
+      color: #fff;
+      text-shadow: 0 0 20px rgba(255, 105, 180, 0.6), 0 0 40px rgba(255, 105, 180, 0.3);
+      margin-bottom: 10px;
+      animation: glowPulse 2s ease-in-out infinite;
+    }
+
+    .sub-text {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 50px;
+      font-weight: 400;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { text-shadow: 0 0 20px rgba(255, 105, 180, 0.6), 0 0 40px rgba(255, 105, 180, 0.3); }
+      50% { text-shadow: 0 0 30px rgba(255, 105, 180, 0.9), 0 0 60px rgba(255, 105, 180, 0.5); }
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      width: 100%;
+      min-height: 200px;
+    }
+
+    .yes-btn {
+      background: linear-gradient(135deg, #ff6b9d, #c44569);
+      color: white;
+      border: none;
+      padding: 18px 60px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(196, 69, 105, 0.5), 0 0 30px rgba(255, 107, 157, 0.3);
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      z-index: 20;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      14% { transform: scale(1.08); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.05); }
+      70% { transform: scale(1); }
+    }
+
+    .yes-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 4px 15px rgba(196, 69, 105, 0.5);
+    }
+
+    .no-btn {
+      background: linear-gradient(135deg, #636e72, #2d3436);
+      color: rgba(255, 255, 255, 0.6);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      padding: 14px 45px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      position: absolute;
+      top: 100px;
+      transition: all 0.15s ease;
+      z-index: 15;
+      touch-action: none;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .success-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a0a2e 0%, #4a1a4e 30%, #8b2f5c 60%, #d44d7a 100%);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
       text-align: center;
     }
 
-    .buttons {
+    .success-screen.active {
       display: flex;
-      gap: 20px;
-      z-index: 1;
+      animation: fadeIn 0.8s ease;
     }
 
-    button {
-      padding: 15px 30px;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
     }
 
-    .yes {
-      background: hotpink;
+    .success-emoji {
+      font-size: 5rem;
+      margin-bottom: 20px;
+      animation: bounce 1s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .success-text {
+      font-family: 'Dancing Script', cursive;
+      font-size: 2.5rem;
+      color: #fff;
+      margin-bottom: 15px;
+      text-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+    }
+
+    .success-sub {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 40px;
+      max-width: 300px;
+    }
+
+    .next-page-btn {
+      background: linear-gradient(135deg, #ff6b9d, #c44569);
       color: white;
-      box-shadow: 0 0 15px rgba(255,105,180,0.6);
-    }
-
-    .no {
-      background: lightgray;
-      color: black;
-    }
-
-    #message {
-      margin-top: 20px;
+      border: none;
+      padding: 16px 50px;
       font-size: 1.2rem;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      z-index: 1;
+      font-weight: 700;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(196, 69, 105, 0.5);
+      font-family: 'Poppins', sans-serif;
+      text-decoration: none;
+      display: inline-block;
     }
 
-    /* Glitter particles */
-    .glitter {
+    .next-page-btn:active {
+      transform: scale(0.95);
+    }
+
+    .rejection-msg {
       position: absolute;
-      width: 4px;
-      height: 4px;
-      background: white;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #ff6b9d;
+      padding: 15px 30px;
+      border-radius: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      z-index: 50;
+      display: none;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 107, 157, 0.3);
+      animation: popIn 0.3s ease;
+    }
+
+    @keyframes popIn {
+      0% { transform: translate(-50%, -50%) scale(0); }
+      80% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    .confetti-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 90;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      opacity: 0.8;
-      animation: sparkle 5s linear infinite;
+      animation: confettiFall 3s ease-out forwards;
     }
 
-    @keyframes sparkle {
-      from { transform: translateY(100vh) scale(0.5); opacity: 0.8; }
-      to { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    @keyframes confettiFall {
+      0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
 
-    /* Mobile adjustments */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.8rem;
-      }
-      .heart {
-        font-size: 60px;
-      }
-      button {
-        font-size: 1rem;
-        padding: 12px 20px;
-      }
+    .mini-heart {
+      position: absolute;
+      color: #ff6b9d;
+      font-size: 24px;
+      animation: miniFloat 2s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes miniFloat {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-150px) scale(0); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <div class="heart">💖</div>
-  <h1>Do you love me?</h1>
-  <div class="buttons">
-    <!-- Yes button goes to page2.html -->
-    <a href="page2.html">
-      <button class="yes">Yes</button>
-    </a>
-    <button class="no">No</button>
+  <div class="love-page" id="lovePage">
+    <div class="heart-bg" id="heartBg"></div>
+
+    <div class="content" id="mainContent">
+      <div class="question-text">Do You Love Me?</div>
+      <div class="sub-text">Be honest... I know the answer already 💕</div>
+
+      <div class="buttons-container" id="btnContainer">
+        <button class="yes-btn" id="yesBtn" onclick="handleYes()">YES 💖</button>
+        <button class="no-btn" id="noBtn" ontouchstart="handleNoTouch(event)" onclick="handleNoClick(event)">No 💔</button>
+      </div>
+    </div>
+
+    <div class="rejection-msg" id="rejMsg"></div>
+
+    <div class="success-screen" id="successScreen">
+      <div class="success-emoji">💕🥰💕</div>
+      <div class="success-text">I Knew It!</div>
+      <div class="success-sub">You make my heart skip a beat every single day. There's no escaping my love for you!</div>
+      <a href="page2.html" class="next-page-btn">Continue Our Story →</a>
+    </div>
+
+    <div class="confetti-container" id="confettiBox"></div>
   </div>
-  <div id="message">Oops! Try again 😜</div>
 
   <script>
-    const noBtn = document.querySelector(".no");
-    const message = document.getElementById("message");
-
-    noBtn.addEventListener("click", () => {
-      let currentSize = parseFloat(window.getComputedStyle(noBtn).fontSize);
-      noBtn.style.fontSize = (currentSize * 0.9) + "px";
-      message.style.opacity = 1;
-    });
-
-    // Generate glitter particles
-    function createGlitter() {
-      const glitter = document.createElement("div");
-      glitter.className = "glitter";
-      glitter.style.left = Math.random() * 100 + "vw";
-      glitter.style.animationDuration = (3 + Math.random() * 3) + "s";
-      document.body.appendChild(glitter);
-
-      setTimeout(() => glitter.remove(), 6000);
+    // Create floating background hearts
+    const heartBg = document.getElementById('heartBg');
+    const heartSymbols = ['💕', '💖', '💗', '💓', '💘', '💝', '❤️', '💜'];
+    
+    for (let i = 0; i < 25; i++) {
+      const span = document.createElement('span');
+      span.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+      span.style.left = Math.random() * 100 + '%';
+      span.style.fontSize = (15 + Math.random() * 25) + 'px';
+      span.style.animationDuration = (8 + Math.random() * 12) + 's';
+      span.style.animationDelay = Math.random() * 10 + 's';
+      heartBg.appendChild(span);
     }
 
-    setInterval(createGlitter, 800); // slower sparkle for mobile
+    // Create twinkling stars
+    const page = document.getElementById('lovePage');
+    for (let i = 0; i < 30; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 2 + 's';
+      star.style.width = (2 + Math.random() * 3) + 'px';
+      star.style.height = star.style.width;
+      page.appendChild(star);
+    }
+
+    const rejections = [
+      "Oops! Try again 😏",
+      "Are you sure? 🤔",
+      "That button seems broken... 💔",
+      "I think you meant the other one! 😉",
+      "Nice try! But no 💕",
+      "My heart says otherwise 💘",
+      "Wrong answer, sweetheart 😘",
+      "You can't escape love! 💗",
+      "Try clicking YES instead 😍",
+      "I don't believe you! 💝"
+    ];
+
+    let rejectionCount = 0;
+    let noBtn = document.getElementById('noBtn');
+    let container = document.getElementById('btnContainer');
+    let rejMsg = document.getElementById('rejMsg');
+
+    function getRandomPosition() {
+      const containerRect = container.getBoundingClientRect();
+      const maxX = containerRect.width - noBtn.offsetWidth - 20;
+      const maxY = containerRect.height - noBtn.offsetHeight - 20;
+      return {
+        x: 10 + Math.random() * maxX,
+        y: 10 + Math.random() * maxY
+      };
+    }
+
+    function showRejection() {
+      const msg = rejections[rejectionCount % rejections.length];
+      rejMsg.textContent = msg;
+      rejMsg.style.display = 'block';
+      
+      const pos = getRandomPosition();
+      noBtn.style.left = pos.x + 'px';
+      noBtn.style.top = pos.y + 'px';
+      
+      noBtn.style.animation = 'none';
+      noBtn.offsetHeight;
+      noBtn.style.animation = 'shake 0.3s ease';
+      
+      setTimeout(() => {
+        rejMsg.style.display = 'none';
+      }, 1500);
+      
+      rejectionCount++;
+    }
+
+    function handleNoTouch(e) {
+      e.preventDefault();
+      showRejection();
+    }
+
+    function handleNoClick(e) {
+      e.preventDefault();
+      showRejection();
+    }
+
+    let lastTouchTime = 0;
+    document.addEventListener('touchmove', function(e) {
+      const now = Date.now();
+      if (now - lastTouchTime < 100) return;
+      lastTouchTime = now;
+      
+      const touch = e.touches[0];
+      const btnRect = noBtn.getBoundingClientRect();
+      const distance = Math.sqrt(
+        Math.pow(touch.clientX - (btnRect.left + btnRect.width/2), 2) +
+        Math.pow(touch.clientY - (btnRect.top + btnRect.height/2), 2)
+      );
+      
+      if (distance < 100) {
+        const pos = getRandomPosition();
+        noBtn.style.left = pos.x + 'px';
+        noBtn.style.top = pos.y + 'px';
+      }
+    }, { passive: true });
+
+    function handleYes() {
+      const confettiBox = document.getElementById('confettiBox');
+      const colors = ['#ff6b9d', '#c44569', '#f8b500', '#ff4757', '#ff6348', '#ffa502', '#eccc68', '#ff9ff3', '#feca57'];
+      
+      for (let i = 0; i < 80; i++) {
+        const conf = document.createElement('div');
+        conf.className = 'confetti';
+        conf.style.left = Math.random() * 100 + '%';
+        conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.width = (6 + Math.random() * 10) + 'px';
+        conf.style.height = conf.style.width;
+        conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        conf.style.animationDelay = Math.random() * 1 + 's';
+        conf.style.animationDuration = (2 + Math.random() * 2) + 's';
+        confettiBox.appendChild(conf);
+      }
+
+      for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+          const mini = document.createElement('div');
+          mini.className = 'mini-heart';
+          mini.textContent = '💕';
+          mini.style.left = (20 + Math.random() * 60) + '%';
+          mini.style.bottom = '20%';
+          mini.style.fontSize = (15 + Math.random() * 20) + 'px';
+          page.appendChild(mini);
+          setTimeout(() => mini.remove(), 2000);
+        }, i * 100);
+      }
+
+      setTimeout(() => {
+        document.getElementById('successScreen').classList.add('active');
+      }, 500);
+    }
   </script>
 </body>
 </html>
