@@ -1,467 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Do You Love Me?</title>
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joshua Kisenja | Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eceef1;        /* soft gray */
+  --surface:#f8f9fa;   /* off-white cards */
+  --ink:#14213d;       /* deep navy */
+  --muted:#5b6475;
+  --line:#d5d9e0;
+  --accent:#1f5bff;    /* electric blue */
+  --on-accent:#ffffff;
+  --radius:14px;
+}
+:root[data-theme="dark"]{
+  --bg:#0e1424;
+  --surface:#161e33;
+  --ink:#eef1f8;
+  --muted:#9aa4ba;
+  --line:#26314d;
+  --accent:#5b8aff;
+  --on-accent:#0e1424;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:"DM Sans",system-ui,sans-serif;font-size:1.05rem;line-height:1.65;
+  transition:background .3s,color .3s;
+}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.1;letter-spacing:-.02em}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 
-    body {
-      overflow: hidden;
-    }
+/* Header */
+header{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.logo{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;text-decoration:none}
+nav{display:flex;gap:22px;align-items:center}
+nav a{text-decoration:none;color:var(--muted);transition:color .2s}
+nav a:hover{color:var(--accent)}
+#theme{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-size:.9rem;cursor:pointer;transition:border-color .2s}
+#theme:hover{border-color:var(--accent)}
 
-    .love-page {
-      width: 100%;
-      height: 100vh;
-      min-height: 100dvh;
-      overflow: hidden;
-      position: relative;
-      background: linear-gradient(135deg, #1a0a2e 0%, #4a1a4e 30%, #8b2f5c 60%, #d44d7a 100%);
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+section{padding:96px 0}
 
-    .heart-bg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
-    }
+/* Hero */
+.hero{padding:120px 0 96px}
+.hero h1{font-size:clamp(3rem,10vw,7.5rem);font-weight:800;max-width:11ch}
+.hero p{max-width:52ch;color:var(--muted);font-size:1.2rem;margin:28px 0 36px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:13px 24px;border-radius:999px;text-decoration:none;font-weight:500;border:1.5px solid var(--accent);transition:transform .2s,background .2s,color .2s}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.ghost{color:var(--accent)}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost:hover{background:var(--accent);color:var(--on-accent)}
 
-    .heart-bg span {
-      position: absolute;
-      color: rgba(255, 255, 255, 0.15);
-      font-size: 20px;
-      animation: floatUp linear infinite;
-      bottom: -50px;
-    }
+/* Headings */
+.sec-head{margin-bottom:40px}
+.sec-head h2{font-size:clamp(2rem,5vw,3.2rem)}
+.sec-head p{color:var(--muted);margin-top:10px;max-width:56ch}
 
-    @keyframes floatUp {
-      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
-    }
+/* About */
+.about{display:grid;grid-template-columns:1.4fr 1fr;gap:48px;align-items:start}
+.about p+p{margin-top:16px}
+.facts{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px}
+.facts dt{font-weight:700;font-family:"Bricolage Grotesque",sans-serif}
+.facts dd{color:var(--muted);margin-bottom:14px}
+.facts dd:last-child{margin-bottom:0}
 
-    .star {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      background: white;
-      border-radius: 50%;
-      animation: twinkle 2s ease-in-out infinite;
-    }
+/* Projects */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.card{
+  display:flex;flex-direction:column;gap:10px;text-decoration:none;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+}
+.card h3{font-size:1.3rem}
+.card p{color:var(--muted);font-size:.97rem;flex:1}
+.card span{color:var(--accent);font-weight:500;font-size:.95rem}
+.card:hover{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 14px 30px -14px color-mix(in srgb,var(--accent) 55%,transparent)}
 
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.3; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.5); }
-    }
+/* Skills */
+.skills{display:flex;flex-wrap:wrap;gap:10px}
+.skills li{list-style:none;padding:9px 18px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
 
-    .content {
-      position: relative;
-      z-index: 10;
-      text-align: center;
-      padding: 20px;
-      width: 100%;
-      max-width: 400px;
-    }
+/* Contact */
+.contact{background:var(--ink);color:var(--bg);border-radius:24px;padding:64px 32px;text-align:center}
+.contact h2{font-size:clamp(2rem,5vw,3.4rem)}
+.contact p{opacity:.8;margin:14px auto 28px;max-width:46ch}
+.contact .btn.primary{background:var(--accent);color:var(--on-accent)}
+.links{display:flex;gap:20px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+.links a{opacity:.8}
+.links a:hover{opacity:1}
+footer{padding:32px 0 48px;text-align:center;color:var(--muted);font-size:.9rem}
 
-    .question-text {
-      font-family: 'Dancing Script', cursive;
-      font-size: 3.5rem;
-      color: #fff;
-      text-shadow: 0 0 20px rgba(255, 105, 180, 0.6), 0 0 40px rgba(255, 105, 180, 0.3);
-      margin-bottom: 10px;
-      animation: glowPulse 2s ease-in-out infinite;
-    }
+/* Scroll reveal for sections */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
 
-    .sub-text {
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 50px;
-      font-weight: 400;
-    }
-
-    @keyframes glowPulse {
-      0%, 100% { text-shadow: 0 0 20px rgba(255, 105, 180, 0.6), 0 0 40px rgba(255, 105, 180, 0.3); }
-      50% { text-shadow: 0 0 30px rgba(255, 105, 180, 0.9), 0 0 60px rgba(255, 105, 180, 0.5); }
-    }
-
-    .buttons-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      position: relative;
-      width: 100%;
-      min-height: 200px;
-    }
-
-    .yes-btn {
-      background: linear-gradient(135deg, #ff6b9d, #c44569);
-      color: white;
-      border: none;
-      padding: 18px 60px;
-      font-size: 1.5rem;
-      font-weight: 700;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 8px 25px rgba(196, 69, 105, 0.5), 0 0 30px rgba(255, 107, 157, 0.3);
-      transition: all 0.3s ease;
-      font-family: 'Poppins', sans-serif;
-      position: relative;
-      z-index: 20;
-      animation: heartbeat 1.5s ease-in-out infinite;
-    }
-
-    @keyframes heartbeat {
-      0%, 100% { transform: scale(1); }
-      14% { transform: scale(1.08); }
-      28% { transform: scale(1); }
-      42% { transform: scale(1.05); }
-      70% { transform: scale(1); }
-    }
-
-    .yes-btn:active {
-      transform: scale(0.95);
-      box-shadow: 0 4px 15px rgba(196, 69, 105, 0.5);
-    }
-
-    .no-btn {
-      background: linear-gradient(135deg, #636e72, #2d3436);
-      color: rgba(255, 255, 255, 0.6);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      padding: 14px 45px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      border-radius: 50px;
-      cursor: pointer;
-      font-family: 'Poppins', sans-serif;
-      position: absolute;
-      top: 100px;
-      transition: all 0.15s ease;
-      z-index: 15;
-      touch-action: none;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
-    }
-
-    .success-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #1a0a2e 0%, #4a1a4e 30%, #8b2f5c 60%, #d44d7a 100%);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .success-screen.active {
-      display: flex;
-      animation: fadeIn 0.8s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .success-emoji {
-      font-size: 5rem;
-      margin-bottom: 20px;
-      animation: bounce 1s ease infinite;
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-    }
-
-    .success-text {
-      font-family: 'Dancing Script', cursive;
-      font-size: 2.5rem;
-      color: #fff;
-      margin-bottom: 15px;
-      text-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
-    }
-
-    .success-sub {
-      font-size: 1rem;
-      color: rgba(255, 255, 255, 0.8);
-      margin-bottom: 40px;
-      max-width: 300px;
-    }
-
-    .next-page-btn {
-      background: linear-gradient(135deg, #ff6b9d, #c44569);
-      color: white;
-      border: none;
-      padding: 16px 50px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 8px 25px rgba(196, 69, 105, 0.5);
-      font-family: 'Poppins', sans-serif;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .next-page-btn:active {
-      transform: scale(0.95);
-    }
-
-    .rejection-msg {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.85);
-      color: #ff6b9d;
-      padding: 15px 30px;
-      border-radius: 20px;
-      font-size: 1rem;
-      font-weight: 600;
-      z-index: 50;
-      display: none;
-      white-space: nowrap;
-      border: 1px solid rgba(255, 107, 157, 0.3);
-      animation: popIn 0.3s ease;
-    }
-
-    @keyframes popIn {
-      0% { transform: translate(-50%, -50%) scale(0); }
-      80% { transform: translate(-50%, -50%) scale(1.1); }
-      100% { transform: translate(-50%, -50%) scale(1); }
-    }
-
-    .confetti-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 90;
-      overflow: hidden;
-    }
-
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      animation: confettiFall 3s ease-out forwards;
-    }
-
-    @keyframes confettiFall {
-      0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-    }
-
-    .mini-heart {
-      position: absolute;
-      color: #ff6b9d;
-      font-size: 24px;
-      animation: miniFloat 2s ease-out forwards;
-      pointer-events: none;
-    }
-
-    @keyframes miniFloat {
-      0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-150px) scale(0); opacity: 0; }
-    }
-  </style>
+@media (max-width:760px){
+  .about{grid-template-columns:1fr}
+  nav a:not(#theme){display:none}
+  section{padding:64px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
 </head>
 <body>
-  <div class="love-page" id="lovePage">
-    <div class="heart-bg" id="heartBg"></div>
 
-    <div class="content" id="mainContent">
-      <div class="question-text">Do You Love Me?</div>
-      <div class="sub-text">Be honest... I know the answer already 💕</div>
+<header>
+  <div class="wrap">
+    <a class="logo" href="#top">Joshua Kisenja</a>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+      <button id="theme" type="button" aria-label="Switch between light and dark theme">Dark mode</button>
+    </nav>
+  </div>
+</header>
 
-      <div class="buttons-container" id="btnContainer">
-        <button class="yes-btn" id="yesBtn" onclick="handleYes()">YES 💖</button>
-        <button class="no-btn" id="noBtn" ontouchstart="handleNoTouch(event)" onclick="handleNoClick(event)">No 💔</button>
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <h1>Joshua Kisenja</h1>
+      <!-- EDIT: one sentence on what you do -->
+      <p>Add a one-line summary of what you do and who you build for. Replace this text with your own.</p>
+      <div class="btns">
+        <a class="btn primary" href="#projects">See my projects</a>
+        <a class="btn ghost" href="#contact">Get in touch</a>
       </div>
     </div>
+  </section>
 
-    <div class="rejection-msg" id="rejMsg"></div>
-
-    <div class="success-screen" id="successScreen">
-      <div class="success-emoji">💕🥰💕</div>
-      <div class="success-text">I Knew It!</div>
-      <div class="success-sub">You make my heart skip a beat every single day. There's no escaping my love for you!</div>
-      <a href="page2.html" class="next-page-btn">Continue Our Story →</a>
+  <!-- ABOUT -->
+  <section id="about" class="reveal">
+    <div class="wrap">
+      <div class="sec-head"><h2>About me</h2></div>
+      <div class="about">
+        <div>
+          <!-- EDIT: your story -->
+          <p>Write a short paragraph about who you are and how you got started.</p>
+          <p>Add a second paragraph about the kind of work you like to take on and what you care about.</p>
+        </div>
+        <dl class="facts">
+          <!-- EDIT: quick facts -->
+          <dt>Based in</dt><dd>Your city, country</dd>
+          <dt>Focus</dt><dd>Your main field</dd>
+          <dt>Available for</dt><dd>Freelance, full-time, collaboration</dd>
+        </dl>
+      </div>
     </div>
+  </section>
 
-    <div class="confetti-container" id="confettiBox"></div>
-  </div>
+  <!-- PROJECTS -->
+  <section id="projects" class="reveal">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Projects</h2>
+        <p>Each card opens a page I built. Select one to see it.</p>
+      </div>
+      <div class="grid" id="project-grid"></div>
+    </div>
+  </section>
 
-  <script>
-    // Create floating background hearts
-    const heartBg = document.getElementById('heartBg');
-    const heartSymbols = ['💕', '💖', '💗', '💓', '💘', '💝', '❤️', '💜'];
-    
-    for (let i = 0; i < 25; i++) {
-      const span = document.createElement('span');
-      span.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
-      span.style.left = Math.random() * 100 + '%';
-      span.style.fontSize = (15 + Math.random() * 25) + 'px';
-      span.style.animationDuration = (8 + Math.random() * 12) + 's';
-      span.style.animationDelay = Math.random() * 10 + 's';
-      heartBg.appendChild(span);
-    }
+  <!-- SKILLS -->
+  <section id="skills" class="reveal">
+    <div class="wrap">
+      <div class="sec-head"><h2>Skills</h2></div>
+      <!-- EDIT: add or remove <li> items -->
+      <ul class="skills">
+        <li>Skill one</li><li>Skill two</li><li>Skill three</li>
+        <li>Skill four</li><li>Skill five</li><li>Skill six</li>
+      </ul>
+    </div>
+  </section>
 
-    // Create twinkling stars
-    const page = document.getElementById('lovePage');
-    for (let i = 0; i < 30; i++) {
-      const star = document.createElement('div');
-      star.className = 'star';
-      star.style.left = Math.random() * 100 + '%';
-      star.style.top = Math.random() * 100 + '%';
-      star.style.animationDelay = Math.random() * 2 + 's';
-      star.style.width = (2 + Math.random() * 3) + 'px';
-      star.style.height = star.style.width;
-      page.appendChild(star);
-    }
+  <!-- CONTACT -->
+  <section id="contact" class="reveal">
+    <div class="wrap">
+      <div class="contact">
+        <h2>Let's work together</h2>
+        <p>Tell me about your project and I will get back to you.</p>
+        <!-- EDIT: your email -->
+        <a class="btn primary" href="mailto:your@email.com">Email Joshua</a>
+        <div class="links">
+          <!-- EDIT: your links -->
+          <a href="#">LinkedIn</a>
+          <a href="#">GitHub</a>
+          <a href="#">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    const rejections = [
-      "Oops! Try again 😏",
-      "Are you sure? 🤔",
-      "That button seems broken... 💔",
-      "I think you meant the other one! 😉",
-      "Nice try! But no 💕",
-      "My heart says otherwise 💘",
-      "Wrong answer, sweetheart 😘",
-      "You can't escape love! 💗",
-      "Try clicking YES instead 😍",
-      "I don't believe you! 💝"
-    ];
+</main>
 
-    let rejectionCount = 0;
-    let noBtn = document.getElementById('noBtn');
-    let container = document.getElementById('btnContainer');
-    let rejMsg = document.getElementById('rejMsg');
+<footer>© <span id="year"></span> Joshua Kisenja</footer>
 
-    function getRandomPosition() {
-      const containerRect = container.getBoundingClientRect();
-      const maxX = containerRect.width - noBtn.offsetWidth - 20;
-      const maxY = containerRect.height - noBtn.offsetHeight - 20;
-      return {
-        x: 10 + Math.random() * maxX,
-        y: 10 + Math.random() * maxY
-      };
-    }
+<script>
+/* ============================================================
+   EDIT YOUR PROJECTS HERE
+   15 placeholders. For each one, change:
+     title : the project name
+     desc  : the short description shown under the name
+     url   : the link to the page you created (e.g. "projects/maze.html")
+   ============================================================ */
+const projects = [
+  { title: "Project name 1",  desc: "Short description of project 1.",  url: "#" },
+  { title: "Project name 2",  desc: "Short description of project 2.",  url: "#" },
+  { title: "Project name 3",  desc: "Short description of project 3.",  url: "#" },
+  { title: "Project name 4",  desc: "Short description of project 4.",  url: "#" },
+  { title: "Project name 5",  desc: "Short description of project 5.",  url: "#" },
+  { title: "Project name 6",  desc: "Short description of project 6.",  url: "#" },
+  { title: "Project name 7",  desc: "Short description of project 7.",  url: "#" },
+  { title: "Project name 8",  desc: "Short description of project 8.",  url: "#" },
+  { title: "Project name 9",  desc: "Short description of project 9.",  url: "#" },
+  { title: "Project name 10", desc: "Short description of project 10.", url: "#" },
+  { title: "Project name 11", desc: "Short description of project 11.", url: "#" },
+  { title: "Project name 12", desc: "Short description of project 12.", url: "#" },
+  { title: "Project name 13", desc: "Short description of project 13.", url: "#" },
+  { title: "Project name 14", desc: "Short description of project 14.", url: "#" },
+  { title: "Project name 15", desc: "Short description of project 15.", url: "#" }
+];
 
-    function showRejection() {
-      const msg = rejections[rejectionCount % rejections.length];
-      rejMsg.textContent = msg;
-      rejMsg.style.display = 'block';
-      
-      const pos = getRandomPosition();
-      noBtn.style.left = pos.x + 'px';
-      noBtn.style.top = pos.y + 'px';
-      
-      noBtn.style.animation = 'none';
-      noBtn.offsetHeight;
-      noBtn.style.animation = 'shake 0.3s ease';
-      
-      setTimeout(() => {
-        rejMsg.style.display = 'none';
-      }, 1500);
-      
-      rejectionCount++;
-    }
+const grid = document.getElementById("project-grid");
+projects.forEach(p => {
+  const a = document.createElement("a");
+  a.className = "card";
+  a.href = p.url;
+  const h = document.createElement("h3"); h.textContent = p.title;
+  const d = document.createElement("p");  d.textContent = p.desc;
+  const s = document.createElement("span"); s.textContent = "Open project";
+  a.append(h, d, s);
+  grid.appendChild(a);
+});
 
-    function handleNoTouch(e) {
-      e.preventDefault();
-      showRejection();
-    }
+/* Theme switch (remembers your choice) */
+const root = document.documentElement, btn = document.getElementById("theme");
+function setTheme(t){
+  root.setAttribute("data-theme", t);
+  btn.textContent = t === "dark" ? "Light mode" : "Dark mode";
+  try { localStorage.setItem("theme", t); } catch (e) {}
+}
+let saved = null;
+try { saved = localStorage.getItem("theme"); } catch (e) {}
+setTheme(saved || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
+btn.addEventListener("click", () => setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"));
 
-    function handleNoClick(e) {
-      e.preventDefault();
-      showRejection();
-    }
+/* Fade in sections on scroll */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}), { threshold: .12 });
+document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-    let lastTouchTime = 0;
-    document.addEventListener('touchmove', function(e) {
-      const now = Date.now();
-      if (now - lastTouchTime < 100) return;
-      lastTouchTime = now;
-      
-      const touch = e.touches[0];
-      const btnRect = noBtn.getBoundingClientRect();
-      const distance = Math.sqrt(
-        Math.pow(touch.clientX - (btnRect.left + btnRect.width/2), 2) +
-        Math.pow(touch.clientY - (btnRect.top + btnRect.height/2), 2)
-      );
-      
-      if (distance < 100) {
-        const pos = getRandomPosition();
-        noBtn.style.left = pos.x + 'px';
-        noBtn.style.top = pos.y + 'px';
-      }
-    }, { passive: true });
-
-    function handleYes() {
-      const confettiBox = document.getElementById('confettiBox');
-      const colors = ['#ff6b9d', '#c44569', '#f8b500', '#ff4757', '#ff6348', '#ffa502', '#eccc68', '#ff9ff3', '#feca57'];
-      
-      for (let i = 0; i < 80; i++) {
-        const conf = document.createElement('div');
-        conf.className = 'confetti';
-        conf.style.left = Math.random() * 100 + '%';
-        conf.style.background = colors[Math.floor(Math.random() * colors.length)];
-        conf.style.width = (6 + Math.random() * 10) + 'px';
-        conf.style.height = conf.style.width;
-        conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-        conf.style.animationDelay = Math.random() * 1 + 's';
-        conf.style.animationDuration = (2 + Math.random() * 2) + 's';
-        confettiBox.appendChild(conf);
-      }
-
-      for (let i = 0; i < 20; i++) {
-        setTimeout(() => {
-          const mini = document.createElement('div');
-          mini.className = 'mini-heart';
-          mini.textContent = '💕';
-          mini.style.left = (20 + Math.random() * 60) + '%';
-          mini.style.bottom = '20%';
-          mini.style.fontSize = (15 + Math.random() * 20) + 'px';
-          page.appendChild(mini);
-          setTimeout(() => mini.remove(), 2000);
-        }, i * 100);
-      }
-
-      setTimeout(() => {
-        document.getElementById('successScreen').classList.add('active');
-      }, 500);
-    }
-  </script>
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
