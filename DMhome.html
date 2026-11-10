@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Services Management System</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#050816,#0b1026,#030712);
+    color:white;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* Loading Screen */
+#loader{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#030712;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.loader-title{
+    font-size:2rem;
+    letter-spacing:3px;
+    color:#00e5ff;
+    margin-bottom:20px;
+    text-align:center;
+}
+
+.bar{
+    width:320px;
+    height:10px;
+    border-radius:20px;
+    background:#1c233b;
+    overflow:hidden;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00e5ff,#00ffb3);
+    animation:load 3s linear forwards;
+}
+
+.loading-text{
+    margin-top:15px;
+    color:#8ae9ff;
+}
+
+@keyframes load{
+    from{width:0;}
+    to{width:100%;}
+}
+
+/* Main Page */
+.main{
+    display:none;
+    min-height:100vh;
+    padding:40px;
+}
+
+.hero{
+    text-align:center;
+    padding:40px 20px;
+}
+
+.hero h1{
+    font-size:3rem;
+    color:#00e5ff;
+    text-shadow:0 0 15px #00e5ff;
+}
+
+.hero p{
+    color:#b8c6db;
+    margin-top:10px;
+}
+
+.info-card{
+    max-width:800px;
+    margin:30px auto;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(15px);
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+}
+
+.summary{
+    margin-top:15px;
+    color:#d2d8e4;
+    line-height:1.6;
+}
+
+.nav-grid{
+    max-width:1000px;
+    margin:40px auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+.card{
+    text-decoration:none;
+    color:white;
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(0,229,255,0.2);
+    border-radius:20px;
+    padding:35px 20px;
+    text-align:center;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 0 25px rgba(0,229,255,0.5);
+    border-color:#00e5ff;
+}
+
+.card span{
+    font-size:3rem;
+    display:block;
+    margin-bottom:15px;
+}
+
+.card h3{
+    color:#00e5ff;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:#88a4c9;
+}
+</style>
+</head>
+
+<body>
+
+<div id="loader">
+    <div class="loader-title">
+        STUDENT SERVICES<br>
+        MANAGEMENT SYSTEM
+    </div>
+
+    <div class="bar">
+        <div class="progress"></div>
+    </div>
+
+    <div class="loading-text">
+        Initializing Database Modules...
+    </div>
+</div>
+
+<div class="main" id="main">
+
+    <div class="hero">
+        <h1>STUDENT SERVICES MANAGEMENT SYSTEM</h1>
+        <p>Database Management Skills Practical Assessment</p>
+    </div>
+
+    <div class="info-card">
+        <h2>Student Information</h2>
+
+        <p><strong>Name:</strong> Joshua</p>
+        <p><strong>Admission No:</strong> 27957</p>
+        <p><strong>Course:</strong> Computer Science Level 6</p>
+        <p><strong>Institution:</strong> PC Kinyanjui Technical Training Institute</p>
+
+        <div class="summary">
+            This project implements a Student Services Management
+            System designed to manage student records, courses,
+            assessments, accommodation, attachments and
+            extracurricular activities using Microsoft SQL Server
+            and GitHub.
+        </div>
+    </div>
+
+    <div class="nav-grid">
+
+        <a href="documentation.html" class="card">
+            <span>📄</span>
+            <h3>Documentation</h3>
+        </a>
+
+        <a href="scripts.html" class="card">
+            <span>💻</span>
+            <h3>SQL Scripts</h3>
+        </a>
+
+        <a href="diagrams.html" class="card">
+            <span>📊</span>
+            <h3>Diagrams</h3>
+        </a>
+
+        <a href="screenshots.html" class="card">
+            <span>🖼️</span>
+            <h3>Screenshots</h3>
+        </a>
+
+        <a href="downloads.html" class="card">
+            <span>📥</span>
+            <h3>Downloads</h3>
+        </a>
+
+    </div>
+
+    <footer>
+        Database Management Skills • Student Services Management System • 2026
+    </footer>
+
+</div>
+
+<script>
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('loader').style.display='none';
+        document.getElementById('main').style.display='block';
+    },3000);
+});
+</script>
+
+</body>
+</html>
