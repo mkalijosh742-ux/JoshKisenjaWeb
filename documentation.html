@@ -36,7 +36,7 @@ footer{text-align:center;font-size:.85em;color:#777}
 <p><em>Project Documentation – Database Management Skills</em></p>
 <table class="meta" style="width:auto;margin:20px auto">
 <tr><td><b>Candidate</b></td><td>Joshua Kisenja</td></tr>
-<tr><td><b>Adm No.</b></td><td>[ENTER ADM NO.]</td></tr>
+<tr><td><b>Adm No.</b></td><td>27957</td></tr>
 <tr><td><b>Course</b></td><td>Computer Science Level 6 (CS L6 SEP 25 A)</td></tr>
 <tr><td><b>Unit Code</b></td><td>ICT/CU/CS/CR/05/6/MA</td></tr>
 <tr><td><b>Session</b></td><td>May – June 2026 · Practical Assessment (8 weeks)</td></tr>
@@ -70,7 +70,7 @@ footer{text-align:center;font-size:.85em;color:#777}
 <h2 id="s2">2. Task 1 – GitHub Repository</h2>
 <h3>2.1 Repository Creation</h3>
 <p>A repository named <b>Student Services</b> was created on GitHub to store all scripts and evidence. Every critical step was pushed through a pull request, and each script and screenshot is annotated with its purpose.</p>
-<div class="shot" data-img="reposition created">PLACE SCREENSHOT: GitHub Repository Created</div><div class="cap">Figure 2.1 – "Student Services" repository on GitHub</div>
+<div class="shot" data-img="github-repository-created">PLACE SCREENSHOT: GitHub Repository Created</div><div class="cap">Figure 2.1 – "Student Services" repository on GitHub</div>
 <h3>2.2 GitHub Desktop</h3>
 <div class="shot" data-img="github-desktop-repository">PLACE SCREENSHOT: GitHub Desktop Repository</div><div class="cap">Figure 2.2 – Repository cloned in GitHub Desktop</div>
 <h3>2.3 Project Folder Structure</h3>
@@ -418,46 +418,61 @@ function link(g,a,b,lab){
  t(20,170,'Each step removes a dependency problem; final tables are linked only by foreign keys.',17,'#777');
 })();
 </script>
+
 <script>
-/* ===== SCREENSHOT SETTINGS =====
-   1. Put your screenshots in the folder below (next to this HTML file).
-   2. For each line, change the file name on the right to match your screenshot.
-   3. Leave a name as '' to keep the placeholder box. */
-const FOLDER = 'screenshots/';
-const IMAGES = {
-  'github-repository-created': 'github-repository-created.png',   // GitHub Repository Created
-  'github-desktop-repository': 'github-desktop-repository.png',   // GitHub Desktop Repository
-  'project-folder-structure': 'project-folder-structure.png',   // Project Folder Structure
-  'sql-server-installation': 'sql-server-installation.png',   // SQL Server Installation
-  'sql-server-management-studio': 'sql-server-management-studio.png',   // SQL Server Management Studio
-  'studentservicesdb-created': 'studentservicesdb-created.png',   // StudentServicesDB Created
-  'user-accounts-created': 'user-accounts-created.png',   // User Accounts Created
-  'departments-table-created': 'departments-table-created.png',   // Departments Table Created
-  'departments-table-records': 'departments-table-records.png',   // Departments Table Records
-  'er-diagram': 'er-diagram.png',   // ER Diagram
-  'normalized-database-schema': 'normalized-database-schema.png',   // Normalized Database Schema
-  'create-table-execution': 'create-table-execution.png',   // CREATE TABLE Execution
-  'constraints-applied': 'constraints-applied.png',   // Constraints Applied
-  'schema-modifications-alter-export-drop-recreate': 'schema-modifications-alter-export-drop-recreate.png',   // Schema Modifications (ALTER, Export, Drop, Recreate)
-  'sample-data-inserted': 'sample-data-inserted.png',   // Sample Data Inserted
-  'select-query-results': 'select-query-results.png',   // SELECT Query Results
-  'update-query-results': 'update-query-results.png',   // UPDATE Query Results
-  'delete-query-results': 'delete-query-results.png',   // DELETE Query Results
-  'join-query-results': 'join-query-results.png',   // JOIN Query Results
-  'aggregate-query-results': 'aggregate-query-results.png',   // Aggregate Query Results
-  'views-created': 'views-created.png',   // Views Created
-  'view-query-results': 'view-query-results.png',   // View Query Results
-  'database-export-sql': 'database-export-sql.png',   // Database Export (.sql)
-  'github-commit-history': 'github-commit-history.png',   // GitHub Commit History
-  'final-repository': 'final-repository.png',   // Final Repository
-};
-/* ===== do not edit below ===== */
-document.querySelectorAll('.shot[data-img]').forEach(box=>{
-  const file=IMAGES[box.dataset.img]; if(!file) return;
-  const img=new Image(); img.alt=box.textContent.replace('PLACE SCREENSHOT:','').trim();
-  img.style.cssText='width:100%;border:1px solid #cdbfa3;margin:16px 0 4px;display:block';
-  img.onload=()=>box.replaceWith(img);   // if the file is missing, the placeholder stays
-  img.src=FOLDER+file;
+/* =====================  HOW THE SCREENSHOTS WORK  =====================
+   1. Save your screenshots in the SAME folder as this HTML file.
+   2. Name them DATA1, DATA2, DATA3 ... in the order the boxes appear in the
+      document (the first screenshot box is DATA1, the next is DATA2, etc.).
+   3. Use .png, .jpg, .jpeg or .webp - the page tries each one automatically.
+   4. Refresh the page. Each image replaces its dashed box.
+      If a file is missing, the dashed box stays (nothing breaks) and
+      it tells you which name to use.
+
+   ORDER OF SCREENSHOTS:
+   DATA1  =  GitHub Repository Created
+   DATA2  =  GitHub Desktop Repository
+   DATA3  =  Project Folder Structure
+   DATA4  =  SQL Server Installation
+   DATA5  =  SQL Server Management Studio
+   DATA6  =  StudentServicesDB Created
+   DATA7  =  User Accounts Created
+   DATA8  =  Departments Table Created
+   DATA9  =  Departments Table Records
+   DATA10  =  ER Diagram
+   DATA11  =  Normalized Database Schema
+   DATA12  =  CREATE TABLE Execution
+   DATA13  =  Constraints Applied
+   DATA14  =  Schema Modifications (ALTER, Export, Drop, Recreate)
+   DATA15  =  Sample Data Inserted
+   DATA16  =  SELECT Query Results
+   DATA17  =  UPDATE Query Results
+   DATA18  =  DELETE Query Results
+   DATA19  =  JOIN Query Results
+   DATA20  =  Aggregate Query Results
+   DATA21  =  Views Created
+   DATA22  =  View Query Results
+   DATA23  =  Database Export (.sql)
+   DATA24  =  GitHub Commit History
+   DATA25  =  Final Repository
+   ===================================================================== */
+const EXTENSIONS = ['png','jpg','jpeg','webp'];   // file types to try
+const PREFIX = 'DATA';                            // change if you rename the files, e.g. 'IMG'
+
+document.querySelectorAll('.shot').forEach((box, i) => {
+  const n = i + 1;                                // position of this box in the document
+  const label = box.textContent.replace('PLACE SCREENSHOT:','').trim();
+  box.textContent = 'PLACE SCREENSHOT: ' + label + '  (save as ' + PREFIX + n + ')';
+  let tries = 0;
+  const img = new Image();
+  img.alt = label;
+  img.style.cssText = 'width:100%;border:1px solid #cdbfa3;margin:16px 0 4px;display:block';
+  img.onload = () => box.replaceWith(img);        // found: swap the box for the picture
+  img.onerror = () => {                           // not found: try the next file type
+    tries++;
+    if (tries < EXTENSIONS.length) img.src = PREFIX + n + '.' + EXTENSIONS[tries];
+  };
+  img.src = PREFIX + n + '.' + EXTENSIONS[0];
 });
 </script>
 </body></html>
