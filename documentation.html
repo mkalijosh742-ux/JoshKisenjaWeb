@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Services Management System – Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d1b26;--purple:#4b2a7b;--paper:#fbf7ee;--line:#cdbfa3;--code:#f1ebdc}
+*{box-sizing:border-box}
+body{margin:0;background:#e9e2d0;color:var(--ink);font:17px/1.65 Georgia,"Times New Roman",serif}
+.page{max-width:880px;margin:24px auto;background:var(--paper);padding:56px 64px;border:1px solid var(--line);box-shadow:0 4px 18px #0002}
+h1,h2,h3{font-family:Georgia,serif;color:var(--purple);line-height:1.25}
+h2{font-size:1.6em;border-bottom:2px double var(--purple);padding-bottom:6px;margin-top:2.2em}
+h3{font-size:1.15em;margin-top:1.6em}
+.cover{text-align:center;padding:40px 0;border-bottom:4px double var(--purple)}
+.cover h1{font-size:2.2em;margin:.3em 0}
+.cover small{letter-spacing:.15em;text-transform:uppercase}
+.meta td{border:0;padding:3px 10px}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:.92em}
+th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+th{background:#ece3cf;color:var(--purple)}
+pre{background:var(--code);border-left:4px solid var(--purple);padding:12px 14px;overflow-x:auto;font:13px/1.5 Consolas,monospace}
+.shot{border:2px dashed #8a7a5a;background:#fffdf6;text-align:center;padding:46px 16px;margin:16px 0 4px;color:#7a6a4a;font-family:Caveat,"Comic Sans MS",cursive;font-size:1.35em}
+.shot::before{content:"▢ ";}
+.cap{font-style:italic;font-size:.88em;text-align:center;color:#666;margin-bottom:18px}
+.toc a{color:var(--purple);text-decoration:none}.toc li{margin:3px 0}
+.sketch{background:#fffef9;border:1px solid var(--line);margin:14px 0;padding:6px}
+.note{background:#f3ecfa;border-left:4px solid var(--purple);padding:8px 14px;font-size:.92em}
+footer{text-align:center;font-size:.85em;color:#777}
+@media print{body{background:#fff}.page{box-shadow:none;border:0;margin:0}h2{page-break-before:always}.cover+h2{page-break-before:auto}}
+@media(max-width:700px){.page{padding:28px 18px}}
+</style></head><body><div class="page">
+
+<div class="cover">
+<small>PC Kinyanjui Technical Training Institute · Computing &amp; Informatics Department</small>
+<h1>Student Services Management System</h1>
+<p><em>Project Documentation – Database Management Skills</em></p>
+<table class="meta" style="width:auto;margin:20px auto">
+<tr><td><b>Candidate</b></td><td>Joshua Kisenja</td></tr>
+<tr><td><b>Adm No.</b></td><td>27957</td></tr>
+<tr><td><b>Course</b></td><td>Computer Science Level 6 </td></tr>
+<tr><td><b>Unit Code</b></td><td>ICT/CU/CS/CR/05/6/MA</td></tr>
+<tr><td><b>Session</b></td><td>May – June 2026 · Practical Assessment (8 weeks)</td></tr>
+</table></div>
+
+<h2 style="border:0">Table of Contents</h2>
+<ol class="toc">
+<li><a href="#s1">Introduction</a></li><li><a href="#s2">Task 1 – GitHub Repository</a></li>
+<li><a href="#s3">Task 2 – Database Setup</a></li><li><a href="#s4">Task 3 – Database Design</a></li>
+<li><a href="#s5">Task 4 – DDL Operations</a></li><li><a href="#s6">Task 5 – DML Operations</a></li>
+<li><a href="#s7">Task 6 – Views</a></li><li><a href="#s8">Conclusion</a></li>
+<li><a href="#s9">References</a></li><li><a href="#s10">Appendices</a></li></ol>
+
+<h2 id="s1">1. Introduction</h2>
+<h3>1.1 Project Overview</h3>
+<p>The college requires an integrated database to manage academic and non-academic services: student records, course registration, teaching, assessments, accommodation, welfare, workload allocation, industry attachments and clubs. This document records the full design and implementation of the <b>Student Services Management System</b> (database: <code>StudentServicesDB</code>) using Microsoft SQL Server.</p>
+<h3>1.2 Objectives</h3>
+<ul><li>Keep accurate, consistent records and minimise redundancy through normalisation to 3NF.</li>
+<li>Enforce business rules (one course per student, assessment limits, 75% attendance, 60% pass mark) using constraints.</li>
+<li>Provide role-based views for registrar, HODs, lecturers, dean, accounts and workload reporting.</li>
+<li>Version-control all scripts on GitHub with annotated screenshots.</li></ul>
+<h3>1.3 Key Business Rules</h3>
+<table><tr><th>Area</th><th>Rule</th></tr>
+<tr><td>Modules</td><td>Diploma = 3, Certificate = 2, Artisan = 1; each module spans three terms.</td></tr>
+<tr><td>Subjects</td><td>Code includes the module code; 2–6 teaching hours per week.</td></tr>
+<tr><td>Assessment</td><td>CAT1 and CAT2 out of 20 each; exam out of 60. Exam needs ≥75% attendance and both CATs.</td></tr>
+<tr><td>Pass mark</td><td>Below 60% → supplementary exam after fee payment; results recorded separately.</td></tr>
+<tr><td>Enrolment</td><td>One course at a time; status: in session / on attachment / completed.</td></tr>
+<tr><td>Hostel</td><td>Allocated only after confirmed accommodation payment.</td></tr></table>
+
+<h2 id="s2">2. Task 1 – GitHub Repository</h2>
+<h3>2.1 Repository Creation</h3>
+<p>A repository named <b>Student Services</b> was created on GitHub to store all scripts and evidence. Every critical step was pushed through a pull request, and each script and screenshot is annotated with its purpose.</p>
+<div class="shot">PLACE SCREENSHOT: GitHub Repository Created</div><div class="cap">Figure 2.1 – "Student Services" repository on GitHub</div>
+<h3>2.2 GitHub Desktop</h3>
+<div class="shot">PLACE SCREENSHOT: GitHub Desktop Repository</div><div class="cap">Figure 2.2 – Repository cloned in GitHub Desktop</div>
+<h3>2.3 Project Folder Structure</h3>
+<pre>Student Services/
+├── Documentation - [ADM NO]/   (scripts, screenshots, ERD, report)
+├── 01_Setup/        departments.sql, users.sql
+├── 02_Design/       erd.png, normalisation.md, crud_matrix.md
+├── 03_DDL/          create_tables.sql, alter_tables.sql
+├── 04_DML/          insert_data.sql, queries.sql
+└── 05_Views/        views.sql, StudentServicesDB.sql (export)</pre>
+<div class="shot">PLACE SCREENSHOT: Project Folder Structure</div><div class="cap">Figure 2.3 – Local project folder</div>
+
+<h2 id="s3">3. Task 2 – Database Setup</h2>
+<h3>3.1 Documentation Folder</h3>
+<p>A folder titled <b>Documentation – [ADM NO]</b> holds every script, screenshot and drawing for this project.</p>
+<h3>3.2 RDBMS Comparison</h3>
+<table><tr><th>Criteria</th><th>MySQL</th><th>PostgreSQL</th><th>MS SQL Server (Express/Developer)</th></tr>
+<tr><td>Performance</td><td>Fast for read-heavy workloads</td><td>Strong on complex queries</td><td>Excellent optimiser, strong on mixed workloads</td></tr>
+<tr><td>Scalability</td><td>Good (replication)</td><td>Very good (partitioning)</td><td>Very good; clear upgrade path to Standard/Enterprise</td></tr>
+<tr><td>Cost</td><td>Free (GPL)</td><td>Free (open source)</td><td>Express and Developer free; paid for production scale</td></tr>
+<tr><td>Ease of use</td><td>Easy; phpMyAdmin/Workbench</td><td>Moderate learning curve</td><td>Very easy with SSMS GUI, wizards and diagrams</td></tr>
+<tr><td>Compatibility with requirements</td><td>Supports CHECK (8.0.16+), views, FKs</td><td>Full support</td><td>Full support: CHECK, FK, views, roles, schemas</td></tr></table>
+<h3>3.3 Recommended RDBMS</h3>
+<p class="note"><b>Recommendation:</b> Microsoft SQL Server with SQL Server Management Studio (SSMS). It meets every requirement of the system, offers role-based security suited to administrators, faculty and students, and its graphical tools make administration easy for college staff. The Express edition is free for development.</p>
+<h3>3.4 SQL Server Installation</h3>
+<div class="shot">PLACE SCREENSHOT: SQL Server Installation</div><div class="cap">Figure 3.1 – SQL Server installer completed</div>
+<table><tr><th>Specification</th><th>Value</th></tr>
+<tr><td>Edition / version</td><td>[e.g. SQL Server 2022 Express]</td></tr><tr><td>Instance name</td><td>[e.g. SQLEXPRESS]</td></tr>
+<tr><td>OS</td><td>[e.g. Windows 11]</td></tr><tr><td>CPU / RAM / Disk</td><td>[fill in]</td></tr>
+<tr><td>Authentication</td><td>Mixed mode (Windows + SQL)</td></tr></table>
+<h3>3.5 SQL Server Management Studio</h3>
+<div class="shot">PLACE SCREENSHOT: SQL Server Management Studio</div><div class="cap">Figure 3.2 – SSMS connected to the server</div>
+<h3>3.6 Database Creation</h3>
+<pre>CREATE DATABASE StudentServicesDB;
+GO
+USE StudentServicesDB;</pre>
+<div class="shot">PLACE SCREENSHOT: StudentServicesDB Created</div><div class="cap">Figure 3.3 – New database in Object Explorer</div>
+<h3>3.7 User Accounts and Permissions</h3>
+<pre>CREATE LOGIN admin_login   WITH PASSWORD='&lt;StrongPass1!&gt;';
+CREATE LOGIN faculty_login WITH PASSWORD='&lt;StrongPass2!&gt;';
+CREATE LOGIN student_login WITH PASSWORD='&lt;StrongPass3!&gt;';
+CREATE USER admin_user   FOR LOGIN admin_login;
+CREATE USER faculty_user FOR LOGIN faculty_login;
+CREATE USER student_user FOR LOGIN student_login;
+ALTER ROLE db_owner      ADD MEMBER admin_user;   -- full control
+ALTER ROLE db_datareader ADD MEMBER faculty_user; -- read; write via GRANT on Assessments
+GRANT INSERT, UPDATE ON dbo.Assessments TO faculty_user;
+ALTER ROLE db_datareader ADD MEMBER student_user; -- later restricted to own views</pre>
+<div class="shot">PLACE SCREENSHOT: User Accounts Created</div><div class="cap">Figure 3.4 – Logins and users with roles</div>
+<h3>3.8 Departments Table</h3>
+<pre>CREATE TABLE Departments(
+  DeptID     INT IDENTITY(1,1) PRIMARY KEY,
+  DeptName   VARCHAR(80) NOT NULL,
+  Block      VARCHAR(20) NOT NULL,
+  HeadOfDept VARCHAR(80) NOT NULL);
+
+INSERT INTO Departments(DeptName,Block,HeadOfDept) VALUES
+('Computing &amp; Informatics','Block A','[Name 1]'),('Building &amp; Civil','Block B','[Name 2]'),
+('Electrical Engineering','Block C','[Name 3]'),('Business Studies','Block D','[Name 4]'),
+('Automotive','Block E','[Name 5]');</pre>
+<div class="shot">PLACE SCREENSHOT: Departments Table Created</div><div class="cap">Figure 3.5 – Table design</div>
+<div class="shot">PLACE SCREENSHOT: Departments Table Records</div><div class="cap">Figure 3.6 – SELECT * FROM Departments</div>
+
+<h2 id="s4">4. Task 3 – Database Design</h2>
+<h3>4.1 Entities and Relationships</h3>
+<table><tr><th>Entity</th><th>Key attributes</th></tr>
+<tr><td>Departments</td><td><u>DeptID</u>, DeptName, Block, HeadOfDept</td></tr>
+<tr><td>Courses</td><td><u>CourseID</u>, CourseName, Level (diploma/certificate/artisan), DeptID*</td></tr>
+<tr><td>Modules</td><td><u>ModuleCode</u>, CourseID*, ModuleNo</td></tr>
+<tr><td>Subjects</td><td><u>SubjectCode</u> (contains module code), SubjectName, HoursPerWeek, ModuleCode*</td></tr>
+<tr><td>Classes</td><td><u>ClassID</u>, ClassName, CourseID*, Intake</td></tr>
+<tr><td>Students</td><td><u>StudentID</u>, AdmNo, FullName, DOB, Gender, Address, Phone, Status, CourseID*, ClassID*</td></tr>
+<tr><td>Lecturers</td><td><u>LecturerID</u>, FullName, Specialty, Role, DeptID*, Phone</td></tr>
+<tr><td>Teaching</td><td><u>TeachID</u>, LecturerID*, SubjectCode*, ClassID*, Term, Year, Hours</td></tr>
+<tr><td>Assessments / Supplementary</td><td><u>AssessID</u>, StudentID*, SubjectCode*, Term, Year, CAT1, CAT2, Exam, Attendance</td></tr>
+<tr><td>Payments</td><td><u>PaymentID</u>, StudentID*, Type (tuition/hostel/supp), Amount, Term, Year</td></tr>
+<tr><td>Hostels / Allocations</td><td><u>HostelID</u>, Name, Capacity; <u>AllocID</u>, StudentID*, HostelID*, Room, Term, Year</td></tr>
+<tr><td>Clubs / ClubMembers</td><td><u>ClubID</u>, Name, Patron, Chairperson; <u>MemberID</u>, ClubID*, StudentID*, Year</td></tr>
+<tr><td>Firms / Attachments</td><td><u>FirmID</u>, Name; <u>AttachID</u>, StudentID*, FirmID*, Start, End, Type (attachment/internship)</td></tr></table>
+<p><i>(* = foreign key)</i></p>
+<table><tr><th>Relationship</th><th>Type</th></tr>
+<tr><td>Department – Course</td><td>1 : M</td></tr><tr><td>Course – Module – Subject</td><td>1 : M each</td></tr>
+<tr><td>Course – Class / Class – Student</td><td>1 : M each</td></tr><tr><td>Lecturer – Subject (via Teaching)</td><td>M : N</td></tr>
+<tr><td>Student – Subject (via Assessments)</td><td>M : N</td></tr><tr><td>Student – Club (via ClubMembers)</td><td>M : N</td></tr>
+<tr><td>Student – Hostel (via Allocations)</td><td>M : N over time</td></tr><tr><td>Student – Firm (via Attachments)</td><td>M : N</td></tr></table>
+<h3>4.2 ER Diagram</h3>
+<p>Hand-drawn style sketch of the main entities (re-draw the final UML version in your modelling tool and export it as an image).</p>
+<div class="sketch"><svg id="erd" viewBox="0 0 820 470" width="100%"></svg></div>
+<div class="shot">PLACE SCREENSHOT: ER Diagram</div><div class="cap">Figure 4.1 – ERD exported from modelling software (UML)</div>
+<h3>4.3 Normalisation to 3NF</h3>
+<table><tr><th>Form</th><th>Problem found</th><th>Change made</th></tr>
+<tr><td>1NF</td><td>Student record held repeating clubs and several phone numbers in one column.</td><td>Atomic values; clubs moved to ClubMembers.</td></tr>
+<tr><td>2NF</td><td>Assessment table held SubjectName and HoursPerWeek (depend only on SubjectCode).</td><td>Subject details moved to Subjects.</td></tr>
+<tr><td>3NF</td><td>Student table held CourseName and Department details (transitive dependency via CourseID).</td><td>Separated Courses and Departments; only FKs remain.</td></tr></table>
+<div class="sketch"><svg id="norm" viewBox="0 0 820 190" width="100%"></svg></div>
+<div class="shot">PLACE SCREENSHOT: Normalized Database Schema</div><div class="cap">Figure 4.2 – Database diagram in SSMS</div>
+<h3>4.4 CRUD Matrix</h3>
+<table><tr><th>Table</th><th>Registrar</th><th>HOD</th><th>Lecturer</th><th>Dean</th><th>Accounts</th><th>Student</th></tr>
+<tr><td>Students</td><td>CRUD</td><td>R</td><td>R</td><td>R</td><td>R</td><td>R, U (own contact)</td></tr>
+<tr><td>Courses / Modules / Subjects</td><td>CRU</td><td>R, U</td><td>R</td><td>R</td><td>–</td><td>R</td></tr>
+<tr><td>Classes</td><td>CRUD</td><td>R</td><td>R</td><td>R</td><td>–</td><td>R</td></tr>
+<tr><td>Lecturers / Teaching</td><td>R</td><td>CRUD</td><td>R</td><td>R</td><td>–</td><td>–</td></tr>
+<tr><td>Assessments / Supplementary</td><td>R</td><td>R</td><td>C, R, U</td><td>R</td><td>–</td><td>R (own)</td></tr>
+<tr><td>Payments</td><td>R</td><td>–</td><td>–</td><td>R</td><td>CRUD</td><td>R (own)</td></tr>
+<tr><td>Hostels / Allocations</td><td>CRUD</td><td>–</td><td>–</td><td>R</td><td>R</td><td>R (own)</td></tr>
+<tr><td>Clubs / ClubMembers</td><td>CRUD</td><td>R</td><td>R</td><td>R</td><td>–</td><td>C, R (join)</td></tr>
+<tr><td>Attachments / Firms</td><td>CRUD</td><td>CRU</td><td>R</td><td>R</td><td>–</td><td>R (own)</td></tr></table>
+
+<h2 id="s5">5. Task 4 – DDL Operations</h2>
+<h3>5.1 CREATE TABLE Statements with Constraints</h3>
+<pre>-- Purpose: core schema with PK, FK, CHECK and UNIQUE constraints
+CREATE TABLE Courses(
+  CourseID INT IDENTITY PRIMARY KEY, CourseName VARCHAR(100) NOT NULL,
+  Level VARCHAR(12) NOT NULL CHECK (Level IN ('Diploma','Certificate','Artisan')),
+  DeptID INT NOT NULL REFERENCES Departments(DeptID));
+
+CREATE TABLE Modules(
+  ModuleCode VARCHAR(10) PRIMARY KEY, CourseID INT NOT NULL REFERENCES Courses(CourseID),
+  ModuleNo TINYINT NOT NULL CHECK (ModuleNo BETWEEN 1 AND 3));
+
+CREATE TABLE Subjects(
+  SubjectCode VARCHAR(20) PRIMARY KEY,   -- e.g. M1-DBMS (module code prefix)
+  SubjectName VARCHAR(100) NOT NULL,
+  HoursPerWeek TINYINT NOT NULL CHECK (HoursPerWeek BETWEEN 2 AND 6),
+  ModuleCode VARCHAR(10) NOT NULL REFERENCES Modules(ModuleCode));
+
+CREATE TABLE Classes(
+  ClassID INT IDENTITY PRIMARY KEY, ClassName VARCHAR(50) NOT NULL,
+  CourseID INT NOT NULL REFERENCES Courses(CourseID), Intake VARCHAR(20) NOT NULL);
+
+CREATE TABLE Students(
+  StudentID INT IDENTITY PRIMARY KEY, AdmNo VARCHAR(20) NOT NULL UNIQUE,
+  FullName VARCHAR(100) NOT NULL, DOB DATE NOT NULL,
+  Gender CHAR(1) NOT NULL CHECK (Gender IN ('M','F')),
+  Address VARCHAR(120), Phone VARCHAR(15),
+  Status VARCHAR(15) NOT NULL DEFAULT 'in session'
+        CHECK (Status IN ('in session','on attachment','completed')),
+  CourseID INT NOT NULL REFERENCES Courses(CourseID),
+  ClassID INT NOT NULL REFERENCES Classes(ClassID),
+  CONSTRAINT UQ_Student_NameDOB UNIQUE (FullName, DOB));
+
+CREATE TABLE Lecturers(
+  LecturerID INT IDENTITY PRIMARY KEY, FullName VARCHAR(100) NOT NULL,
+  Specialty VARCHAR(80), Role VARCHAR(40), Phone VARCHAR(15),
+  DeptID INT NOT NULL REFERENCES Departments(DeptID));
+
+CREATE TABLE Teaching(
+  TeachID INT IDENTITY PRIMARY KEY,
+  LecturerID INT NOT NULL REFERENCES Lecturers(LecturerID),
+  SubjectCode VARCHAR(20) NOT NULL REFERENCES Subjects(SubjectCode),
+  ClassID INT NOT NULL REFERENCES Classes(ClassID),
+  Term TINYINT NOT NULL CHECK (Term BETWEEN 1 AND 3), Year INT NOT NULL, Hours TINYINT NOT NULL);
+
+CREATE TABLE Assessments(
+  AssessID INT IDENTITY PRIMARY KEY,
+  StudentID INT NOT NULL REFERENCES Students(StudentID),
+  SubjectCode VARCHAR(20) NOT NULL REFERENCES Subjects(SubjectCode),
+  Term TINYINT NOT NULL, Year INT NOT NULL, Attendance DECIMAL(5,2),
+  CAT1 DECIMAL(4,1) CHECK (CAT1 BETWEEN 0 AND 20),
+  CAT2 DECIMAL(4,1) CHECK (CAT2 BETWEEN 0 AND 20),
+  Exam DECIMAL(4,1) CHECK (Exam BETWEEN 0 AND 60),
+  IsSupplementary BIT NOT NULL DEFAULT 0,
+  UNIQUE (StudentID, SubjectCode, Term, Year, IsSupplementary));
+
+CREATE TABLE Payments(
+  PaymentID INT IDENTITY PRIMARY KEY, StudentID INT NOT NULL REFERENCES Students(StudentID),
+  PayType VARCHAR(12) NOT NULL CHECK (PayType IN ('tuition','hostel','supp')),
+  Amount DECIMAL(10,2) NOT NULL, Term TINYINT, Year INT, PaidOn DATE DEFAULT GETDATE());
+
+CREATE TABLE Hostels(HostelID INT IDENTITY PRIMARY KEY, HostelName VARCHAR(50) NOT NULL, Capacity INT NOT NULL);
+CREATE TABLE HostelAllocations(
+  AllocID INT IDENTITY PRIMARY KEY, StudentID INT NOT NULL REFERENCES Students(StudentID),
+  HostelID INT NOT NULL REFERENCES Hostels(HostelID), Room VARCHAR(10), Term TINYINT, Year INT);
+
+CREATE TABLE Clubs(ClubID INT IDENTITY PRIMARY KEY, ClubName VARCHAR(60) NOT NULL UNIQUE,
+  Patron VARCHAR(80), Chairperson VARCHAR(80), IsActive BIT DEFAULT 1);
+CREATE TABLE ClubMembers(MemberID INT IDENTITY PRIMARY KEY,
+  ClubID INT NOT NULL REFERENCES Clubs(ClubID), StudentID INT NOT NULL REFERENCES Students(StudentID),
+  Year INT NOT NULL, UNIQUE (ClubID, StudentID, Year));
+
+CREATE TABLE Firms(FirmID INT IDENTITY PRIMARY KEY, FirmName VARCHAR(100) NOT NULL);
+CREATE TABLE Attachments(AttachID INT IDENTITY PRIMARY KEY,
+  StudentID INT NOT NULL REFERENCES Students(StudentID), FirmID INT NOT NULL REFERENCES Firms(FirmID),
+  StartDate DATE NOT NULL, EndDate DATE, AttachType VARCHAR(12) CHECK (AttachType IN ('attachment','internship')),
+  Completed BIT DEFAULT 0);</pre>
+<div class="shot">PLACE SCREENSHOT: CREATE TABLE Execution</div><div class="cap">Figure 5.1 – Tables created without errors</div>
+<div class="shot">PLACE SCREENSHOT: Constraints Applied</div><div class="cap">Figure 5.2 – Keys and constraints in SSMS</div>
+<h3>5.2 Schema Modifications</h3>
+<pre>ALTER TABLE Students ADD Email VARCHAR(100);                    -- (i) add column
+ALTER TABLE Students ALTER COLUMN Address VARCHAR(200);         -- (ii) change data type (non-referenced)
+-- (iii) export structure + data (SSMS: Tasks &gt; Generate Scripts), then:
+DROP TABLE Firms_backup;  -- repeat on a table, e.g. Clubs copy, then run the exported script to recreate it</pre>
+<div class="shot">PLACE SCREENSHOT: Schema Modifications (ALTER, Export, Drop, Recreate)</div><div class="cap">Figure 5.3 – Add column, change type, export/drop/recreate</div>
+
+<h2 id="s6">6. Task 5 – DML Operations</h2>
+<h3>6.1 Insert Test Data</h3>
+<p>At least 10 realistic records per table (students across courses, classes and statuses).</p>
+<pre>INSERT INTO Courses(CourseName,Level,DeptID) VALUES
+('Diploma in ICT','Diploma',1),('Certificate in Electrical Installation','Certificate',3);
+-- ...repeat to at least 10 rows per table (see 04_DML/insert_data.sql)</pre>
+<div class="shot">PLACE SCREENSHOT: Sample Data Inserted</div><div class="cap">Figure 6.1 – Data in tables</div>
+<h3>6.2 SELECT Queries</h3>
+<pre>SELECT * FROM Students WHERE FullName LIKE 'A%';                      -- (i)
+SELECT * FROM Departments WHERE Block = 'Block A';                    -- (ii)
+SELECT s.* FROM Students s JOIN Classes c ON c.ClassID=s.ClassID
+ WHERE c.ClassName = 'DICT-Y1';                                       -- (iii)
+SELECT c.* FROM Clubs c LEFT JOIN ClubMembers m ON m.ClubID=c.ClubID
+ WHERE m.MemberID IS NULL;                                            -- (iv)</pre>
+<div class="shot">PLACE SCREENSHOT: SELECT Query Results</div><div class="cap">Figure 6.2 – SELECT outputs (i–iv)</div>
+<h3>6.3 UPDATE and DELETE</h3>
+<pre>UPDATE Students SET Phone='0712345678' WHERE AdmNo='[ADM]';                         -- (i)
+UPDATE Students SET Status='on attachment' WHERE AdmNo='[ADM]' AND Status='in session'; -- (ii)
+UPDATE Clubs SET Chairperson='New Name' WHERE ClubName='Drama Club';                 -- (iii)
+-- (iv) deregister clubs with no members in the last three consecutive years
+DELETE FROM Clubs WHERE ClubID NOT IN
+ (SELECT ClubID FROM ClubMembers WHERE Year &gt;= YEAR(GETDATE())-2);</pre>
+<div class="shot">PLACE SCREENSHOT: UPDATE Query Results</div><div class="cap">Figure 6.3 – Before and after UPDATE</div>
+<div class="shot">PLACE SCREENSHOT: DELETE Query Results</div><div class="cap">Figure 6.4 – Club deregistration</div>
+<h3>6.4 JOIN Queries</h3>
+<pre>SELECT l.FullName, sb.SubjectName FROM Lecturers l                      -- (i)
+ JOIN Teaching t ON t.LecturerID=l.LecturerID JOIN Subjects sb ON sb.SubjectCode=t.SubjectCode;
+-- (ii) clubs with patrons and chairpersons: SELECT ClubName, Patron, Chairperson FROM Clubs;
+SELECT s.FullName, h.HostelName, a.Room FROM Students s                 -- (iii)
+ JOIN Classes c ON c.ClassID=s.ClassID JOIN HostelAllocations a ON a.StudentID=s.StudentID
+ JOIN Hostels h ON h.HostelID=a.HostelID WHERE c.ClassName='DICT-Y1';
+SELECT s.FullName, f.FirmName FROM Attachments at                       -- (iv)
+ JOIN Students s ON s.StudentID=at.StudentID JOIN Firms f ON f.FirmID=at.FirmID
+ WHERE f.FirmName='[Firm]' AND at.StartDate='2026-01-05' AND at.EndDate='2026-03-27';</pre>
+<div class="shot">PLACE SCREENSHOT: JOIN Query Results</div><div class="cap">Figure 6.5 – JOIN outputs (i–iv)</div>
+<h3>6.5 Aggregate Queries</h3>
+<pre>SELECT c.CourseName, COUNT(*) AS Total FROM Students s JOIN Courses c ON c.CourseID=s.CourseID GROUP BY c.CourseName;  -- (i)
+SELECT d.DeptName, AVG(a.CAT1+a.CAT2+a.Exam) AS AvgMarks FROM Assessments a                                   -- (ii)
+ JOIN Students s ON s.StudentID=a.StudentID JOIN Courses c ON c.CourseID=s.CourseID
+ JOIN Departments d ON d.DeptID=c.DeptID WHERE a.Term=1 AND a.Year=2026 GROUP BY d.DeptName;
+SELECT ClubID, Year, COUNT(*) AS Members FROM ClubMembers GROUP BY ClubID, Year;                              -- (iii)
+SELECT SubjectCode, SUM(CAT1+CAT2+Exam) AS Total FROM Assessments                                             -- (iv)
+ WHERE StudentID=1 AND Term=1 AND Year=2026 GROUP BY SubjectCode;
+SELECT l.FullName, t.Term, SUM(t.Hours) AS HoursTaught FROM Teaching t                                        -- (ix)
+ JOIN Lecturers l ON l.LecturerID=t.LecturerID GROUP BY l.FullName, t.Term;
+-- (v) attachment by dept, (vi) completion rate per course, (vii) hostel occupancy per term,
+-- (viii) club trends over years: same GROUP BY pattern - full scripts in 04_DML/queries.sql</pre>
+<div class="shot">PLACE SCREENSHOT: Aggregate Query Results</div><div class="cap">Figure 6.6 – Aggregate outputs (i–ix)</div>
+
+<h2 id="s7">7. Task 6 – Views</h2>
+<h3>7.1 Creating Views</h3>
+<table><tr><th>View</th><th>Audience</th><th>Content</th></tr>
+<tr><td>vw_Registrar</td><td>Registrar</td><td>Student records, course, class, status</td></tr>
+<tr><td>vw_HOD</td><td>HODs</td><td>Department students, lecturers, courses</td></tr>
+<tr><td>vw_Lecturer</td><td>Lecturers</td><td>Own classes and student marks</td></tr>
+<tr><td>vw_Dean</td><td>Dean</td><td>Institution-wide summaries</td></tr>
+<tr><td>vw_ExamPerformance</td><td>Exams office</td><td>Marks, totals, pass/fail</td></tr>
+<tr><td>vw_Accounts</td><td>Accounts</td><td>Payments and fee balances</td></tr>
+<tr><td>vw_Workload</td><td>HODs / Dean</td><td>Lecturer hours per term</td></tr></table>
+<pre>CREATE VIEW vw_ExamPerformance AS
+SELECT a.StudentID, s.FullName, a.SubjectCode, a.Term, a.Year,
+       a.CAT1+a.CAT2+a.Exam AS Total,
+       CASE WHEN a.CAT1+a.CAT2+a.Exam &gt;= 60 THEN 'Pass' ELSE 'Supplementary' END AS Result
+FROM Assessments a JOIN Students s ON s.StudentID=a.StudentID
+WHERE a.IsSupplementary = 0;
+GO
+CREATE VIEW vw_Workload AS
+SELECT l.LecturerID, l.FullName, t.Term, t.Year, SUM(t.Hours) AS TotalHours
+FROM Lecturers l JOIN Teaching t ON t.LecturerID=l.LecturerID GROUP BY l.LecturerID,l.FullName,t.Term,t.Year;</pre>
+<div class="shot">PLACE SCREENSHOT: Views Created</div><div class="cap">Figure 7.1 – Views in Object Explorer</div>
+<h3>7.2 Retrieving Data from Views</h3>
+<pre>-- (iv) students in more than one club
+SELECT StudentID, COUNT(*) AS Clubs FROM ClubMembers GROUP BY StudentID HAVING COUNT(*)&gt;1 ORDER BY Clubs DESC;
+-- (iii) department exam averages per course, given term/year
+SELECT c.CourseName, AVG(v.Total) AS Average FROM vw_ExamPerformance v
+ JOIN Students s ON s.StudentID=v.StudentID JOIN Courses c ON c.CourseID=s.CourseID
+ WHERE v.Term=1 AND v.Year=2026 GROUP BY c.CourseName;
+-- remaining items (i, ii, v, vi, vii, viii) follow the same approach in 05_Views/views.sql</pre>
+<div class="shot">PLACE SCREENSHOT: View Query Results</div><div class="cap">Figure 7.2 – Results of view queries (i–viii)</div>
+<h3>7.3 Update, Drop and Recreate a View</h3>
+<pre>ALTER VIEW vw_ExamPerformance AS  -- include supplementary results
+SELECT a.StudentID, s.FullName, a.SubjectCode, a.Term, a.Year, a.IsSupplementary,
+       a.CAT1+a.CAT2+a.Exam AS Total FROM Assessments a JOIN Students s ON s.StudentID=a.StudentID;
+GO
+DROP VIEW vw_ExamPerformance;
+GO
+-- then re-run the CREATE VIEW script</pre>
+<h3>7.4 Database Export</h3>
+<div class="shot">PLACE SCREENSHOT: Database Export (.sql)</div><div class="cap">Figure 7.3 – Generate Scripts: schema and data → StudentServicesDB.sql</div>
+
+<h2 id="s8">8. Conclusion</h2>
+<p>The Student Services Management System database was designed, normalised to 3NF and implemented in SQL Server with enforced integrity rules and role-based views. Version control on GitHub documents each stage. The system can be extended with a timetable module that consumes the Teaching data.</p>
+
+<h2 id="s9">9. References</h2>
+<ul><li>Microsoft. <i>SQL Server Documentation</i>. learn.microsoft.com/sql</li>
+<li>Elmasri, R. &amp; Navathe, S. <i>Fundamentals of Database Systems</i>. Pearson.</li>
+<li>GitHub Docs. docs.github.com</li>
+<li>PC Kinyanjui TTI. <i>CS L6 Practical Assessment – Candidate Tool</i>, May–June 2026.</li></ul>
+
+<h2 id="s10">10. Appendices</h2>
+<h3>Appendix A – GitHub Commit History</h3>
+<div class="shot">PLACE SCREENSHOT: GitHub Commit History</div><div class="cap">Figure A.1 – Commits and pull requests</div>
+<h3>Appendix B – Final Repository</h3>
+<div class="shot">PLACE SCREENSHOT: Final Repository</div><div class="cap">Figure A.2 – Final state of "Student Services"</div>
+<footer><hr>Student Services Management System · Joshua Kisenja · PC Kinyanjui TTI</footer>
+</div>
+
+<script>
+const NS='http://www.w3.org/2000/svg';
+function mk(svg){
+ svg.innerHTML='<defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter></defs>';
+ const g=document.createElementNS(NS,'g');g.setAttribute('filter','url(#rough)');
+ g.setAttribute('font-family','Caveat,"Comic Sans MS",cursive');g.setAttribute('fill','#2b2b3a');
+ svg.appendChild(g);return g}
+function box(g,x,y,w,t,attrs){
+ const h=30+attrs.length*19;
+ let s=`<path d="M${x} ${y+1} L${x+w} ${y-1} L${x+w+2} ${y+h} L${x-1} ${y+h+1} Z" fill="#fffef6" stroke="#3a2a60" stroke-width="2"/>`+
+ `<path d="M${x} ${y+27} L${x+w} ${y+25}" stroke="#3a2a60" stroke-width="1.5"/>`+
+ `<text x="${x+w/2}" y="${y+20}" text-anchor="middle" font-size="20" font-weight="700" fill="#4b2a7b">${t}</text>`;
+ attrs.forEach((a,i)=>s+=`<text x="${x+8}" y="${y+45+i*19}" font-size="16">${a}</text>`);
+ g.insertAdjacentHTML('beforeend',s);return{x,y,w,h}}
+function link(g,a,b,lab){
+ const x1=a.x+a.w/2,y1=a.y+a.h/2,x2=b.x+b.w/2,y2=b.y+b.h/2,mx=(x1+x2)/2+8,my=(y1+y2)/2-8;
+ g.insertAdjacentHTML('afterbegin',`<path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" fill="none" stroke="#7a5a2a" stroke-width="2"/>`);
+ g.insertAdjacentHTML('beforeend',`<text x="${mx+4}" y="${my-3}" font-size="16" fill="#a0301f">${lab}</text>`)}
+(function(){
+ const g=mk(document.getElementById('erd')),E={};
+ const d=[['Departments',20,20,['DeptID (PK)','DeptName','Block','HeadOfDept']],
+ ['Courses',300,20,['CourseID (PK)','CourseName','Level','DeptID (FK)']],
+ ['Modules',590,20,['ModuleCode (PK)','CourseID (FK)','ModuleNo']],
+ ['Subjects',590,170,['SubjectCode (PK)','SubjectName','Hours/Week','ModuleCode (FK)']],
+ ['Classes',300,170,['ClassID (PK)','ClassName','CourseID (FK)','Intake']],
+ ['Students',20,190,['StudentID (PK)','AdmNo','FullName, DOB','Gender, Status','CourseID, ClassID']],
+ ['Lecturers',590,340,['LecturerID (PK)','FullName','Specialty','DeptID (FK)']],
+ ['Assessments',300,350,['StudentID (FK)','SubjectCode (FK)','CAT1, CAT2, Exam']],
+ ['Clubs',20,370,['ClubID (PK)','ClubName','Patron, Chair']]];
+ d.forEach(v=>E[v[0]]=box(g,v[1],v[2],v[0]=='Students'?170:180,v[0],v[3]));
+ [['Departments','Courses','1 : M'],['Courses','Modules','1 : M'],['Modules','Subjects','1 : M'],
+ ['Courses','Classes','1 : M'],['Classes','Students','1 : M'],['Students','Assessments','1 : M'],
+ ['Subjects','Assessments','1 : M'],['Lecturers','Subjects','M : N'],['Students','Clubs','M : N']].forEach(r=>link(g,E[r[0]],E[r[1]],r[2]));
+ g.insertAdjacentHTML('beforeend','<text x="640" y="455" font-size="15" fill="#777">(Teaching, ClubMembers = junction tables)</text>');
+})();
+(function(){
+ const g=mk(document.getElementById('norm')),t=(x,y,s,sz,c)=>g.insertAdjacentHTML('beforeend',`<text x="${x}" y="${y}" font-size="${sz||18}" fill="${c||'#2b2b3a'}">${s}</text>`);
+ const ar=(x)=>g.insertAdjacentHTML('beforeend',`<path d="M${x} 90 L${x+60} 88 M${x+48} 78 L${x+60} 88 L${x+48} 101" stroke="#a0301f" stroke-width="2.5" fill="none"/>`);
+ const b=(x,w,h)=>g.insertAdjacentHTML('beforeend',`<rect x="${x}" y="40" width="${w}" height="${h}" fill="#fffef6" stroke="#3a2a60" stroke-width="2"/>`);
+ b(10,170,110);t(20,62,'UNF: Student',20,'#4b2a7b');t(20,88,'name, clubs(many),');t(20,108,'phones(many), course..',17);
+ ar(190);b(260,170,110);t(270,62,'1NF: atomic',20,'#4b2a7b');t(270,88,'Students | ClubMembers');t(270,108,'one value per cell',17);
+ ar(440);b(510,150,110);t(520,62,'2NF: no partial',20,'#4b2a7b');t(520,88,'Subjects split from');t(520,108,'Assessments',17);
+ ar(670);b(740,70,110);t(745,62,'3NF',20,'#4b2a7b');t(745,88,'no trans-');t(745,108,'itive deps',16);
+ t(20,170,'Each step removes a dependency problem; final tables are linked only by foreign keys.',17,'#777');
+})();
+</script></body></html>
