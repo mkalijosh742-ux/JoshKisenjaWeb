@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Services – Screenshots</title>
+<style>
+:root{--ink:#1d1b26;--purple:#4b2a7b;--paper:#fbf7ee;--line:#cdbfa3}
+*{box-sizing:border-box;margin:0}
+body{background:#e9e2d0;color:var(--ink);font:16px/1.6 Georgia,"Times New Roman",serif}
+header{background:var(--purple);color:#fff;text-align:center;padding:30px 16px}
+header h1{font-size:1.7rem;letter-spacing:.04em}
+header p{opacity:.8;font-style:italic;margin-top:4px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:16px;background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.bar button{font:inherit;font-size:.85rem;padding:6px 14px;border:1px solid var(--purple);background:#fff;color:var(--purple);border-radius:20px;cursor:pointer;transition:.2s}
+.bar button:hover,.bar button.on{background:var(--purple);color:#fff}
+main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:20px}
+.card{background:var(--paper);border:1px solid var(--line);box-shadow:0 2px 8px #0002;display:flex;flex-direction:column;transition:transform .25s}
+.card:hover{transform:translateY(-4px)}
+.card .img{aspect-ratio:16/10;background:#fffdf6;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;text-align:center;color:#8a7a5a;font-size:.9rem;padding:10px;overflow:hidden}
+.card img{width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+.card .body{padding:12px 14px 14px;flex:1;display:flex;flex-direction:column}
+.tag{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--purple)}
+.card h3{font-size:1.02rem;margin:2px 0 4px}
+.card p{font-size:.88rem;color:#555;flex:1}
+.dl{margin-top:10px;align-self:flex-start;font-size:.8rem;text-decoration:none;color:#fff;background:var(--purple);padding:6px 14px;border-radius:3px}
+.dl.off{background:#b5ab95;pointer-events:none}
+.dl:not(.off):hover{background:#33195a}
+#lb{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:20;cursor:zoom-out;padding:20px}
+#lb.on{display:flex}#lb img{max-width:100%;max-height:100%;box-shadow:0 0 30px #000}
+footer{text-align:center;font-size:.8rem;color:#777;padding:30px}
+</style></head><body>
+<header><h1>Student Services Management System</h1><p>Project screenshots · click a picture to enlarge, use Download to save it</p></header>
+<div class="bar" id="bar"></div>
+<main id="grid"></main>
+<div id="lb"><img alt=""></div>
+<footer>Save screenshots in the same folder as this page and name them DATA1, DATA2, DATA3 … (png, jpg, jpeg or webp).</footer>
+
+<script>
+/* HOW IT WORKS
+   Each screenshot below is looked up by its number: DATA1, DATA2 ... DATA25.
+   Save your images next to this file; the page tries .png, .jpg, .jpeg and .webp.
+   To change a title or description, edit the matching line in the SHOTS list.
+   Format of a line: [number, task, 'Title', 'Short description'] */
+const EXT=['png','jpg','jpeg','webp'], PREFIX='DATA';
+const SHOTS=[
+[1,'Task 1','GitHub Repository Created','The "Student Services" repository created on GitHub.'],
+[2,'Task 1','GitHub Desktop Repository','The repository cloned and open in GitHub Desktop.'],
+[3,'Task 1','Project Folder Structure','The local project folder with its subfolders and scripts.'],
+[4,'Task 2','SQL Server Installation','SQL Server installed, with the server specifications.'],
+[5,'Task 2','SQL Server Management Studio','SSMS connected to the SQL Server instance.'],
+[6,'Task 2','StudentServicesDB Created','The new database created and visible in Object Explorer.'],
+[7,'Task 2','User Accounts Created','Administrator, faculty and student accounts with their roles.'],
+[8,'Task 2','Departments Table Created','Departments table design: primary key and NOT NULL columns.'],
+[9,'Task 2','Departments Table Records','Sample records inserted into the Departments table.'],
+[10,'Task 3','ER Diagram','Entity-relationship diagram showing all entities and relationships.'],
+[11,'Task 3','Normalized Database Schema','The database diagram in SSMS after normalisation to 3NF.'],
+[12,'Task 4','CREATE TABLE Execution','CREATE TABLE script executed successfully.'],
+[13,'Task 4','Constraints Applied','Primary, foreign, CHECK and UNIQUE constraints on the Students table.'],
+[14,'Task 4','Schema Modifications','Add column, change data type, and export, drop and recreate a table.'],
+[15,'Task 5','Sample Data Inserted','Row counts showing at least 10 records in every table.'],
+[16,'Task 5','SELECT Query Results','Queries for names by letter, departments by block, class lists and empty clubs.'],
+[17,'Task 5','UPDATE Query Results','Updated contact details, enrolment status and club chairperson.'],
+[18,'Task 5','DELETE Query Results','Clubs with no members for three years deregistered.'],
+[19,'Task 5','JOIN Query Results','Lecturers and subjects, clubs, hostels and attachments joined.'],
+[20,'Task 5','Aggregate Query Results','Counts, averages, totals, occupancy rates and workload summaries.'],
+[21,'Task 6','Views Created','Role-based views created for each user group.'],
+[22,'Task 6','View Query Results','Data retrieved through the views: graduation, fees, exams and transcripts.'],
+[23,'Task 6','Database Export (.sql)','Database exported as an SQL file with schema and data.'],
+[24,'Appendix','GitHub Commit History','Commits and pull requests made during the project.'],
+[25,'Appendix','Final Repository','Final state of the Student Services repository.']
+];
+const tasks=['All',...new Set(SHOTS.map(s=>s[1]))];
+const bar=document.getElementById('bar'),grid=document.getElementById('grid'),lb=document.getElementById('lb');
+
+tasks.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;if(!i)b.className='on';
+ b.onclick=()=>{[...bar.children].forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  [...grid.children].forEach(c=>c.style.display=(t==='All'||c.dataset.task===t)?'':'none')};bar.appendChild(b)});
+
+SHOTS.forEach(([n,task,title,desc])=>{
+ const c=document.createElement('div');c.className='card';c.dataset.task=task;
+ c.innerHTML=`<div class="img">Save as ${PREFIX}${n}</div><div class="body"><div class="tag">${task} · ${PREFIX}${n}</div><h3>${title}</h3><p>${desc}</p><a class="dl off">Download</a></div>`;
+ grid.appendChild(c);
+ const box=c.querySelector('.img'),dl=c.querySelector('.dl');let i=0;
+ const img=new Image();img.alt=title;
+ img.onload=()=>{box.textContent='';box.appendChild(img);
+  dl.href=img.src;dl.download=`${PREFIX}${n}.${EXT[i]}`;dl.classList.remove('off');
+  img.onclick=()=>{lb.querySelector('img').src=img.src;lb.classList.add('on')}};
+ img.onerror=()=>{i++;if(i<EXT.length)img.src=`${PREFIX}${n}.${EXT[i]}`};
+ img.src=`${PREFIX}${n}.${EXT[0]}`;
+});
+lb.onclick=()=>lb.classList.remove('on');
+addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('on')});
+</script></body></html>
