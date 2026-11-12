@@ -1,74 +1,64 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Student Services – Download Center</title>
+<title>Student Services – Project Download</title>
 <style>
-:root{--ink:#1d1b26;--purple:#4b2a7b;--paper:#fbf7ee;--line:#cdbfa3}
+:root{--ink:#1d1b26;--purple:#4b2a7b;--deep:#33195a;--paper:#fbf7ee;--line:#cdbfa3;--gold:#b8923f}
 *{box-sizing:border-box;margin:0}
-body{background:#e9e2d0;color:var(--ink);font:16px/1.6 Georgia,"Times New Roman",serif}
-header{background:var(--purple);color:#fff;text-align:center;padding:30px 16px}
-header h1{font-size:1.7rem;letter-spacing:.04em}header p{opacity:.8;font-style:italic;margin-top:4px}
-main{max-width:920px;margin:22px auto;padding:0 16px}
-.box{background:var(--paper);border:1px solid var(--line);box-shadow:0 2px 8px #0002;padding:18px 20px;margin-bottom:18px}
-h2{font-size:1.1rem;color:var(--purple);margin-bottom:8px}
-label.f{display:block;font-size:.88rem;margin:6px 0 2px}
-input[type=text]{font:inherit;padding:7px 10px;border:1px solid var(--line);width:100%;max-width:340px}
-.btn{font:inherit;font-size:.9rem;padding:8px 18px;border:1px solid var(--purple);background:var(--purple);color:#fff;cursor:pointer;border-radius:3px;margin:8px 8px 0 0}
-.btn.alt{background:#fff;color:var(--purple)}.btn:hover{opacity:.85}.btn:disabled{opacity:.45;cursor:default}
-.drop{border:2px dashed #8a7a5a;background:#fffdf6;text-align:center;padding:26px 14px;margin:10px 0;color:#7a6a4a;transition:.2s}
-.drop.on{background:#efe6ff;border-color:var(--purple)}
-.tabs{display:flex;gap:6px;margin-bottom:14px}
-.tabs button{font:inherit;flex:1;padding:10px;border:1px solid var(--purple);background:#fff;color:var(--purple);cursor:pointer}
-.tabs button.on{background:var(--purple);color:#fff}
-.panel{display:none}.panel.on{display:block}
-.grp{margin:12px 0;border-top:1px solid var(--line);padding-top:8px}
-.grp>b{display:flex;gap:8px;align-items:center;color:var(--purple)}
-.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px 14px;margin:4px 0 0 24px;font-size:.88rem}
-.items label.dis{color:#aaa}
-.sum{font-size:.9rem}.sum span{display:inline-block;margin-right:16px}
-.ok{color:#2c7a4b}.no{color:#a0301f}
-#msg{margin-top:10px;font-size:.9rem;min-height:1.4em}
-.tree{font:12.5px/1.45 Consolas,monospace;background:#f1ebdc;padding:10px 14px;white-space:pre;overflow:auto;margin-top:8px}
+body{background:#e9e2d0;color:var(--ink);font:17px/1.65 Georgia,"Times New Roman",serif;min-height:100vh;padding-bottom:90px}
+header{background:linear-gradient(135deg,#33195a,#4b2a7b);color:#fff;text-align:center;padding:34px 16px 30px;border-bottom:4px double var(--gold)}
+header small{letter-spacing:.28em;text-transform:uppercase;font-size:.7rem;color:#e6d3a3}
+header h1{font-size:clamp(1.4rem,3.6vw,2.1rem);letter-spacing:.04em;margin:6px 0 2px}
+header p{opacity:.8;font-style:italic;font-size:.95rem}
+main{max-width:860px;margin:0 auto;padding:0 16px}
+.hero{background:var(--paper);border:1px solid var(--line);box-shadow:0 6px 22px #0003;text-align:center;padding:42px 24px 36px;margin:-18px auto 30px;position:relative;animation:rise .7s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.hero h2{font-size:1.6rem;color:var(--purple);letter-spacing:.03em}
+.hero p{max-width:540px;margin:8px auto 0;color:#555}
+.facts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:20px 0 26px}
+.facts span{font-size:.8rem;letter-spacing:.06em;border:1px solid var(--line);background:#fff;padding:3px 14px;border-radius:20px;color:var(--purple)}
+.big{font:inherit;font-size:1.15rem;letter-spacing:.05em;color:#fff;background:linear-gradient(135deg,#5b3394,#33195a);border:0;padding:17px 46px;border-radius:40px;cursor:pointer;box-shadow:0 8px 20px #4b2a7b66;transition:.3s}
+.big:hover{transform:translateY(-3px);box-shadow:0 12px 26px #4b2a7b88}
+.big:disabled{opacity:.7;cursor:wait;transform:none}
+#status{min-height:1.6em;margin-top:14px;font-size:.92rem;color:#555}
+#status.ok{color:#2c7a4b}
+.parts h3{font-size:1.15rem;color:var(--purple);text-align:center;letter-spacing:.04em}
+.parts>p{text-align:center;color:#666;font-size:.9rem;margin-bottom:14px}
+.sec{background:var(--paper);border:1px solid var(--line);padding:14px 18px;margin-bottom:12px}
+.sec b{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{font:inherit;font-size:.86rem;padding:7px 15px;border:1px solid var(--purple);background:#fff;color:var(--purple);border-radius:22px;cursor:pointer;transition:.2s;user-select:none}
+.chip:hover{background:#f1e9fb}
+.chip.on{background:var(--purple);color:#fff}
+.chip.on::before{content:"\2713  "}
+.chip.all{border-style:dashed}
+#bar{position:fixed;left:0;right:0;bottom:0;background:#fffdf6f2;border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:14px;align-items:center;justify-content:center;transform:translateY(110%);transition:.35s;box-shadow:0 -4px 14px #0002}
+#bar.on{transform:none}
+#bar button{font:inherit;font-size:.95rem;color:#fff;background:var(--purple);border:0;padding:10px 26px;border-radius:30px;cursor:pointer}
+#bar button.clr{background:none;color:var(--purple);text-decoration:underline;padding:10px}
+footer{text-align:center;font-size:.76rem;color:#8a8270;margin:30px 0 10px}
+footer a{color:inherit;cursor:pointer;text-decoration:underline dotted}
+#author{display:none;max-width:560px;margin:14px auto;background:#f3ecfa;border-left:4px solid var(--purple);padding:10px 16px;font-size:.88rem;text-align:left}
 </style></head><body>
-<header><h1>Download Center</h1><p>Student Services Management System · download your whole project, or only parts of it</p></header>
+<header><small>PC Kinyanjui Technical Training Institute</small><h1>Student Services Management System</h1><p>Database Management Skills · Project files</p></header>
 <main>
+<section class="hero">
+<h2>Everything, in one download</h2>
+<p>All the screenshots, SQL scripts, documentation and the ER diagram, arranged in a ready-to-open project folder.</p>
+<div class="facts" id="facts"></div>
+<button class="big" id="all">⬇&nbsp; Download everything</button>
+<div id="status"></div>
+</section>
 
-<div class="box"><h2>Step 1 · Your details and files</h2>
-<label class="f">Admission number (used in the folder name)</label>
-<input type="text" id="adm" placeholder="e.g. PCK-ICT-001-25">
-<div class="drop" id="drop">Drag your files here (DATA images, the HTML pages, StudentServicesDB.sql)<br>or use the buttons below</div>
-<input type="file" id="pick" multiple hidden accept="image/*,.html,.sql">
-<input type="file" id="pickDir" webkitdirectory multiple hidden>
-<button class="btn" onclick="pick.click()">Select files</button>
-<button class="btn alt" onclick="pickDir.click()">Select a whole folder</button>
-<div class="sum" id="sum" style="margin-top:12px">Nothing selected yet. The 7 SQL scripts are already built into this page.</div>
-</div>
-
-<div class="box"><h2>Step 2 · Download</h2>
-<div class="tabs"><button id="t1" class="on">Download everything</button><button id="t2">Choose parts</button></div>
-
-<div class="panel on" id="p1">
-<p>Creates one ZIP that unpacks into an organised project folder:</p>
-<div class="tree">Student-Services/
- ├─ Documentation - [ADM]/   pages, DATA1…DATA25, renamed screenshots
- ├─ 01_Setup/   01_setup_database.sql, 07_permissions.sql
- ├─ 02_Design/  ERD_Diagram image
- ├─ 03_DDL/     02_create_tables.sql, 04_alter_tables.sql
- ├─ 04_DML/     03_insert_data.sql, 05_queries.sql
- └─ 05_Views/   06_views.sql, StudentServicesDB.sql</div>
-<button class="btn" id="all">Download everything (.zip)</button></div>
-
-<div class="panel" id="p2">
-<button class="btn alt" id="selAll">Select all</button><button class="btn alt" id="selNone">Select none</button>
-<div id="parts"></div>
-<button class="btn" id="some">Download selected (.zip)</button></div>
-
-<div class="grp"><b>Options</b>
-<div class="items" style="grid-template-columns:1fr">
-<label><input type="checkbox" id="oRen" checked> Also save screenshots with readable names (Task2_06_StudentServicesDB_Created.png)</label>
-<label><input type="checkbox" id="oOrig" checked> Keep original DATA names too (the pages need them to find the images)</label></div></div>
-<div id="msg"></div></div>
+<section class="parts">
+<h3>Or take only what you need</h3>
+<p>Tap to choose, then press Download selected.</p>
+<div id="secs"></div>
+</section>
+<footer>Student Services Management System · PC Kinyanjui TTI · <a id="authorLink">author tools</a>
+<div id="author">One-time preparation: choose your project folder and this page creates <b>pack.js</b>. Save it next to this page and the download then works in one tap, with no questions, on any computer.<br><button class="chip" id="mkpack" style="margin-top:8px">Prepare one-tap version</button></div></footer>
 </main>
+<div id="bar"><span id="cnt"></span><button id="some">Download selected</button><button class="clr" id="clr">Clear</button></div>
 <script type="text/plain" id="src1">/* =====================================================================
    01_setup_database.sql          TASK 2 - Database setup
    PURPOSE: creates StudentServicesDB, the three user accounts, shows
@@ -927,14 +917,18 @@ ORDER BY r.name;
 GO
 </script>
 
+<script src="pack.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
-/* HOW IT WORKS
-   1. You pick your files once. Images named DATA1, DATA2 ... are matched by number,
-      the HTML pages and StudentServicesDB.sql are matched by file name.
-   2. The 7 SQL scripts are stored inside this page, so they are always available.
-   3. "Download" builds a ZIP in your browser (nothing is uploaded anywhere).
-   Edit the lists below to change titles, folders or file names. */
+/* HOW THIS PAGE WORKS
+   - "Download everything" builds one ZIP that unpacks into a Student-Services project folder.
+   - The 7 SQL scripts are stored inside this page. Screenshots (DATA1, DATA2 ...), the HTML pages and
+     StudentServicesDB.sql are read from your project folder, in this order:
+       1. pack.js, if it sits next to this page (made once with "author tools", gives a one-tap download)
+       2. the web address, if the project is hosted (for example GitHub Pages)
+       3. a single "choose your project folder" prompt from the browser (a browser rule for local files)
+   - Set your admission number below to name the folder "Documentation - <number>". */
+const ADMISSION='';
 const SHOTS=[[1,'Task1','GitHub Repository Created'],[2,'Task1','GitHub Desktop Repository'],[3,'Task1','Project Folder Structure'],
 [4,'Task2','SQL Server Installation'],[5,'Task2','SQL Server Management Studio'],[6,'Task2','StudentServicesDB Created'],
 [7,'Task2','User Accounts Created'],[8,'Task2','Departments Table Created'],[9,'Task2','Departments Table Records'],
@@ -948,80 +942,104 @@ const SCRIPTS=[[1,'01_setup_database.sql','01_Setup'],[2,'02_create_tables.sql',
 [4,'04_alter_tables.sql','03_DDL'],[5,'05_queries.sql','04_DML'],[6,'06_views.sql','05_Views'],[7,'07_permissions.sql','01_Setup']];
 const PAGES=['Student_Services_Documentation.html','Screenshots.html','SQL_Scripts.html','ERD.html'];
 const EXPORT='StudentServicesDB.sql';
+const TASKS=[['Task1','Task 1 · GitHub'],['Task2','Task 2 · Database setup'],['Task3','Task 3 · Design'],['Task4','Task 4 · DDL'],
+ ['Task5','Task 5 · DML'],['Task6','Task 6 · Views'],['Appendix','Appendix']];
 
 const $=id=>document.getElementById(id);
 const shotF={},pageF={};let exportF=null;
-const msg=t=>$('msg').innerHTML=t;
-const clean=s=>s.replace(/[\\\/:*?"<>|]+/g,'-').trim();
 const snake=s=>s.replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'');
 const ext=f=>f.name.split('.').pop().toLowerCase();
+const clean=s=>s.replace(/[\\\/:*?"<>|]+/g,'-').trim();
+const say=(t,ok)=>{$('status').textContent=t;$('status').className=ok?'ok':''};
 
-/* ---------- build the "choose parts" list ---------- */
-const parts=$('parts');
-function group(title,items){
- const g=document.createElement('div');g.className='grp';
- g.innerHTML=`<b><input type="checkbox" class="gc"> ${title}</b><div class="items"></div>`;
- const box=g.querySelector('.items');
- items.forEach(([key,label])=>{const l=document.createElement('label');l.innerHTML=`<input type="checkbox" class="it" data-key="${key}"> ${label}`;box.appendChild(l)});
- g.querySelector('.gc').onchange=e=>g.querySelectorAll('.it:not(:disabled)').forEach(c=>c.checked=e.target.checked);
- parts.appendChild(g)}
-[...new Set(SHOTS.map(s=>s[1]))].forEach(t=>group('Screenshots · '+t,SHOTS.filter(s=>s[1]===t).map(s=>['s'+s[0],`DATA${s[0]} ${s[2]}`])));
-group('SQL scripts',SCRIPTS.map(s=>['q'+s[0],s[1]]));
-group('Pages',PAGES.map(p=>['p'+p,p]));
-group('Database export',[['x',EXPORT]]);
+/* ---------- facts + chips ---------- */
+$('facts').innerHTML=[`${SHOTS.length} screenshots`,`${SCRIPTS.length} SQL scripts`,`${PAGES.length} documents`,'database export','ER diagram']
+ .map(t=>`<span>${t}</span>`).join('');
+const groups=[]; // {id,label,keys,section}
+const sections=[['Screenshots'],['SQL scripts'],['Documents']];
+groups.push({id:'g-shots',label:'All screenshots',keys:SHOTS.map(s=>'s'+s[0]),sec:0,all:1});
+TASKS.forEach(([k,l])=>{const ks=SHOTS.filter(s=>s[1]===k).map(s=>'s'+s[0]);groups.push({id:'g-'+k,label:`${l} (${ks.length})`,keys:ks,sec:0})});
+groups.push({id:'g-sql',label:'All SQL scripts',keys:SCRIPTS.map(s=>'q'+s[0]),sec:1,all:1});
+SCRIPTS.forEach(s=>groups.push({id:'g-q'+s[0],label:s[1],keys:['q'+s[0]],sec:1}));
+groups.push({id:'g-docs',label:'All documents',keys:[...PAGES.map(p=>'p'+p),'x'],sec:2,all:1});
+PAGES.forEach(p=>groups.push({id:'g-p'+p,label:p.replace('.html','').replace(/_/g,' '),keys:['p'+p],sec:2}));
+groups.push({id:'g-x',label:'Database export (.sql)',keys:['x'],sec:2});
+const sel=new Set();
+sections.forEach(([t],i)=>{const d=document.createElement('div');d.className='sec';d.innerHTML=`<b>${t}</b><div class="chips" id="c${i}"></div>`;$('secs').appendChild(d)});
+groups.forEach(g=>{const c=document.createElement('button');c.className='chip'+(g.all?' all':'');c.textContent=g.label;c.dataset.id=g.id;
+ c.onclick=()=>{sel.has(g.id)?sel.delete(g.id):sel.add(g.id);paint()};$('c'+g.sec).appendChild(c)});
+function chosen(){const k=new Set();groups.forEach(g=>{if(sel.has(g.id))g.keys.forEach(x=>k.add(x))});return [...k]}
+function paint(){document.querySelectorAll('.chip[data-id]').forEach(c=>c.classList.toggle('on',sel.has(c.dataset.id)));
+ const n=chosen().length;$('cnt').textContent=n+' item'+(n===1?'':'s')+' selected';$('bar').classList.toggle('on',n>0)}
+$('clr').onclick=()=>{sel.clear();paint()};
 
-/* ---------- reading the files you pick ---------- */
-function take(list){
- [...list].forEach(f=>{const m=f.name.match(/^data(\d+)\.(png|jpe?g|webp)$/i);
-  if(m){shotF[+m[1]]=f;return}
-  const p=PAGES.find(x=>x.toLowerCase()===f.name.toLowerCase());
-  if(p){pageF[p]=f;return}
-  if(f.name.toLowerCase()===EXPORT.toLowerCase())exportF=f});
- refresh()}
-function has(key){const t=key[0];
- if(t==='s')return !!shotF[+key.slice(1)];
- if(t==='q')return true;
- if(t==='p')return !!pageF[key.slice(1)];
- return !!exportF}
-function refresh(){
- document.querySelectorAll('.it').forEach(c=>{const ok=has(c.dataset.key);c.disabled=!ok;c.parentElement.classList.toggle('dis',!ok);if(!ok)c.checked=false});
- const ns=Object.keys(shotF).length,np=Object.keys(pageF).length;
- $('sum').innerHTML=`<span class="${ns?'ok':'no'}">Screenshots: ${ns}/25</span><span class="${np?'ok':'no'}">Pages: ${np}/4</span><span class="${exportF?'ok':'no'}">Export .sql: ${exportF?'found':'not added'}</span><span class="ok">SQL scripts: 7/7 (built in)</span>`}
-$('pick').onchange=e=>take(e.target.files);
-$('pickDir').onchange=e=>take(e.target.files);
-const drop=$('drop');
-['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('on')}));
-['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('on')}));
-drop.addEventListener('drop',e=>take(e.dataTransfer.files));
-refresh();
+/* ---------- finding the files ---------- */
+function take(list){[...list].forEach(f=>{const m=f.name.match(/^data(\d+)\.(png|jpe?g|webp)$/i);
+ if(m){shotF[+m[1]]=f;return}
+ const p=PAGES.find(x=>x.toLowerCase()===f.name.toLowerCase());if(p){pageF[p]=f;return}
+ if(f.name.toLowerCase()===EXPORT.toLowerCase())exportF=f})}
+const any=()=>Object.keys(shotF).length||Object.keys(pageF).length||exportF;
+function has(k){const t=k[0],id=k.slice(1);return t==='s'?!!shotF[+id]:t==='q'?true:t==='p'?!!pageF[id]:!!exportF}
+async function fromPack(){if(!window.PACK)return;const got=[];
+ for(const [n,u] of Object.entries(PACK))got.push(new File([await (await fetch(u)).blob()],n));take(got)}
+async function fromWeb(){if(location.protocol==='file:')return;const got=[];
+ const grab=async n=>{try{const r=await fetch(n);if(r.ok){got.push(new File([await r.blob()],n));return 1}}catch(e){}return 0};
+ for(const s of SHOTS){for(const e of ['png','jpg','jpeg','webp']){if(await grab(`DATA${s[0]}.${e}`))break}}
+ for(const p of PAGES)await grab(p);await grab(EXPORT);take(got)}
+async function walk(d,out,depth=0){for await(const [n,h] of d.entries()){
+ if(h.kind==='file')out.push(await h.getFile());else if(depth<3&&!/^(\.git|node_modules)$/i.test(n))await walk(h,out,depth+1)}}
+function pickFolder(){return new Promise(async res=>{
+ if(window.showDirectoryPicker){try{const d=await showDirectoryPicker();const o=[];await walk(d,o);return res(o)}
+  catch(e){if(e&&e.name==='AbortError')return res([])}}
+ const i=document.createElement('input');i.type='file';i.webkitdirectory=true;i.multiple=true;
+ i.onchange=()=>res([...i.files]);i.oncancel=()=>res([]);i.click()})}
+async function ensureFiles(){
+ if(any())return true;
+ await fromPack();if(any())return true;
+ await fromWeb();if(any())return true;
+ say('Please choose the folder that holds your project files…');
+ take(await pickFolder());return !!any()}
 
-/* ---------- tabs and select buttons ---------- */
-$('t1').onclick=()=>tab(1);$('t2').onclick=()=>tab(2);
-function tab(n){$('t1').classList.toggle('on',n===1);$('t2').classList.toggle('on',n===2);$('p1').classList.toggle('on',n===1);$('p2').classList.toggle('on',n===2)}
-$('selAll').onclick=()=>document.querySelectorAll('.it:not(:disabled),.gc').forEach(c=>c.checked=true);
-$('selNone').onclick=()=>document.querySelectorAll('.it,.gc').forEach(c=>c.checked=false);
+/* ---------- building the ZIP ---------- */
+async function build(keys,name){
+ if(typeof JSZip==='undefined'){say('Please connect to the internet once so the download can be prepared, then try again.');return}
+ const btns=document.querySelectorAll('.big,#some');btns.forEach(b=>b.disabled=true);
+ try{
+  if(!(await ensureFiles())){say('No project folder was chosen. Tap the button to try again.');return}
+  say('Preparing your project…');
+  const zip=new JSZip(),root=zip.folder('Student-Services');
+  const doc=root.folder('Documentation'+(ADMISSION?' - '+clean(ADMISSION):''));
+  let n=0;
+  for(const k of keys){if(!has(k))continue;const t=k[0],id=k.slice(1);
+   if(t==='s'){const f=shotF[+id],e=ext(f),s=SHOTS.find(x=>x[0]==+id);
+    doc.file(`DATA${id}.${e}`,f);
+    doc.folder('Screenshots (renamed)').file(`${s[1]}_${String(id).padStart(2,'0')}_${snake(s[2])}.${e}`,f);
+    if(+id===10)root.folder('02_Design').file(`ERD_Diagram.${e}`,f);n++}
+   else if(t==='q'){const s=SCRIPTS.find(x=>x[0]==+id);root.folder(s[2]).file(s[1],$('src'+id).textContent.replace(/^\n/,''));n++}
+   else if(t==='p'){doc.file(id,pageF[id]);n++}
+   else if(t==='x'){root.folder('05_Views').file(EXPORT,exportF);n++}}
+  if(!n){say('Nothing from your selection was found next to this page.');return}
+  const blob=await zip.generateAsync({type:'blob'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+  say('✓ Your download is ready.',true);
+ }catch(e){say('Something went wrong while preparing the download. Please try once more.')}
+ finally{btns.forEach(b=>b.disabled=false)}}
+$('all').onclick=()=>build([...SHOTS.map(s=>'s'+s[0]),...SCRIPTS.map(s=>'q'+s[0]),...PAGES.map(p=>'p'+p),'x'],'Student-Services.zip');
+$('some').onclick=()=>build(chosen(),'Student-Services-selected.zip');
 
-/* ---------- make the ZIP ---------- */
-async function build(keys,zipName){
- if(typeof JSZip==='undefined'){msg('<span class="no">The zipping library did not load. Connect to the internet and refresh this page.</span>');return}
- if(!keys.length){msg('<span class="no">Nothing selected.</span>');return}
- msg('Building your ZIP…');
- const adm=clean($('adm').value)||'ADM NO';
- const zip=new JSZip(),root=zip.folder('Student-Services'),doc=root.folder(`Documentation - ${adm}`);
- const ren=$('oRen').checked,orig=$('oOrig').checked;let n=0;const missing=[];
- for(const key of keys){const t=key[0],id=key.slice(1);
-  if(!has(key)){missing.push(key);continue}
-  if(t==='s'){const f=shotF[+id],e=ext(f),s=SHOTS.find(x=>x[0]==+id);
-   if(orig)doc.file(`DATA${id}.${e}`,f);
-   if(ren)doc.folder('Screenshots (renamed)').file(`${s[1]}_${String(id).padStart(2,'0')}_${snake(s[2])}.${e}`,f);
-   if(+id===10)root.folder('02_Design').file(`ERD_Diagram.${e}`,f);n++}
-  else if(t==='q'){const s=SCRIPTS.find(x=>x[0]==+id);root.folder(s[2]).file(s[1],$('src'+id).textContent.replace(/^\n/,''));n++}
-  else if(t==='p'){doc.file(id,pageF[id]);n++}
-  else if(t==='x'){root.folder('05_Views').file(EXPORT,exportF);n++}}
- const zipped=await zip.generateAsync({type:'blob'});
- const a=document.createElement('a');a.href=URL.createObjectURL(zipped);a.download=zipName;a.click();
- setTimeout(()=>URL.revokeObjectURL(a.href),4000);
- msg(`<span class="ok">Done: ${n} item(s) saved in ${zipName}.</span>`+(missing.length?` <span class="no">Skipped (not selected yet): ${missing.length}.</span>`:''))}
-$('all').onclick=()=>build([...document.querySelectorAll('.it')].filter(c=>!c.disabled).map(c=>c.dataset.key),'Student-Services.zip');
-$('some').onclick=()=>build([...document.querySelectorAll('.it:checked')].map(c=>c.dataset.key),'Student-Services-selected.zip');
+/* ---------- author tools: make pack.js once ---------- */
+$('authorLink').onclick=()=>{const a=$('author');a.style.display=a.style.display==='block'?'none':'block'};
+$('mkpack').onclick=async()=>{
+ const files=await pickFolder();const pack={};let n=0;
+ const rd=f=>new Promise(r=>{const x=new FileReader();x.onload=()=>r(x.result);x.readAsDataURL(f)});
+ for(const f of files){const isShot=/^data\d+\.(png|jpe?g|webp)$/i.test(f.name);
+  const isPage=PAGES.some(p=>p.toLowerCase()===f.name.toLowerCase());
+  if(isShot||isPage||f.name.toLowerCase()===EXPORT.toLowerCase()){pack[f.name]=await rd(f);n++}}
+ if(!n){alert('No project files were found in that folder.');return}
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob(['window.PACK='+JSON.stringify(pack)+';'],{type:'text/javascript'}));
+ a.download='pack.js';a.click();
+ alert(n+' files packed. Save pack.js in the same folder as this page.')};
+paint();
 </script></body></html>
