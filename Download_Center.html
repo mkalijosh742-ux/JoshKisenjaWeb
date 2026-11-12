@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Services – Download Center</title>
+<style>
+:root{--ink:#1d1b26;--purple:#4b2a7b;--paper:#fbf7ee;--line:#cdbfa3}
+*{box-sizing:border-box;margin:0}
+body{background:#e9e2d0;color:var(--ink);font:16px/1.6 Georgia,"Times New Roman",serif}
+header{background:var(--purple);color:#fff;text-align:center;padding:30px 16px}
+header h1{font-size:1.7rem;letter-spacing:.04em}header p{opacity:.8;font-style:italic;margin-top:4px}
+main{max-width:920px;margin:22px auto;padding:0 16px}
+.box{background:var(--paper);border:1px solid var(--line);box-shadow:0 2px 8px #0002;padding:18px 20px;margin-bottom:18px}
+h2{font-size:1.1rem;color:var(--purple);margin-bottom:8px}
+label.f{display:block;font-size:.88rem;margin:6px 0 2px}
+input[type=text]{font:inherit;padding:7px 10px;border:1px solid var(--line);width:100%;max-width:340px}
+.btn{font:inherit;font-size:.9rem;padding:8px 18px;border:1px solid var(--purple);background:var(--purple);color:#fff;cursor:pointer;border-radius:3px;margin:8px 8px 0 0}
+.btn.alt{background:#fff;color:var(--purple)}.btn:hover{opacity:.85}.btn:disabled{opacity:.45;cursor:default}
+.drop{border:2px dashed #8a7a5a;background:#fffdf6;text-align:center;padding:26px 14px;margin:10px 0;color:#7a6a4a;transition:.2s}
+.drop.on{background:#efe6ff;border-color:var(--purple)}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tabs button{font:inherit;flex:1;padding:10px;border:1px solid var(--purple);background:#fff;color:var(--purple);cursor:pointer}
+.tabs button.on{background:var(--purple);color:#fff}
+.panel{display:none}.panel.on{display:block}
+.grp{margin:12px 0;border-top:1px solid var(--line);padding-top:8px}
+.grp>b{display:flex;gap:8px;align-items:center;color:var(--purple)}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2px 14px;margin:4px 0 0 24px;font-size:.88rem}
+.items label.dis{color:#aaa}
+.sum{font-size:.9rem}.sum span{display:inline-block;margin-right:16px}
+.ok{color:#2c7a4b}.no{color:#a0301f}
+#msg{margin-top:10px;font-size:.9rem;min-height:1.4em}
+.tree{font:12.5px/1.45 Consolas,monospace;background:#f1ebdc;padding:10px 14px;white-space:pre;overflow:auto;margin-top:8px}
+</style></head><body>
+<header><h1>Download Center</h1><p>Student Services Management System · download your whole project, or only parts of it</p></header>
+<main>
+
+<div class="box"><h2>Step 1 · Your details and files</h2>
+<label class="f">Admission number (used in the folder name)</label>
+<input type="text" id="adm" placeholder="e.g. PCK-ICT-001-25">
+<div class="drop" id="drop">Drag your files here (DATA images, the HTML pages, StudentServicesDB.sql)<br>or use the buttons below</div>
+<input type="file" id="pick" multiple hidden accept="image/*,.html,.sql">
+<input type="file" id="pickDir" webkitdirectory multiple hidden>
+<button class="btn" onclick="pick.click()">Select files</button>
+<button class="btn alt" onclick="pickDir.click()">Select a whole folder</button>
+<div class="sum" id="sum" style="margin-top:12px">Nothing selected yet. The 7 SQL scripts are already built into this page.</div>
+</div>
+
+<div class="box"><h2>Step 2 · Download</h2>
+<div class="tabs"><button id="t1" class="on">Download everything</button><button id="t2">Choose parts</button></div>
+
+<div class="panel on" id="p1">
+<p>Creates one ZIP that unpacks into an organised project folder:</p>
+<div class="tree">Student-Services/
+ ├─ Documentation - [ADM]/   pages, DATA1…DATA25, renamed screenshots
+ ├─ 01_Setup/   01_setup_database.sql, 07_permissions.sql
+ ├─ 02_Design/  ERD_Diagram image
+ ├─ 03_DDL/     02_create_tables.sql, 04_alter_tables.sql
+ ├─ 04_DML/     03_insert_data.sql, 05_queries.sql
+ └─ 05_Views/   06_views.sql, StudentServicesDB.sql</div>
+<button class="btn" id="all">Download everything (.zip)</button></div>
+
+<div class="panel" id="p2">
+<button class="btn alt" id="selAll">Select all</button><button class="btn alt" id="selNone">Select none</button>
+<div id="parts"></div>
+<button class="btn" id="some">Download selected (.zip)</button></div>
+
+<div class="grp"><b>Options</b>
+<div class="items" style="grid-template-columns:1fr">
+<label><input type="checkbox" id="oRen" checked> Also save screenshots with readable names (Task2_06_StudentServicesDB_Created.png)</label>
+<label><input type="checkbox" id="oOrig" checked> Keep original DATA names too (the pages need them to find the images)</label></div></div>
+<div id="msg"></div></div>
+</main>
+<script type="text/plain" id="src1">/* =====================================================================
+   01_setup_database.sql          TASK 2 - Database setup
+   PURPOSE: creates StudentServicesDB, the three user accounts, shows
+            the server specifications, and builds the Departments table
+            with 5 sample records.
+   RUN ORDER: 1 of 7.  Run the whole file in SSMS (F5).
+   ===================================================================== */
+USE master;
+GO
+IF DB_ID('StudentServicesDB') IS NULL
+    CREATE DATABASE StudentServicesDB;   -- the new database
+GO
+USE StudentServicesDB;
+GO
+
+/* ---- Server specifications (take a screenshot of this result) ---- */
+SELECT @@SERVERNAME AS ServerName,
+       SERVERPROPERTY('Edition')        AS Edition,
+       SERVERPROPERTY('ProductVersion') AS Version,
+       SERVERPROPERTY('Collation')      AS Collation;
+SELECT cpu_count AS LogicalCPUs, physical_memory_kb/1024 AS RAM_MB FROM sys.dm_os_sys_info;
+SELECT @@VERSION AS FullVersionInfo;
+GO
+
+/* ---- User accounts: administrator, faculty, student ----
+   CHANGE THE PASSWORDS before running if you wish.                      */
+IF NOT EXISTS (SELECT 1 FROM sys.server_principals WHERE name='admin_login')
+    CREATE LOGIN admin_login   WITH PASSWORD='Adm!n#2026Pass';
+IF NOT EXISTS (SELECT 1 FROM sys.server_principals WHERE name='faculty_login')
+    CREATE LOGIN faculty_login WITH PASSWORD='Fac#2026Pass!';
+IF NOT EXISTS (SELECT 1 FROM sys.server_principals WHERE name='student_login')
+    CREATE LOGIN student_login WITH PASSWORD='Stu#2026Pass!';
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name='admin_user')
+    CREATE USER admin_user   FOR LOGIN admin_login;
+IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name='faculty_user')
+    CREATE USER faculty_user FOR LOGIN faculty_login;
+IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name='student_user')
+    CREATE USER student_user FOR LOGIN student_login;
+ALTER ROLE db_owner ADD MEMBER admin_user;   -- administrators: full control
+-- Faculty and student permissions are applied in 07_permissions.sql
+GO
+
+/* ---- Departments table (Task 2e): PK + NOT NULL constraints ---- */
+IF OBJECT_ID('dbo.Departments','U') IS NULL
+CREATE TABLE Departments(
+    DeptID     INT IDENTITY(1,1) PRIMARY KEY,
+    DeptName   VARCHAR(80) NOT NULL,
+    Block      VARCHAR(20) NOT NULL,
+    HeadOfDept VARCHAR(80) NOT NULL);
+GO
+IF NOT EXISTS (SELECT 1 FROM Departments)
+INSERT INTO Departments(DeptName,Block,HeadOfDept) VALUES
+('Computing & Informatics',         'Block A','Dr. Samuel Mwangi'),
+('Building & Civil Engineering',    'Block B','Eng. Peter Omondi'),
+('Electrical & Electronics',        'Block C','Eng. Daniel Mutiso'),
+('Business Studies',                'Block D','Mrs. Joyce Akinyi'),
+('Automotive Engineering',          'Block E','Mr. Isaac Rotich');
+GO
+SELECT * FROM Departments;   -- screenshot this (DATA9)
+</script>
+<script type="text/plain" id="src2">/* =====================================================================
+   02_create_tables.sql           TASK 4 (a, b) - DDL
+   PURPOSE: creates every table with primary keys, foreign keys and the
+            CHECK / UNIQUE constraints required by the task.
+            (Departments already exists from script 01.)
+   RUN ORDER: 2 of 7.
+   ===================================================================== */
+USE StudentServicesDB;
+GO
+
+/* Courses: diploma / certificate / artisan */
+CREATE TABLE Courses(
+    CourseID   INT IDENTITY(1,1) PRIMARY KEY,
+    CourseName VARCHAR(100) NOT NULL,
+    Level      VARCHAR(12)  NOT NULL CHECK (Level IN ('Diploma','Certificate','Artisan')),
+    TuitionFee DECIMAL(10,2) NOT NULL DEFAULT 0,        -- used for fee balances
+    DeptID     INT NOT NULL REFERENCES Departments(DeptID));
+
+/* Modules: diploma = 3, certificate = 2, artisan = 1 */
+CREATE TABLE Modules(
+    ModuleCode VARCHAR(10) PRIMARY KEY,
+    CourseID   INT NOT NULL REFERENCES Courses(CourseID),
+    ModuleNo   TINYINT NOT NULL CHECK (ModuleNo BETWEEN 1 AND 3));
+
+/* Subjects: code starts with the module code; 2-6 hours per week */
+CREATE TABLE Subjects(
+    SubjectCode  VARCHAR(20) PRIMARY KEY,
+    SubjectName  VARCHAR(100) NOT NULL,
+    HoursPerWeek TINYINT NOT NULL CHECK (HoursPerWeek BETWEEN 2 AND 6),
+    ModuleCode   VARCHAR(10) NOT NULL REFERENCES Modules(ModuleCode),
+    CONSTRAINT CK_Subject_Code_Prefix CHECK (SubjectCode LIKE ModuleCode + '-%'));
+
+/* Classes: one course per class, may span intakes */
+CREATE TABLE Classes(
+    ClassID   INT IDENTITY(1,1) PRIMARY KEY,
+    ClassName VARCHAR(50) NOT NULL,
+    CourseID  INT NOT NULL REFERENCES Courses(CourseID),
+    Intake    VARCHAR(20) NOT NULL);
+
+/* Students: gender CHECK, status CHECK, UNIQUE(name, date of birth) */
+CREATE TABLE Students(
+    StudentID INT IDENTITY(1,1) PRIMARY KEY,
+    AdmNo     VARCHAR(20)  NOT NULL UNIQUE,
+    FullName  VARCHAR(100) NOT NULL,
+    DOB       DATE         NOT NULL,
+    Gender    CHAR(1)      NOT NULL CHECK (Gender IN ('M','F')),
+    Address   VARCHAR(120),
+    Phone     VARCHAR(15),
+    Status    VARCHAR(15)  NOT NULL DEFAULT 'in session'
+              CHECK (Status IN ('in session','on attachment','completed')),
+    CourseID  INT NOT NULL REFERENCES Courses(CourseID),
+    ClassID   INT NOT NULL REFERENCES Classes(ClassID),
+    GradYear  INT NULL,                                   -- expected graduation year
+    CONSTRAINT UQ_Student_NameDOB UNIQUE (FullName, DOB));
+
+CREATE TABLE Lecturers(
+    LecturerID INT IDENTITY(1,1) PRIMARY KEY,
+    FullName   VARCHAR(100) NOT NULL,
+    Specialty  VARCHAR(80),
+    Role       VARCHAR(40),
+    Phone      VARCHAR(15),
+    DeptID     INT NOT NULL REFERENCES Departments(DeptID));
+
+/* Teaching = workload allocation (lecturer + subject + class + term) */
+CREATE TABLE Teaching(
+    TeachID     INT IDENTITY(1,1) PRIMARY KEY,
+    LecturerID  INT NOT NULL REFERENCES Lecturers(LecturerID),
+    SubjectCode VARCHAR(20) NOT NULL REFERENCES Subjects(SubjectCode),
+    ClassID     INT NOT NULL REFERENCES Classes(ClassID),
+    Term        TINYINT NOT NULL CHECK (Term BETWEEN 1 AND 3),
+    Year        INT NOT NULL,
+    Hours       TINYINT NOT NULL CHECK (Hours BETWEEN 2 AND 6));   -- hours per week
+
+/* Assessments: CATs out of 20, exam out of 60; supplementary kept separately by flag */
+CREATE TABLE Assessments(
+    AssessID    INT IDENTITY(1,1) PRIMARY KEY,
+    StudentID   INT NOT NULL REFERENCES Students(StudentID),
+    SubjectCode VARCHAR(20) NOT NULL REFERENCES Subjects(SubjectCode),
+    Term        TINYINT NOT NULL CHECK (Term BETWEEN 1 AND 3),
+    Year        INT NOT NULL,
+    Attendance  DECIMAL(5,2) CHECK (Attendance BETWEEN 0 AND 100),
+    CAT1        DECIMAL(4,1) CHECK (CAT1 BETWEEN 0 AND 20),
+    CAT2        DECIMAL(4,1) CHECK (CAT2 BETWEEN 0 AND 20),
+    Exam        DECIMAL(4,1) CHECK (Exam BETWEEN 0 AND 60),
+    IsSupplementary BIT NOT NULL DEFAULT 0,
+    CONSTRAINT UQ_Assessment UNIQUE (StudentID, SubjectCode, Term, Year, IsSupplementary));
+
+CREATE TABLE Payments(
+    PaymentID INT IDENTITY(1,1) PRIMARY KEY,
+    StudentID INT NOT NULL REFERENCES Students(StudentID),
+    PayType   VARCHAR(12) NOT NULL CHECK (PayType IN ('tuition','hostel','supp')),
+    Amount    DECIMAL(10,2) NOT NULL CHECK (Amount > 0),
+    Term      TINYINT,
+    Year      INT,
+    PaidOn    DATE DEFAULT GETDATE());
+
+CREATE TABLE Hostels(
+    HostelID   INT IDENTITY(1,1) PRIMARY KEY,
+    HostelName VARCHAR(50) NOT NULL,
+    Capacity   INT NOT NULL CHECK (Capacity > 0));
+
+CREATE TABLE HostelAllocations(
+    AllocID   INT IDENTITY(1,1) PRIMARY KEY,
+    StudentID INT NOT NULL REFERENCES Students(StudentID),
+    HostelID  INT NOT NULL REFERENCES Hostels(HostelID),
+    Room      VARCHAR(10),
+    Term      TINYINT,
+    Year      INT);
+
+CREATE TABLE Clubs(
+    ClubID      INT IDENTITY(1,1) PRIMARY KEY,
+    ClubName    VARCHAR(60) NOT NULL UNIQUE,
+    Patron      VARCHAR(80),
+    Chairperson VARCHAR(80),
+    IsActive    BIT NOT NULL DEFAULT 1);
+
+CREATE TABLE ClubMembers(
+    MemberID  INT IDENTITY(1,1) PRIMARY KEY,
+    ClubID    INT NOT NULL REFERENCES Clubs(ClubID),
+    StudentID INT NOT NULL REFERENCES Students(StudentID),
+    Year      INT NOT NULL,
+    CONSTRAINT UQ_ClubMember UNIQUE (ClubID, StudentID, Year));
+
+CREATE TABLE Firms(
+    FirmID   INT IDENTITY(1,1) PRIMARY KEY,
+    FirmName VARCHAR(100) NOT NULL);
+
+CREATE TABLE Attachments(
+    AttachID   INT IDENTITY(1,1) PRIMARY KEY,
+    StudentID  INT NOT NULL REFERENCES Students(StudentID),
+    FirmID     INT NOT NULL REFERENCES Firms(FirmID),
+    StartDate  DATE NOT NULL,
+    EndDate    DATE,
+    AttachType VARCHAR(12) NOT NULL CHECK (AttachType IN ('attachment','internship')),
+    Completed  BIT NOT NULL DEFAULT 0,
+    CONSTRAINT CK_Attach_Dates CHECK (EndDate IS NULL OR EndDate >= StartDate));
+GO
+
+/* Quick check - lists all tables (screenshot DATA12 / DATA13) */
+SELECT name AS TableName FROM sys.tables ORDER BY name;
+</script>
+<script type="text/plain" id="src3">/* =====================================================================
+   03_insert_data.sql             TASK 5a - Insert test data
+   PURPOSE: at least 10 realistic records in every table (students in
+            different courses, classes and enrolment statuses).
+   RUN ORDER: 3 of 7. Run ONCE on a fresh database - the scripts that
+            follow rely on the IDs generated here (1, 2, 3 ...).
+   ===================================================================== */
+USE StudentServicesDB;
+GO
+
+/* Departments: 5 rows exist from script 01, add 5 more -> 10 */
+INSERT INTO Departments(DeptName,Block,HeadOfDept) VALUES
+('Hospitality & Tourism','Block D','Ms. Lydia Wafula'),
+('Agriculture','Block F','Mr. Samuel Kiptoo'),
+('Fashion & Design','Block G','Mrs. Beatrice Mueni'),
+('Mechanical Engineering','Block E','Eng. Joseph Maina'),
+('Liberal Studies','Block A','Dr. Agnes Wairimu');
+
+INSERT INTO Courses(CourseName,Level,TuitionFee,DeptID) VALUES
+('Diploma in ICT','Diploma',85000,1),
+('Certificate in ICT','Certificate',60000,1),
+('Artisan in Computer Packages','Artisan',30000,1),
+('Diploma in Civil Engineering','Diploma',95000,2),
+('Certificate in Building Technology','Certificate',55000,2),
+('Diploma in Electrical Engineering','Diploma',90000,3),
+('Certificate in Electrical Installation','Certificate',55000,3),
+('Diploma in Business Management','Diploma',70000,4),
+('Certificate in Motor Vehicle Mechanics','Certificate',58000,5),
+('Artisan in Food and Beverage','Artisan',28000,6);
+
+INSERT INTO Modules(ModuleCode,CourseID,ModuleNo) VALUES
+('DICT-M1',1,1),('DICT-M2',1,2),('DICT-M3',1,3),
+('CICT-M1',2,1),('CICT-M2',2,2),
+('ACP-M1',3,1),
+('DCE-M1',4,1),('DCE-M2',4,2),('DCE-M3',4,3),
+('CBT-M1',5,1),('CBT-M2',5,2),
+('DEE-M1',6,1),('DEE-M2',6,2),('DEE-M3',6,3);
+
+INSERT INTO Subjects(SubjectCode,SubjectName,HoursPerWeek,ModuleCode) VALUES
+('DICT-M1-PRG','Programming Fundamentals',5,'DICT-M1'),
+('DICT-M1-NET','Computer Networks',4,'DICT-M1'),
+('DICT-M1-DBM','Database Management',4,'DICT-M1'),
+('DICT-M2-WEB','Web Development',5,'DICT-M2'),
+('DICT-M2-OOP','Object Oriented Programming',4,'DICT-M2'),
+('DICT-M3-PRJ','Capstone Project',3,'DICT-M3'),
+('CICT-M1-HWR','Computer Hardware',4,'CICT-M1'),
+('CICT-M1-OSY','Operating Systems',3,'CICT-M1'),
+('ACP-M1-OFF','Office Packages',4,'ACP-M1'),
+('DCE-M1-SUR','Surveying',5,'DCE-M1'),
+('DCE-M1-MAT','Engineering Mathematics',4,'DCE-M1'),
+('DEE-M1-CIR','Circuit Theory',5,'DEE-M1');
+
+INSERT INTO Classes(ClassName,CourseID,Intake) VALUES
+('DICT-Y1-SEP25',1,'Sep 2025'),
+('DICT-Y2-SEP24',1,'Sep 2024'),
+('CICT-Y1-SEP25',2,'Sep 2025'),
+('ACP-Y1-JAN26',3,'Jan 2026'),
+('DCE-Y1-SEP25',4,'Sep 2025'),
+('CBT-Y1-SEP25',5,'Sep 2025'),
+('DEE-Y1-SEP25',6,'Sep 2025'),
+('CEI-Y1-JAN26',7,'Jan 2026'),
+('DBM-Y1-SEP25',8,'Sep 2025'),
+('CMV-Y1-SEP25',9,'Sep 2025');
+
+INSERT INTO Students(AdmNo,FullName,DOB,Gender,Address,Phone,Status,CourseID,ClassID,GradYear) VALUES
+('PCK/DICT/001/25','Amina Wanjiru',   '2007-03-14','F','Nyeri',    '0712000001','in session',   1,1,2028),
+('PCK/DICT/002/25','Brian Otieno',    '2006-11-02','M','Kisumu',   '0712000002','in session',   1,1,2028),
+('PCK/DICT/003/24','Cynthia Achieng', '2005-06-21','F','Siaya',    '0712000003','on attachment',1,2,2026),
+('PCK/DICT/004/24','David Kamau',     '2004-01-30','M','Thika',    '0712000004','completed',    1,2,2026),
+('PCK/CICT/005/25','Esther Njeri',    '2007-09-09','F','Nakuru',   '0712000005','in session',   2,3,2028),
+('PCK/CICT/006/25','Felix Mutua',     '2006-04-17','M','Machakos', '0712000006','on attachment',2,3,2028),
+('PCK/ACP/007/26', 'Grace Chebet',    '2008-02-25','F','Eldoret',  '0712000007','in session',   3,4,2028),
+('PCK/DCE/008/25', 'Hassan Abdi',     '2005-12-05','M','Mombasa',  '0712000008','in session',   4,5,2028),
+('PCK/DCE/009/25', 'Irene Wambui',    '2006-08-19','F','Nairobi',  '0712000009','on attachment',4,5,2028),
+('PCK/DEE/010/25', 'James Kiprono',   '2004-05-11','M','Kericho',  '0712000010','in session',   6,7,2028),
+('PCK/DICT/011/24','Kevin Mwangi',    '2004-10-03','M','Nyahururu','0712000011','completed',    1,2,2026),
+('PCK/CEI/012/26', 'Lucy Atieno',     '2007-01-28','F','Homa Bay', '0712000012','in session',   7,8,2028),
+('PCK/DBM/013/25', 'Moses Barasa',    '2005-07-07','M','Kakamega', '0712000013','in session',   8,9,2028),
+('PCK/DBM/014/25', 'Naomi Chepkoech', '2006-03-03','F','Bomet',    '0712000014','on attachment',8,9,2028),
+('PCK/CMV/015/25', 'Peter Ochieng',   '2005-09-23','M','Migori',   '0712000015','on attachment',9,10,2028),
+('PCK/CICT/016/25','Faith Muthoni',   '2007-05-16','F','Embu',     '0712000016','in session',   2,3,2028);
+
+INSERT INTO Lecturers(FullName,Specialty,Role,Phone,DeptID) VALUES
+('Dr. Samuel Mwangi','Software Engineering','HOD',          '0722100001',1),
+('Mary Njoroge',     'Databases',            'Class Teacher','0722100002',1),
+('John Kariuki',     'Networking',           'Lecturer',     '0722100003',1),
+('Alice Wekesa',     'Web Development',      'Lecturer',     '0722100004',1),
+('Eng. Peter Omondi','Surveying',            'HOD',          '0722100005',2),
+('Rose Kimani',      'Mathematics',          'Lecturer',     '0722100006',2),
+('Eng. Daniel Mutiso','Electrical Circuits', 'HOD',          '0722100007',3),
+('Joyce Akinyi',     'Business Management',  'HOD',          '0722100008',4),
+('Hannah Nduta',     'Computer Hardware',    'Class Teacher','0722100009',1),
+('Isaac Rotich',     'Motor Vehicle Technology','HOD',       '0722100010',5);
+
+INSERT INTO Teaching(LecturerID,SubjectCode,ClassID,Term,Year,Hours) VALUES
+(2,'DICT-M1-DBM',1,2,2026,4),
+(2,'DICT-M1-DBM',1,3,2026,4),
+(3,'DICT-M1-NET',1,3,2026,4),
+(1,'DICT-M1-PRG',1,3,2026,3),
+(4,'DICT-M2-WEB',2,3,2026,5),
+(2,'DICT-M2-OOP',2,3,2026,4),
+(9,'CICT-M1-HWR',3,3,2026,4),
+(3,'CICT-M1-OSY',3,3,2026,3),
+(5,'DCE-M1-SUR',5,3,2026,5),
+(6,'DCE-M1-MAT',5,3,2026,4),
+(7,'DEE-M1-CIR',7,3,2026,5),
+(9,'ACP-M1-OFF',4,3,2026,4);
+
+INSERT INTO Assessments(StudentID,SubjectCode,Term,Year,Attendance,CAT1,CAT2,Exam,IsSupplementary) VALUES
+(1,'DICT-M1-PRG',1,2026,90,15,16,47,0),
+(1,'DICT-M1-DBM',2,2026,92,16,15,48,0),
+(1,'DICT-M1-NET',2,2026,88,14,17,45,0),
+(2,'DICT-M1-DBM',2,2026,80,12,10,35,0),   -- 57 : fails, supplementary
+(2,'DICT-M1-NET',2,2026,85,15,13,42,0),
+(2,'DICT-M1-DBM',3,2026,85,14,12,40,1),   -- supplementary result (66)
+(5,'CICT-M1-HWR',2,2026,90,17,18,50,0),
+(5,'CICT-M1-OSY',2,2026,78,11, 9,30,0),   -- 50 : fails, supplementary
+(7,'ACP-M1-OFF', 2,2026,93,18,17,51,0),
+(8,'DCE-M1-SUR', 2,2026,95,18,16,52,0),
+(8,'DCE-M1-MAT', 2,2026,82,13,14,38,0),
+(10,'DEE-M1-CIR',2,2026,89,15,16,44,0),
+(16,'CICT-M1-HWR',2,2026,91,16,14,46,0);
+
+INSERT INTO Payments(StudentID,PayType,Amount,Term,Year,PaidOn) VALUES
+(1,'tuition',60000,1,2026,'2026-01-10'),
+(1,'tuition',10000,2,2026,'2026-05-12'),
+(2,'tuition',50000,1,2026,'2026-01-11'),
+(2,'tuition',35000,2,2026,'2026-05-13'),
+(5,'tuition',40000,1,2026,'2026-01-15'),
+(8,'tuition',60000,1,2026,'2026-01-12'),
+(1,'hostel',15000,3,2026,'2026-09-02'),
+(2,'hostel',15000,3,2026,'2026-09-03'),
+(5,'hostel',15000,3,2026,'2026-09-04'),
+(8,'hostel',15000,3,2026,'2026-09-05'),
+(12,'hostel',15000,3,2026,'2026-09-05'),
+(2,'supp',2000,3,2026,'2026-09-01'),
+(16,'tuition',45000,1,2026,'2026-01-16'),
+(13,'tuition',40000,1,2026,'2026-01-17'),
+(3,'tuition',85000,1,2026,'2026-01-09'),
+(4,'tuition',85000,1,2026,'2026-01-09'),
+(11,'tuition',85000,1,2026,'2026-01-09'),
+(1,'hostel',15000,2,2026,'2026-05-03'),
+(2,'hostel',15000,2,2026,'2026-05-03'),
+(5,'hostel',15000,2,2026,'2026-05-04'),
+(8,'hostel',15000,2,2026,'2026-05-04'),
+(12,'hostel',15000,2,2026,'2026-05-05');
+
+INSERT INTO Hostels(HostelName,Capacity) VALUES
+('Kilimanjaro House',100),('Mt Kenya House',100),('Aberdare Hall',80),('Rift View Hostel',60),
+('Lake Side Hostel',90),('Savannah House',70),('Baobab Hall',50),('Acacia Hostel',60),
+('Tsavo House',80),('Naivasha Hall',40);
+
+/* Allocations only for students who paid for accommodation (terms 2 and 3, 2026) */
+INSERT INTO HostelAllocations(StudentID,HostelID,Room,Term,Year) VALUES
+(1,3,'A12',2,2026),(2,1,'K05',2,2026),(5,3,'A20',2,2026),(8,2,'M08',2,2026),(12,4,'R03',2,2026),
+(1,3,'A12',3,2026),(2,1,'K05',3,2026),(5,3,'A20',3,2026),(8,2,'M08',3,2026),(12,4,'R03',3,2026);
+
+INSERT INTO Clubs(ClubName,Patron,Chairperson) VALUES
+('Drama Club','Mary Njoroge','Amina Wanjiru'),
+('Debate Club','Joyce Akinyi','Brian Otieno'),
+('Football Club','Isaac Rotich','Felix Mutua'),
+('Christian Union','Rose Kimani','Cynthia Achieng'),
+('Music Club','Alice Wekesa','Grace Chebet'),
+('Environmental Club','Eng. Peter Omondi','Irene Wambui'),
+('Chess Club','John Kariuki','Hassan Abdi'),
+('Computer Club','Dr. Samuel Mwangi','David Kamau'),
+('Photography Club','Hannah Nduta','Naomi Chepkoech'),
+('Rotaract Club','Eng. Daniel Mutiso','Moses Barasa');
+
+/* Chess (7), Photography (9) and Rotaract (10) deliberately have NO members */
+INSERT INTO ClubMembers(ClubID,StudentID,Year) VALUES
+(1,1,2025),(1,1,2026),(1,5,2026),
+(2,2,2025),(2,2,2026),(2,8,2026),
+(3,2,2026),(3,6,2026),(3,13,2026),
+(4,3,2024),(4,3,2025),(4,3,2026),(4,12,2026),
+(5,7,2026),(5,16,2025),(5,16,2026),
+(6,9,2026),(6,10,2026),
+(8,1,2026),(8,4,2025),(8,11,2025),(8,11,2026);
+
+INSERT INTO Firms(FirmName) VALUES
+('Safaricom PLC'),('Kenya Power'),('Equity Bank'),('KCB Group'),('Nairobi Water'),
+('Bidco Africa'),('Sameer Africa'),('Davis & Shirtliff'),('Kenya Airways'),('Brookside Dairy');
+
+INSERT INTO Attachments(StudentID,FirmID,StartDate,EndDate,AttachType,Completed) VALUES
+(3,1,'2026-09-07','2026-12-04','attachment',0),   -- current (term 3 2026)
+(6,1,'2026-09-07','2026-12-04','attachment',0),   -- same firm, same period as Cynthia
+(9,2,'2026-09-07','2026-12-04','attachment',0),
+(14,3,'2026-09-07','2026-12-04','attachment',0),
+(15,7,'2026-09-07','2026-12-04','attachment',0),
+(4,1,'2026-01-05','2026-03-27','attachment',1),
+(11,1,'2026-01-05','2026-03-27','attachment',1),
+(3,3,'2025-09-08','2025-12-05','attachment',1),
+(6,2,'2026-01-05','2026-03-27','attachment',1),
+(9,5,'2026-01-05','2026-03-27','attachment',1),
+(4,10,'2026-05-04','2026-08-28','internship',1),
+(11,4,'2026-05-04','2026-08-28','internship',1);
+GO
+
+/* Row counts for every table (screenshot DATA15) */
+SELECT 'Departments' AS TableName, COUNT(*) AS Rows FROM Departments UNION ALL
+SELECT 'Courses',COUNT(*) FROM Courses UNION ALL SELECT 'Modules',COUNT(*) FROM Modules UNION ALL
+SELECT 'Subjects',COUNT(*) FROM Subjects UNION ALL SELECT 'Classes',COUNT(*) FROM Classes UNION ALL
+SELECT 'Students',COUNT(*) FROM Students UNION ALL SELECT 'Lecturers',COUNT(*) FROM Lecturers UNION ALL
+SELECT 'Teaching',COUNT(*) FROM Teaching UNION ALL SELECT 'Assessments',COUNT(*) FROM Assessments UNION ALL
+SELECT 'Payments',COUNT(*) FROM Payments UNION ALL SELECT 'Hostels',COUNT(*) FROM Hostels UNION ALL
+SELECT 'HostelAllocations',COUNT(*) FROM HostelAllocations UNION ALL SELECT 'Clubs',COUNT(*) FROM Clubs UNION ALL
+SELECT 'ClubMembers',COUNT(*) FROM ClubMembers UNION ALL SELECT 'Firms',COUNT(*) FROM Firms UNION ALL
+SELECT 'Attachments',COUNT(*) FROM Attachments;
+</script>
+<script type="text/plain" id="src4">/* =====================================================================
+   04_alter_tables.sql            TASK 4c - Schema modifications
+   PURPOSE: (i) add a column, (ii) change a data type, (iii) export,
+            drop and recreate a table with the same data.
+   RUN ORDER: 4 of 7 (after the data is inserted).
+   ===================================================================== */
+USE StudentServicesDB;
+GO
+
+/* (i) Add a new column */
+ALTER TABLE Students ADD Email VARCHAR(100) NULL;
+GO
+UPDATE Students SET Email = LOWER(REPLACE(FullName,' ','.')) + '@pckinyanjui.ac.ke';
+SELECT TOP 5 StudentID, FullName, Email FROM Students;      -- screenshot
+GO
+
+/* (ii) Change the data type of a column that no other table references */
+ALTER TABLE Students ALTER COLUMN Address VARCHAR(200) NULL;   -- was VARCHAR(120)
+SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME='Students' AND COLUMN_NAME='Address';          -- screenshot
+GO
+
+/* (iii) Export, drop and recreate the Payments table (no table references it)
+   STEP 1 - EXPORT (do this in SSMS first, then screenshot the wizard):
+     Right-click StudentServicesDB > Tasks > Generate Scripts > choose
+     "Select specific database objects" > tick Payments > Advanced >
+     "Types of data to script" = Schema and data > save as Payments_export.sql
+   STEP 2 - run the script below.                                          */
+SELECT COUNT(*) AS RowsBefore, SUM(Amount) AS TotalBefore FROM Payments;
+SELECT * INTO Payments_backup FROM Payments;     -- safety copy of structure and data
+GO
+DROP TABLE Payments;
+GO
+CREATE TABLE Payments(
+    PaymentID INT IDENTITY(1,1) PRIMARY KEY,
+    StudentID INT NOT NULL REFERENCES Students(StudentID),
+    PayType   VARCHAR(12) NOT NULL CHECK (PayType IN ('tuition','hostel','supp')),
+    Amount    DECIMAL(10,2) NOT NULL CHECK (Amount > 0),
+    Term      TINYINT,
+    Year      INT,
+    PaidOn    DATE DEFAULT GETDATE());
+GO
+SET IDENTITY_INSERT Payments ON;
+INSERT INTO Payments(PaymentID,StudentID,PayType,Amount,Term,Year,PaidOn)
+SELECT PaymentID,StudentID,PayType,Amount,Term,Year,PaidOn FROM Payments_backup;
+SET IDENTITY_INSERT Payments OFF;
+GO
+SELECT COUNT(*) AS RowsAfter, SUM(Amount) AS TotalAfter FROM Payments;   -- must equal RowsBefore
+DROP TABLE Payments_backup;
+GO
+</script>
+<script type="text/plain" id="src5">/* =====================================================================
+   05_queries.sql                 TASK 5 (b, c, d, e) - DML queries
+   PURPOSE: SELECT, UPDATE, DELETE, JOIN and aggregate queries.
+   RUN ORDER: 5 of 7. Run each numbered query on its own (highlight it
+   and press F5) so you can screenshot each result.
+   Values such as 'A%', 'Block A' or term/year can be changed freely.
+   ===================================================================== */
+USE StudentServicesDB;
+GO
+
+/* ------------------------- 5b. SELECT queries ------------------------- */
+-- (i) students whose names start with a given letter
+SELECT AdmNo, FullName, Status FROM Students WHERE FullName LIKE 'A%';
+
+-- (ii) departments located in a given block
+SELECT DeptName, Block, HeadOfDept FROM Departments WHERE Block = 'Block A';
+
+-- (iii) students in a specified class
+SELECT s.AdmNo, s.FullName, s.Status
+FROM Students s JOIN Classes c ON c.ClassID = s.ClassID
+WHERE c.ClassName = 'DICT-Y1-SEP25';
+
+-- (iv) clubs with no members
+SELECT c.ClubID, c.ClubName
+FROM Clubs c
+WHERE NOT EXISTS (SELECT 1 FROM ClubMembers m WHERE m.ClubID = c.ClubID);
+GO
+
+/* ----------------------- 5c. UPDATE and DELETE ------------------------ */
+-- (i) update a user's contact details
+SELECT AdmNo, Phone, Address FROM Students WHERE AdmNo = 'PCK/DICT/001/25';   -- before
+UPDATE Students SET Phone = '0700123456', Address = 'Nyeri Town'
+WHERE AdmNo = 'PCK/DICT/001/25';
+SELECT AdmNo, Phone, Address FROM Students WHERE AdmNo = 'PCK/DICT/001/25';   -- after
+GO
+
+-- (ii) enrolment status 'in session' -> 'on attachment' (and record the attachment)
+BEGIN TRANSACTION;
+    UPDATE Students SET Status = 'on attachment'
+    WHERE AdmNo = 'PCK/CICT/005/25' AND Status = 'in session';
+
+    INSERT INTO Attachments(StudentID, FirmID, StartDate, EndDate, AttachType, Completed)
+    SELECT StudentID, 8, '2026-09-07', '2026-12-04', 'attachment', 0
+    FROM Students WHERE AdmNo = 'PCK/CICT/005/25';
+COMMIT TRANSACTION;
+SELECT AdmNo, FullName, Status FROM Students WHERE AdmNo = 'PCK/CICT/005/25';
+GO
+
+-- (iii) change a club's chairperson
+UPDATE Clubs SET Chairperson = 'Brian Otieno' WHERE ClubName = 'Drama Club';
+SELECT ClubName, Patron, Chairperson FROM Clubs WHERE ClubName = 'Drama Club';
+GO
+
+-- (iv) deregister clubs with no members for three consecutive years
+--      (no membership rows in the current year or the two years before it)
+SELECT ClubID, ClubName AS ClubsToDeregister FROM Clubs c
+WHERE NOT EXISTS (SELECT 1 FROM ClubMembers m
+                  WHERE m.ClubID = c.ClubID AND m.Year >= YEAR(GETDATE()) - 2);   -- preview
+DELETE FROM Clubs
+WHERE NOT EXISTS (SELECT 1 FROM ClubMembers m
+                  WHERE m.ClubID = Clubs.ClubID AND m.Year >= YEAR(GETDATE()) - 2);
+SELECT ClubID, ClubName FROM Clubs;                                              -- after
+GO
+
+/* --------------------------- 5d. JOIN queries ------------------------- */
+-- (i) lecturers and the subjects they teach
+SELECT l.FullName AS Lecturer, sb.SubjectCode, sb.SubjectName, cl.ClassName, t.Term, t.Year
+FROM Lecturers l
+JOIN Teaching t  ON t.LecturerID  = l.LecturerID
+JOIN Subjects sb ON sb.SubjectCode = t.SubjectCode
+JOIN Classes cl  ON cl.ClassID    = t.ClassID
+ORDER BY l.FullName;
+
+-- (ii) clubs with their patrons and chairpersons
+SELECT ClubName, Patron, Chairperson FROM Clubs ORDER BY ClubName;
+
+-- (iii) students in a specific class with their hostel details
+SELECT s.AdmNo, s.FullName, h.HostelName, a.Room, a.Term, a.Year
+FROM Students s
+JOIN Classes c           ON c.ClassID   = s.ClassID
+JOIN HostelAllocations a ON a.StudentID = s.StudentID
+JOIN Hostels h           ON h.HostelID  = a.HostelID
+WHERE c.ClassName = 'DICT-Y1-SEP25'
+ORDER BY a.Year, a.Term;
+
+-- (iv) students attached in the same firm for a specified attachment period
+SELECT f.FirmName, s.AdmNo, s.FullName, att.StartDate, att.EndDate
+FROM Attachments att
+JOIN Students s ON s.StudentID = att.StudentID
+JOIN Firms f    ON f.FirmID    = att.FirmID
+WHERE f.FirmName = 'Safaricom PLC'
+  AND att.StartDate = '2026-09-07' AND att.EndDate = '2026-12-04';
+GO
+
+/* ------------------------ 5e. Aggregate queries ----------------------- */
+-- (i) total number of students per course
+SELECT c.CourseName, COUNT(*) AS TotalStudents
+FROM Students s JOIN Courses c ON c.CourseID = s.CourseID
+GROUP BY c.CourseName ORDER BY TotalStudents DESC;
+
+-- (ii) average grade per department in a given term and year
+SELECT d.DeptName, CAST(AVG(a.CAT1 + a.CAT2 + a.Exam) AS DECIMAL(5,2)) AS AverageMarks
+FROM Assessments a
+JOIN Students s    ON s.StudentID = a.StudentID
+JOIN Courses c     ON c.CourseID  = s.CourseID
+JOIN Departments d ON d.DeptID    = c.DeptID
+WHERE a.Term = 2 AND a.Year = 2026 AND a.IsSupplementary = 0
+GROUP BY d.DeptName;
+
+-- (iii) membership per club per year
+SELECT c.ClubName, m.Year, COUNT(*) AS Members
+FROM Clubs c JOIN ClubMembers m ON m.ClubID = c.ClubID
+GROUP BY c.ClubName, m.Year ORDER BY c.ClubName, m.Year;
+
+-- (iv) total marks per subject for a given student in a given term and year
+SELECT sb.SubjectName, a.CAT1 + a.CAT2 + a.Exam AS TotalMarks
+FROM Assessments a JOIN Subjects sb ON sb.SubjectCode = a.SubjectCode
+WHERE a.StudentID = 1 AND a.Term = 2 AND a.Year = 2026 AND a.IsSupplementary = 0;
+
+-- (v) students currently on attachment or internship, per department
+SELECT d.DeptName, s.AdmNo, s.FullName, f.FirmName, att.AttachType
+FROM Attachments att
+JOIN Students s    ON s.StudentID = att.StudentID
+JOIN Courses c     ON c.CourseID  = s.CourseID
+JOIN Departments d ON d.DeptID    = c.DeptID
+JOIN Firms f       ON f.FirmID    = att.FirmID
+WHERE CAST(GETDATE() AS DATE) BETWEEN att.StartDate AND att.EndDate
+ORDER BY d.DeptName, s.FullName;
+
+-- (vi) attachment completion rate per course
+SELECT c.CourseName,
+       COUNT(*) AS TotalAttachments,
+       SUM(CAST(att.Completed AS INT)) AS Completed,
+       CAST(SUM(CAST(att.Completed AS INT)) * 100.0 / COUNT(*) AS DECIMAL(5,2)) AS CompletionRatePct
+FROM Attachments att
+JOIN Students s ON s.StudentID = att.StudentID
+JOIN Courses c  ON c.CourseID  = s.CourseID
+GROUP BY c.CourseName;
+
+-- (vii) hostel occupancy rate by term
+SELECT a.Year, a.Term, h.HostelName, COUNT(*) AS Occupants, h.Capacity,
+       CAST(COUNT(*) * 100.0 / h.Capacity AS DECIMAL(5,2)) AS OccupancyPct
+FROM Hostels h JOIN HostelAllocations a ON a.HostelID = h.HostelID
+GROUP BY a.Year, a.Term, h.HostelName, h.Capacity
+ORDER BY a.Year, a.Term, h.HostelName;
+
+-- (viii) club participation trends over several years
+SELECT ClubName, Year, Members,
+       Members - LAG(Members) OVER (PARTITION BY ClubName ORDER BY Year) AS ChangeOnPreviousYear
+FROM (SELECT c.ClubName, m.Year, COUNT(*) AS Members
+      FROM Clubs c JOIN ClubMembers m ON m.ClubID = c.ClubID
+      GROUP BY c.ClubName, m.Year) x
+ORDER BY ClubName, Year;
+
+-- (ix) lecturer workload: hours taught per week and per term (13-week term)
+SELECT l.FullName, l.Role, t.Year, t.Term,
+       SUM(t.Hours)      AS HoursPerWeek,
+       SUM(t.Hours) * 13 AS HoursPerTerm
+FROM Lecturers l JOIN Teaching t ON t.LecturerID = l.LecturerID
+GROUP BY l.FullName, l.Role, t.Year, t.Term
+ORDER BY t.Year, t.Term, l.FullName;
+GO
+</script>
+<script type="text/plain" id="src6">/* =====================================================================
+   06_views.sql                   TASK 6 - Views
+   PURPOSE: role-based views (registrar, HODs, lecturers, dean, exam
+            performance, accounts, workload), queries that use them,
+            and the update / drop / recreate of the exam view.
+   RUN ORDER: 6 of 7. Run the CREATE VIEW section first, then run each
+   query on its own.
+   ===================================================================== */
+USE StudentServicesDB;
+GO
+
+/* ====================== A. CREATE VIEWS ====================== */
+CREATE VIEW vw_Registrar AS              -- student records, enrolment and graduation
+SELECT s.StudentID, s.AdmNo, s.FullName, s.DOB, s.Gender, s.Phone, s.Status, s.GradYear,
+       c.CourseName, c.Level, cl.ClassName, d.DeptID, d.DeptName
+FROM Students s
+JOIN Courses c     ON c.CourseID = s.CourseID
+JOIN Classes cl    ON cl.ClassID = s.ClassID
+JOIN Departments d ON d.DeptID   = c.DeptID;
+GO
+CREATE VIEW vw_HOD AS                    -- lecturers, subjects and classes per department
+SELECT d.DeptName, l.FullName AS Lecturer, l.Role, sb.SubjectName, cl.ClassName,
+       t.Term, t.Year, t.Hours
+FROM Departments d
+JOIN Lecturers l ON l.DeptID = d.DeptID
+LEFT JOIN Teaching t  ON t.LecturerID = l.LecturerID
+LEFT JOIN Subjects sb ON sb.SubjectCode = t.SubjectCode
+LEFT JOIN Classes cl  ON cl.ClassID = t.ClassID;
+GO
+CREATE VIEW vw_Lecturer AS               -- classes taught, students and their marks
+SELECT t.LecturerID, l.FullName AS Lecturer, t.SubjectCode, sb.SubjectName, cl.ClassName,
+       s.AdmNo, s.FullName AS Student, t.Term, t.Year, a.CAT1, a.CAT2, a.Exam
+FROM Teaching t
+JOIN Lecturers l  ON l.LecturerID = t.LecturerID
+JOIN Subjects sb  ON sb.SubjectCode = t.SubjectCode
+JOIN Classes cl   ON cl.ClassID = t.ClassID
+JOIN Students s   ON s.ClassID = t.ClassID
+LEFT JOIN Assessments a ON a.StudentID = s.StudentID AND a.SubjectCode = t.SubjectCode
+                       AND a.Term = t.Term AND a.Year = t.Year AND a.IsSupplementary = 0;
+GO
+CREATE VIEW vw_Dean AS                   -- institution-wide summary per department and course
+SELECT d.DeptName, c.CourseName, c.Level,
+       COUNT(s.StudentID) AS TotalStudents,
+       SUM(CASE WHEN s.Status = 'in session'    THEN 1 ELSE 0 END) AS InSession,
+       SUM(CASE WHEN s.Status = 'on attachment' THEN 1 ELSE 0 END) AS OnAttachment,
+       SUM(CASE WHEN s.Status = 'completed'     THEN 1 ELSE 0 END) AS Completed
+FROM Departments d
+JOIN Courses c ON c.DeptID = d.DeptID
+LEFT JOIN Students s ON s.CourseID = c.CourseID
+GROUP BY d.DeptName, c.CourseName, c.Level;
+GO
+CREATE VIEW vw_ExamPerformance AS        -- main exam results (supplementary added later)
+SELECT s.StudentID, s.AdmNo, s.FullName, d.DeptName, c.CourseName,
+       a.SubjectCode, sb.SubjectName, a.Term, a.Year, a.Attendance, a.CAT1, a.CAT2, a.Exam,
+       a.CAT1 + a.CAT2 + a.Exam AS Total,
+       CASE WHEN a.CAT1 + a.CAT2 + a.Exam >= 60 THEN 'Pass' ELSE 'Supplementary' END AS Result
+FROM Assessments a
+JOIN Students s    ON s.StudentID = a.StudentID
+JOIN Subjects sb   ON sb.SubjectCode = a.SubjectCode
+JOIN Courses c     ON c.CourseID = s.CourseID
+JOIN Departments d ON d.DeptID = c.DeptID
+WHERE a.IsSupplementary = 0;
+GO
+CREATE VIEW vw_Accounts AS               -- tuition, hostel and supplementary payments, fee balance
+SELECT s.StudentID, s.AdmNo, s.FullName, d.DeptName, c.CourseName, c.TuitionFee,
+       p.TuitionPaid, p.HostelPaid, p.SuppPaid, c.TuitionFee - p.TuitionPaid AS FeeBalance
+FROM Students s
+JOIN Courses c     ON c.CourseID = s.CourseID
+JOIN Departments d ON d.DeptID = c.DeptID
+CROSS APPLY (SELECT ISNULL(SUM(CASE WHEN PayType='tuition' THEN Amount END),0) AS TuitionPaid,
+                    ISNULL(SUM(CASE WHEN PayType='hostel'  THEN Amount END),0) AS HostelPaid,
+                    ISNULL(SUM(CASE WHEN PayType='supp'    THEN Amount END),0) AS SuppPaid
+             FROM Payments pay WHERE pay.StudentID = s.StudentID) p;
+GO
+CREATE VIEW vw_FeesCollected AS          -- every payment with its department (accounts office)
+SELECT d.DeptName, p.Term, p.Year, p.PayType, p.Amount, s.AdmNo
+FROM Payments p
+JOIN Students s    ON s.StudentID = p.StudentID
+JOIN Courses c     ON c.CourseID = s.CourseID
+JOIN Departments d ON d.DeptID = c.DeptID;
+GO
+CREATE VIEW vw_Workload AS               -- lecturer workload per term
+SELECT l.LecturerID, l.FullName AS Lecturer, l.Role, d.DeptName, t.Year, t.Term,
+       COUNT(DISTINCT t.SubjectCode) AS Subjects,
+       SUM(t.Hours) AS HoursPerWeek, SUM(t.Hours) * 13 AS HoursPerTerm
+FROM Lecturers l
+JOIN Departments d ON d.DeptID = l.DeptID
+JOIN Teaching t    ON t.LecturerID = l.LecturerID
+GROUP BY l.LecturerID, l.FullName, l.Role, d.DeptName, t.Year, t.Term;
+GO
+CREATE VIEW vw_StudentClubs AS           -- supporting view: club membership per student
+SELECT s.StudentID, s.AdmNo, s.FullName, c.ClubName, m.Year
+FROM ClubMembers m
+JOIN Students s ON s.StudentID = m.StudentID
+JOIN Clubs c    ON c.ClubID = m.ClubID;
+GO
+CREATE VIEW vw_Attachments AS            -- supporting view: attachments with department and firm
+SELECT d.DeptName, s.AdmNo, s.FullName, f.FirmName, att.StartDate, att.EndDate,
+       att.AttachType, att.Completed
+FROM Attachments att
+JOIN Students s    ON s.StudentID = att.StudentID
+JOIN Courses c     ON c.CourseID = s.CourseID
+JOIN Departments d ON d.DeptID = c.DeptID
+JOIN Firms f       ON f.FirmID = att.FirmID;
+GO
+SELECT name AS ViewName FROM sys.views ORDER BY name;      -- screenshot (DATA21)
+GO
+
+/* ================= B. RETRIEVE DATA FROM THE VIEWS ================= */
+-- (i) students due for the next graduation (held every two years, in even years)
+SELECT COUNT(*) AS StudentsDueForNextGraduation
+FROM vw_Registrar
+WHERE GradYear = CASE WHEN YEAR(GETDATE()) % 2 = 0 THEN YEAR(GETDATE()) ELSE YEAR(GETDATE()) + 1 END;
+
+-- (ii) students with fee balances above 10,000 per department
+SELECT DeptName, AdmNo, FullName, FeeBalance FROM vw_Accounts
+WHERE FeeBalance > 10000 ORDER BY DeptName, FeeBalance DESC;
+
+-- (iii) departmental examination averages per course for a given term and year
+SELECT DeptName, CourseName, CAST(AVG(Total) AS DECIMAL(5,2)) AS AverageMarks
+FROM vw_ExamPerformance WHERE Term = 2 AND Year = 2026
+GROUP BY DeptName, CourseName;
+
+-- (iv) students in more than one club, highest count first
+SELECT AdmNo, FullName, COUNT(DISTINCT ClubName) AS ClubCount
+FROM vw_StudentClubs GROUP BY AdmNo, FullName
+HAVING COUNT(DISTINCT ClubName) > 1 ORDER BY ClubCount DESC;
+
+-- (v) fees collected per department per term per year
+SELECT DeptName, Year, Term, SUM(Amount) AS FeesCollected
+FROM vw_FeesCollected GROUP BY DeptName, Year, Term ORDER BY Year, Term, DeptName;
+
+-- (vi) students scheduled for supplementary exams at the start of a given term and year
+--      (those who failed in the term before it)
+DECLARE @Term TINYINT = 3, @Year INT = 2026;
+DECLARE @PrevTerm TINYINT = CASE WHEN @Term = 1 THEN 3 ELSE @Term - 1 END;
+DECLARE @PrevYear INT     = CASE WHEN @Term = 1 THEN @Year - 1 ELSE @Year END;
+SELECT COUNT(DISTINCT StudentID) AS StudentsForSupplementary
+FROM vw_ExamPerformance
+WHERE Result = 'Supplementary' AND Term = @PrevTerm AND Year = @PrevYear;
+GO
+
+-- (vii) students on attachment in the current term, per department
+SELECT DeptName, COUNT(DISTINCT AdmNo) AS StudentsOnAttachment
+FROM vw_Attachments
+WHERE CAST(GETDATE() AS DATE) BETWEEN StartDate AND EndDate
+GROUP BY DeptName;
+
+-- (viii) a student's transcript for a given term and year
+SELECT AdmNo, FullName, SubjectCode, SubjectName, CAT1, CAT2, Exam, Total, Result
+FROM vw_ExamPerformance
+WHERE AdmNo = 'PCK/DICT/001/25' AND Term = 2 AND Year = 2026;
+GO
+
+/* ============ C. UPDATE, DROP AND RECREATE A VIEW ============ */
+-- (i) update the exam performance view to include supplementary results
+ALTER VIEW vw_ExamPerformance AS
+SELECT s.StudentID, s.AdmNo, s.FullName, d.DeptName, c.CourseName,
+       a.SubjectCode, sb.SubjectName, a.Term, a.Year, a.Attendance, a.CAT1, a.CAT2, a.Exam,
+       a.CAT1 + a.CAT2 + a.Exam AS Total,
+       CASE WHEN a.IsSupplementary = 1 THEN 'Supplementary' ELSE 'Main' END AS ExamType,
+       CASE WHEN a.CAT1 + a.CAT2 + a.Exam >= 60 THEN 'Pass'
+            WHEN a.IsSupplementary = 1 THEN 'Fail'
+            ELSE 'Supplementary' END AS Result
+FROM Assessments a
+JOIN Students s    ON s.StudentID = a.StudentID
+JOIN Subjects sb   ON sb.SubjectCode = a.SubjectCode
+JOIN Courses c     ON c.CourseID = s.CourseID
+JOIN Departments d ON d.DeptID = c.DeptID;
+GO
+SELECT AdmNo, SubjectCode, Term, Year, Total, ExamType, Result
+FROM vw_ExamPerformance WHERE ExamType = 'Supplementary';      -- supplementary now visible
+GO
+
+-- (ii) drop the view
+DROP VIEW vw_ExamPerformance;
+GO
+
+-- (iii) recreate the view (final version, includes supplementary results)
+CREATE VIEW vw_ExamPerformance AS
+SELECT s.StudentID, s.AdmNo, s.FullName, d.DeptName, c.CourseName,
+       a.SubjectCode, sb.SubjectName, a.Term, a.Year, a.Attendance, a.CAT1, a.CAT2, a.Exam,
+       a.CAT1 + a.CAT2 + a.Exam AS Total,
+       CASE WHEN a.IsSupplementary = 1 THEN 'Supplementary' ELSE 'Main' END AS ExamType,
+       CASE WHEN a.CAT1 + a.CAT2 + a.Exam >= 60 THEN 'Pass'
+            WHEN a.IsSupplementary = 1 THEN 'Fail'
+            ELSE 'Supplementary' END AS Result
+FROM Assessments a
+JOIN Students s    ON s.StudentID = a.StudentID
+JOIN Subjects sb   ON sb.SubjectCode = a.SubjectCode
+JOIN Courses c     ON c.CourseID = s.CourseID
+JOIN Departments d ON d.DeptID = c.DeptID;
+GO
+SELECT TOP 10 * FROM vw_ExamPerformance ORDER BY Year, Term;   -- screenshot
+GO
+</script>
+<script type="text/plain" id="src7">/* =====================================================================
+   07_permissions.sql             TASK 2d - Permissions (needs tables + views)
+   PURPOSE: roles that match the CRUD matrix, then assign the faculty and
+            student accounts created in script 01 to them.
+   RUN ORDER: 7 of 7.
+   ===================================================================== */
+USE StudentServicesDB;
+GO
+IF DATABASE_PRINCIPAL_ID('role_faculty') IS NULL CREATE ROLE role_faculty;
+IF DATABASE_PRINCIPAL_ID('role_student') IS NULL CREATE ROLE role_student;
+GO
+/* Faculty: read their own views, record assessment marks */
+GRANT SELECT ON vw_Lecturer         TO role_faculty;
+GRANT SELECT ON vw_ExamPerformance  TO role_faculty;
+GRANT SELECT ON vw_Workload         TO role_faculty;
+GRANT SELECT, INSERT, UPDATE ON Assessments TO role_faculty;
+
+/* Students: read course information, join clubs, update own contact details */
+GRANT SELECT ON Courses  TO role_student;
+GRANT SELECT ON Subjects TO role_student;
+GRANT SELECT ON Clubs    TO role_student;
+GRANT SELECT, INSERT ON ClubMembers TO role_student;
+GRANT UPDATE (Phone, Address) ON Students TO role_student;
+
+ALTER ROLE role_faculty ADD MEMBER faculty_user;
+ALTER ROLE role_student ADD MEMBER student_user;
+GO
+-- Check (screenshot DATA7): who belongs to which role
+SELECT r.name AS RoleName, m.name AS MemberName
+FROM sys.database_role_members rm
+JOIN sys.database_principals r ON r.principal_id = rm.role_principal_id
+JOIN sys.database_principals m ON m.principal_id = rm.member_principal_id
+ORDER BY r.name;
+GO
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+/* HOW IT WORKS
+   1. You pick your files once. Images named DATA1, DATA2 ... are matched by number,
+      the HTML pages and StudentServicesDB.sql are matched by file name.
+   2. The 7 SQL scripts are stored inside this page, so they are always available.
+   3. "Download" builds a ZIP in your browser (nothing is uploaded anywhere).
+   Edit the lists below to change titles, folders or file names. */
+const SHOTS=[[1,'Task1','GitHub Repository Created'],[2,'Task1','GitHub Desktop Repository'],[3,'Task1','Project Folder Structure'],
+[4,'Task2','SQL Server Installation'],[5,'Task2','SQL Server Management Studio'],[6,'Task2','StudentServicesDB Created'],
+[7,'Task2','User Accounts Created'],[8,'Task2','Departments Table Created'],[9,'Task2','Departments Table Records'],
+[10,'Task3','ER Diagram'],[11,'Task3','Normalized Database Schema'],
+[12,'Task4','CREATE TABLE Execution'],[13,'Task4','Constraints Applied'],[14,'Task4','Schema Modifications'],
+[15,'Task5','Sample Data Inserted'],[16,'Task5','SELECT Query Results'],[17,'Task5','UPDATE Query Results'],
+[18,'Task5','DELETE Query Results'],[19,'Task5','JOIN Query Results'],[20,'Task5','Aggregate Query Results'],
+[21,'Task6','Views Created'],[22,'Task6','View Query Results'],[23,'Task6','Database Export sql'],
+[24,'Appendix','GitHub Commit History'],[25,'Appendix','Final Repository']];
+const SCRIPTS=[[1,'01_setup_database.sql','01_Setup'],[2,'02_create_tables.sql','03_DDL'],[3,'03_insert_data.sql','04_DML'],
+[4,'04_alter_tables.sql','03_DDL'],[5,'05_queries.sql','04_DML'],[6,'06_views.sql','05_Views'],[7,'07_permissions.sql','01_Setup']];
+const PAGES=['Student_Services_Documentation.html','Screenshots.html','SQL_Scripts.html','ERD.html'];
+const EXPORT='StudentServicesDB.sql';
+
+const $=id=>document.getElementById(id);
+const shotF={},pageF={};let exportF=null;
+const msg=t=>$('msg').innerHTML=t;
+const clean=s=>s.replace(/[\\\/:*?"<>|]+/g,'-').trim();
+const snake=s=>s.replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'');
+const ext=f=>f.name.split('.').pop().toLowerCase();
+
+/* ---------- build the "choose parts" list ---------- */
+const parts=$('parts');
+function group(title,items){
+ const g=document.createElement('div');g.className='grp';
+ g.innerHTML=`<b><input type="checkbox" class="gc"> ${title}</b><div class="items"></div>`;
+ const box=g.querySelector('.items');
+ items.forEach(([key,label])=>{const l=document.createElement('label');l.innerHTML=`<input type="checkbox" class="it" data-key="${key}"> ${label}`;box.appendChild(l)});
+ g.querySelector('.gc').onchange=e=>g.querySelectorAll('.it:not(:disabled)').forEach(c=>c.checked=e.target.checked);
+ parts.appendChild(g)}
+[...new Set(SHOTS.map(s=>s[1]))].forEach(t=>group('Screenshots · '+t,SHOTS.filter(s=>s[1]===t).map(s=>['s'+s[0],`DATA${s[0]} ${s[2]}`])));
+group('SQL scripts',SCRIPTS.map(s=>['q'+s[0],s[1]]));
+group('Pages',PAGES.map(p=>['p'+p,p]));
+group('Database export',[['x',EXPORT]]);
+
+/* ---------- reading the files you pick ---------- */
+function take(list){
+ [...list].forEach(f=>{const m=f.name.match(/^data(\d+)\.(png|jpe?g|webp)$/i);
+  if(m){shotF[+m[1]]=f;return}
+  const p=PAGES.find(x=>x.toLowerCase()===f.name.toLowerCase());
+  if(p){pageF[p]=f;return}
+  if(f.name.toLowerCase()===EXPORT.toLowerCase())exportF=f});
+ refresh()}
+function has(key){const t=key[0];
+ if(t==='s')return !!shotF[+key.slice(1)];
+ if(t==='q')return true;
+ if(t==='p')return !!pageF[key.slice(1)];
+ return !!exportF}
+function refresh(){
+ document.querySelectorAll('.it').forEach(c=>{const ok=has(c.dataset.key);c.disabled=!ok;c.parentElement.classList.toggle('dis',!ok);if(!ok)c.checked=false});
+ const ns=Object.keys(shotF).length,np=Object.keys(pageF).length;
+ $('sum').innerHTML=`<span class="${ns?'ok':'no'}">Screenshots: ${ns}/25</span><span class="${np?'ok':'no'}">Pages: ${np}/4</span><span class="${exportF?'ok':'no'}">Export .sql: ${exportF?'found':'not added'}</span><span class="ok">SQL scripts: 7/7 (built in)</span>`}
+$('pick').onchange=e=>take(e.target.files);
+$('pickDir').onchange=e=>take(e.target.files);
+const drop=$('drop');
+['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('on')}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('on')}));
+drop.addEventListener('drop',e=>take(e.dataTransfer.files));
+refresh();
+
+/* ---------- tabs and select buttons ---------- */
+$('t1').onclick=()=>tab(1);$('t2').onclick=()=>tab(2);
+function tab(n){$('t1').classList.toggle('on',n===1);$('t2').classList.toggle('on',n===2);$('p1').classList.toggle('on',n===1);$('p2').classList.toggle('on',n===2)}
+$('selAll').onclick=()=>document.querySelectorAll('.it:not(:disabled),.gc').forEach(c=>c.checked=true);
+$('selNone').onclick=()=>document.querySelectorAll('.it,.gc').forEach(c=>c.checked=false);
+
+/* ---------- make the ZIP ---------- */
+async function build(keys,zipName){
+ if(typeof JSZip==='undefined'){msg('<span class="no">The zipping library did not load. Connect to the internet and refresh this page.</span>');return}
+ if(!keys.length){msg('<span class="no">Nothing selected.</span>');return}
+ msg('Building your ZIP…');
+ const adm=clean($('adm').value)||'ADM NO';
+ const zip=new JSZip(),root=zip.folder('Student-Services'),doc=root.folder(`Documentation - ${adm}`);
+ const ren=$('oRen').checked,orig=$('oOrig').checked;let n=0;const missing=[];
+ for(const key of keys){const t=key[0],id=key.slice(1);
+  if(!has(key)){missing.push(key);continue}
+  if(t==='s'){const f=shotF[+id],e=ext(f),s=SHOTS.find(x=>x[0]==+id);
+   if(orig)doc.file(`DATA${id}.${e}`,f);
+   if(ren)doc.folder('Screenshots (renamed)').file(`${s[1]}_${String(id).padStart(2,'0')}_${snake(s[2])}.${e}`,f);
+   if(+id===10)root.folder('02_Design').file(`ERD_Diagram.${e}`,f);n++}
+  else if(t==='q'){const s=SCRIPTS.find(x=>x[0]==+id);root.folder(s[2]).file(s[1],$('src'+id).textContent.replace(/^\n/,''));n++}
+  else if(t==='p'){doc.file(id,pageF[id]);n++}
+  else if(t==='x'){root.folder('05_Views').file(EXPORT,exportF);n++}}
+ const zipped=await zip.generateAsync({type:'blob'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(zipped);a.download=zipName;a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+ msg(`<span class="ok">Done: ${n} item(s) saved in ${zipName}.</span>`+(missing.length?` <span class="no">Skipped (not selected yet): ${missing.length}.</span>`:''))}
+$('all').onclick=()=>build([...document.querySelectorAll('.it')].filter(c=>!c.disabled).map(c=>c.dataset.key),'Student-Services.zip');
+$('some').onclick=()=>build([...document.querySelectorAll('.it:checked')].map(c=>c.dataset.key),'Student-Services-selected.zip');
+</script></body></html>

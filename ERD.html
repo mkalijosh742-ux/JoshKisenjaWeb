@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Services – ER Diagram</title>
+<style>
+:root{--ink:#1d1b26;--purple:#4b2a7b;--paper:#fbf7ee;--line:#cdbfa3}
+*{box-sizing:border-box;margin:0}
+body{background:#e9e2d0;color:var(--ink);font:16px/1.6 Georgia,"Times New Roman",serif}
+header{background:var(--purple);color:#fff;text-align:center;padding:30px 16px}
+header h1{font-size:1.7rem;letter-spacing:.04em}header p{opacity:.8;font-style:italic;margin-top:4px}
+main{max-width:1100px;margin:22px auto;padding:0 16px}
+.box{background:var(--paper);border:1px solid var(--line);box-shadow:0 2px 8px #0002;padding:16px 20px;margin-bottom:18px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.btn{font:inherit;font-size:.85rem;padding:6px 14px;border:1px solid var(--purple);background:var(--purple);color:#fff;cursor:pointer;border-radius:3px;text-decoration:none}
+.btn.alt{background:#fff;color:var(--purple)}.btn:hover{opacity:.85}
+.btn.off{opacity:.45;pointer-events:none}
+#zoomv{font-size:.85rem;min-width:48px;text-align:center}
+#view{background:#fffef9;border:1px solid var(--line);height:70vh;overflow:auto;display:flex}
+#view img{margin:auto;display:block;cursor:zoom-in}
+#empty{margin:auto;text-align:center;padding:30px;color:#7a6a4a}
+details{margin-top:10px}summary{cursor:pointer;color:var(--purple);font-weight:bold}
+ul{columns:3 200px;margin:8px 0 0 20px;font-size:.9rem}
+</style></head><body>
+<header><h1>Entity-Relationship Diagram</h1><p>Student Services Management System · StudentServicesDB</p></header>
+<main>
+<div class="box">
+<p>The ERD shows the 16 tables of the database and how they are related: departments own courses, courses contain modules and subjects, students belong to a course and a class, and students link to assessments, payments, hostels, clubs and attachments.</p>
+</div>
+<div class="box">
+<div class="bar">
+<button class="btn alt" id="out">−</button><span id="zoomv">Fit</span><button class="btn alt" id="inn">+</button>
+<button class="btn alt" id="fit">Fit to screen</button><button class="btn alt" id="full">100%</button>
+<a class="btn off" id="dl">Download image</a>
+</div>
+<div id="view"><div id="empty">Looking for DATA10 (your ER diagram image)…</div></div>
+<details><summary>Entities in this diagram</summary>
+<ul><li>Departments</li><li>Courses</li><li>Modules</li><li>Subjects</li><li>Classes</li><li>Students</li><li>Lecturers</li><li>Teaching</li><li>Assessments</li><li>Payments</li><li>Hostels</li><li>HostelAllocations</li><li>Clubs</li><li>ClubMembers</li><li>Firms</li><li>Attachments</li></ul></details>
+</div>
+</main>
+<script>
+/* HOW IT WORKS
+   The page looks for your ER diagram image saved beside it as DATA10 (.png, .jpg, .jpeg or .webp).
+   If it is not found, a button appears so you can choose the image by hand.
+   Change IMAGE_NUMBER if your diagram has a different number. */
+const IMAGE_NUMBER=10, EXT=['png','jpg','jpeg','webp'];
+const view=document.getElementById('view'),dl=document.getElementById('dl'),zv=document.getElementById('zoomv');
+let img=null,zoom=0; // zoom 0 = fit, otherwise a percentage
+function show(src,name){
+ img=new Image();img.alt='ER Diagram';
+ img.onload=()=>{view.innerHTML='';view.appendChild(img);fit();
+  dl.href=src;dl.download=name;dl.classList.remove('off');
+  img.onclick=()=>zoom?fit():setZoom(100)};
+ img.src=src}
+function fit(){zoom=0;zv.textContent='Fit';if(img){img.style.width='';img.style.maxWidth='100%';img.style.maxHeight='100%';img.style.cursor='zoom-in'}}
+function setZoom(p){if(!img)return;zoom=Math.max(20,Math.min(400,p));zv.textContent=zoom+'%';
+ img.style.maxWidth='none';img.style.maxHeight='none';img.style.width=(img.naturalWidth*zoom/100)+'px';img.style.cursor='zoom-out'}
+document.getElementById('inn').onclick=()=>setZoom((zoom||100)+20);
+document.getElementById('out').onclick=()=>setZoom((zoom||100)-20);
+document.getElementById('fit').onclick=fit;
+document.getElementById('full').onclick=()=>setZoom(100);
+let i=0;const probe=new Image();
+probe.onload=()=>show(probe.src,`DATA${IMAGE_NUMBER}.${EXT[i]}`);
+probe.onerror=()=>{i++;if(i<EXT.length){probe.src=`DATA${IMAGE_NUMBER}.${EXT[i]}`}else notFound()};
+probe.src=`DATA${IMAGE_NUMBER}.${EXT[0]}`;
+function notFound(){
+ view.innerHTML='<div id="empty">Image <b>DATA'+IMAGE_NUMBER+'</b> was not found next to this page.<br>Save your ER diagram in the same folder with that name, or choose it here:<br><br><input type="file" id="f" accept="image/*"></div>';
+ document.getElementById('f').onchange=e=>{const f=e.target.files[0];if(f)show(URL.createObjectURL(f),f.name)}}
+</script></body></html>
